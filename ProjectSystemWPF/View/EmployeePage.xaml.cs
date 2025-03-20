@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace ProjectSystemWPF.View
@@ -17,7 +18,7 @@ namespace ProjectSystemWPF.View
     /// <summary>
     /// Логика взаимодействия для EmployeePage.xaml
     /// </summary>
-    public partial class EmployeePage : Window
+    public partial class EmployeePage : Page
     {
         public EmployeePage()
         {

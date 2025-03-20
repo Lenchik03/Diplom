@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace ProjectSystemWPF.View
@@ -17,7 +18,7 @@ namespace ProjectSystemWPF.View
     /// <summary>
     /// Логика взаимодействия для DirectorPage.xaml
     /// </summary>
-    public partial class DirectorPage : Window
+    public partial class DirectorPage : Page
     {
         public DirectorPage()
         {

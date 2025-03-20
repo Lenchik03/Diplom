@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,13 +17,15 @@ using System.Windows.Shapes;
 namespace ProjectSystemWPF.View
 {
     /// <summary>
-    /// Логика взаимодействия для DeputyPage.xaml
+    /// Логика взаимодействия для LoginPage.xaml
     /// </summary>
-    public partial class DeputyPage : Page
+    public partial class LoginPage : Page
     {
-        public DeputyPage()
+        public LoginPage()
         {
             InitializeComponent();
+            var vm = ((LoginVM)DataContext);
+            vm.SetPasswordBox(passwrdBox);
         }
     }
 }

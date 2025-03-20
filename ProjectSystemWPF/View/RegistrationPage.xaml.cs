@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ProjectSystemWPF.View
 {
     /// <summary>
-    /// Логика взаимодействия для DeputyPage.xaml
+    /// Логика взаимодействия для RegistrationPage.xaml
     /// </summary>
-    public partial class DeputyPage : Page
+    public partial class RegistrationPage : Page
     {
-        public DeputyPage()
+        public RegistrationPage()
         {
             InitializeComponent();
         }
