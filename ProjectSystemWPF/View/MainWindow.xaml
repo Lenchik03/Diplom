@@ -7,15 +7,11 @@
         xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
         DataContext="{DynamicResource mainVM}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1200">
     <Window.Resources>
         <vm:MainVM x:Key="mainVM"/>
     </Window.Resources>
     <Grid>
-        <Expander >
-            <Expander>
-                <Label Content="jhbgkhjgjkgh"/>
-            </Expander>
-        </Expander>
+        <Frame Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

@@ -23,7 +23,11 @@ public partial class User
 
     public string Phone { get; set; } = null!;
 
+    public DateOnly? Birthday { get; set; }
+
     public virtual Department IdDepartmentNavigation { get; set; } = null!;
 
     public virtual Role IdRoleNavigation { get; set; } = null!;
+
+    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 }

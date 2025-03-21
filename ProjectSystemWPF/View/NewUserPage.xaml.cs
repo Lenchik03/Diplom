@@ -1,5 +1,4 @@
-﻿using ProjectSystemWPF.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,22 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ProjectSystemWPF.ViewModel;
 
 namespace ProjectSystemWPF.View
 {
     /// <summary>
-    /// Логика взаимодействия для LoginPage.xaml
+    /// Логика взаимодействия для NewUserPage.xaml
     /// </summary>
-    public partial class LoginPage : Page
+    public partial class NewUserPage : Window
     {
-        public LoginPage()
+        public NewUserPage()
         {
             InitializeComponent();
-            //var vm = ((LoginVM)DataContext);
-            //vm.SetPasswordBox(passwrdBox);
         }
     }
 }

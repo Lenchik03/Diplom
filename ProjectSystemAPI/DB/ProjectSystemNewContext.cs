@@ -16,7 +16,13 @@ public partial class ProjectSystemNewContext : DbContext
     {
     }
 
+    public virtual DbSet<Chat> Chats { get; set; }
+
+    public virtual DbSet<ChatUser> ChatUsers { get; set; }
+
     public virtual DbSet<Department> Departments { get; set; }
+
+    public virtual DbSet<Message> Messages { get; set; }
 
     public virtual DbSet<Project> Projects { get; set; }
 
@@ -33,12 +39,48 @@ public partial class ProjectSystemNewContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySql("server=192.168.200.13;user=student;password=student;database=ProjectSystemNew", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.39-mariadb"));
-
+    //95.154.107.102
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
             .UseCollation("utf8mb4_general_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Chat>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Title)
+                .HasMaxLength(255)
+                .HasDefaultValueSql("''");
+        });
+
+        modelBuilder.Entity<ChatUser>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.HasIndex(e => e.IdChat, "FK_ChatUsers_Chats_Id");
+
+            entity.HasIndex(e => e.IdUser, "FK_ChatUsers_Users_Id");
+
+            entity.Property(e => e.IdChat)
+                .HasColumnType("int(11)")
+                .HasColumnName("Id_chat");
+            entity.Property(e => e.IdUser)
+                .HasColumnType("int(11)")
+                .HasColumnName("Id_user");
+
+            entity.HasOne(d => d.IdChatNavigation).WithMany()
+                .HasForeignKey(d => d.IdChat)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ChatUsers_Chats_Id");
+
+            entity.HasOne(d => d.IdUserNavigation).WithMany()
+                .HasForeignKey(d => d.IdUser)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ChatUsers_Users_Id");
+        });
 
         modelBuilder.Entity<Department>(entity =>
         {
@@ -59,8 +101,39 @@ public partial class ProjectSystemNewContext : DbContext
 
             entity.HasOne(d => d.IdMainDepNavigation).WithMany(p => p.InverseIdMainDepNavigation)
                 .HasForeignKey(d => d.IdMainDep)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Departments_Departments_Id");
+        });
+
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.HasIndex(e => e.IdChat, "FK_Messages_Chats_Id");
+
+            entity.HasIndex(e => e.IdSender, "FK_Messages_Users_Id");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.IdChat)
+                .HasColumnType("int(11)")
+                .HasColumnName("Id_chat");
+            entity.Property(e => e.IdSender)
+                .HasColumnType("int(11)")
+                .HasColumnName("Id_sender");
+            entity.Property(e => e.IsReadIt).HasColumnName("is_read_it");
+            entity.Property(e => e.Text)
+                .HasMaxLength(255)
+                .HasDefaultValueSql("''")
+                .HasColumnName("text");
+
+            entity.HasOne(d => d.IdChatNavigation).WithMany(p => p.Messages)
+                .HasForeignKey(d => d.IdChat)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Messages_Chats_Id");
+
+            entity.HasOne(d => d.IdSenderNavigation).WithMany(p => p.Messages)
+                .HasForeignKey(d => d.IdSender)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Messages_Users_Id");
         });
 
         modelBuilder.Entity<Project>(entity =>
@@ -177,6 +250,7 @@ public partial class ProjectSystemNewContext : DbContext
             entity.HasIndex(e => e.IdRole, "FK_Users_Roles_Id");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Birthday).HasColumnName("birthday");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("''");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,16 @@ namespace ProjectSystemWPF.View
         public SuperUserPage()
         {
             InitializeComponent();
+            var vm = new SuperUserVM();
+            vm.Loaded += Vm_Loaded;
+            DataContext = vm;
+        }
+
+        private void Vm_Loaded(object? sender, EventArgs e)
+        {
+
+            var stackpanel = (DataContext as SuperUserVM). CreateExpanders();
+            stack1.Children.Add(stackpanel);
         }
     }
 }

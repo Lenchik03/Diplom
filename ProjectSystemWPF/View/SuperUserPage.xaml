@@ -4,11 +4,29 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
+      xmlns:m="clr-namespace:ProjectSystemWPF.Model"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="">
-
+    <Page.Resources>
+        <DataTemplate DataType="{x:Type m:User}">
+            <StackPanel Orientation="Horizontal" >
+                <TextBlock Text="{Binding FirstName}" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding LastName}" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Patronymic}" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Phone}"/>
+            </StackPanel> 
+        </DataTemplate>
+    </Page.Resources>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel x:Name="stack1" Margin="10">
+            
+           
+        </StackPanel>
     </Grid>
 </Page>

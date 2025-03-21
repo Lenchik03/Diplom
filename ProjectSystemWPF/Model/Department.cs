@@ -12,7 +12,7 @@ namespace ProjectSystemWPF.Model
 
         public string Title { get; set; } = null!;
 
-        public int IdMainDep { get; set; }
+        public int? IdMainDep { get; set; }
 
         public int? IdDirector { get; set; }
 
