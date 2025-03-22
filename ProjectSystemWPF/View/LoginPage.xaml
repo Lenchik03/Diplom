@@ -9,6 +9,32 @@
       Title="LoginPage">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Grid.Row="1" Width="300" Height="220">
+            <Label Content="Авторизация" HorizontalAlignment="Center" FontSize="20" FontFamily="Sitka Small"/>
+            <Label Content="Введите эл.почту" FontSize="14" Margin="5"/>
+            <TextBox Margin="5" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(Validation.Errors)[0].ErrorContent}" x:Name="loginBox"/>
+            <Label Content="Введите пароль" FontSize="14" Margin="5"/>
+            <PasswordBox x:Name="passwrdBox" ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            <Button Content="Войти" Height="25" Width="80" Margin="10" FontWeight="Bold" Command="{Binding OpenPage}"
+                TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+TextElement.FontWeight="Regular"
+TextElement.FontSize="13"
+TextOptions.TextFormattingMode="Ideal"
+TextOptions.TextRenderingMode="Auto"
+Background="{DynamicResource MaterialDesignPaper}"
+FontFamily="{DynamicResource MaterialDesignFont}"
+                />
+        </StackPanel>
     </Grid>
 </Page>
