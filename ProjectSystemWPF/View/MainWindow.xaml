@@ -12,6 +12,14 @@
         <vm:MainVM x:Key="mainVM"/>
     </Window.Resources>
     <Grid>
-        <Frame Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu>
+            <Image Source="/View/logo.jpg" Width="50" Height="50"/>
+            <MenuItem Header="Выйти" Command="{Binding SignOut}" />
+        </Menu>
+        <Frame Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden" Grid.Row="1"/>
     </Grid>
 </Window>
