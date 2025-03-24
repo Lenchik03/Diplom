@@ -25,13 +25,13 @@ FontFamily="{DynamicResource MaterialDesignFont}">
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
-    <Grid Background="Yellow">
+    <Grid Background="#FFFDC401">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer Background="Yellow" BorderThickness="1" BorderBrush="Black">
+        <ScrollViewer Background="#FFFDC401" BorderThickness="1" BorderBrush="Black">
             <StackPanel x:Name="stack1" Margin="10" Background="White">
 
 
@@ -44,7 +44,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <StackPanel Background="Yellow">
+                <StackPanel Background="#FFFDC401">
                     <StackPanel Margin="10,10,10,0" IsEnabled="{Binding CanEdit}" Background="White">
 
                         <Grid Margin="2">
@@ -59,22 +59,22 @@ FontFamily="{DynamicResource MaterialDesignFont}">
 
 
                         <Label Content="Имя"/>
-                        <TextBox Text="{Binding Director.FirstName}" />
+                        <TextBox Text="{Binding Employee.FirstName}" />
                         <Label Content="Фамилия"/>
-                        <TextBox Text="{Binding Director.LastName}" />
+                        <TextBox Text="{Binding Employee.LastName}" />
                         <Label Content="Отчество"/>
-                        <TextBox Text="{Binding Director.Patronymic}" />
+                        <TextBox Text="{Binding Employee.Patronymic}" />
                         <Label Content="Дата рождения"/>
-                        <TextBox Text="{Binding Director.Birthday, StringFormat=dd.MM.yyyy}" />
+                        <TextBox Text="{Binding Employee.Birthday, StringFormat=dd.MM.yyyy}" />
                         <Label Content="Эл.почта"/>
-                        <TextBox Text="{Binding Director.Email}" />
+                        <TextBox Text="{Binding Employee.Email}" />
                         <Label Content="Номер телефона"/>
-                        <TextBox Text="{Binding Director.Phone}" />
+                        <TextBox Text="{Binding Employee.Phone}" />
                         <Label Content="Отдел"/>
-                        <ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDep}" DisplayMemberPath="Title"/>
+                        
                         <Label Content="Должность"/>
-                        <TextBox/>
-                        <Button Content="Сохранить" Command="{Binding Save}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
+                        <TextBox Text="{Binding Employee.Post}"/>
+                        <Button Content="Сохранить" Command="{Binding SaveUser}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
                     </StackPanel>
                     <Button Content="✍︎" Command="{Binding CanEditClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>
                 </StackPanel>
@@ -93,7 +93,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <TextBox Text="{Binding Department.Title}" />
                         <Label Content="Начальник отдела"/>
                         <ComboBox ItemsSource="{Binding Directors}" SelectedItem="{Binding DepDirector}"/>
-                        <Button Content="Сохранить" Command="{Binding Save}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
+                        <Button Content="Сохранить" Command="{Binding SaveDep}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
                     </StackPanel>
                     <Button Content="✍︎" Command="{Binding CanEditDepClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>
                 </StackPanel>

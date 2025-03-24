@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    class VmCommand : ICommand
+    public class VmCommand : ICommand
     {
         Action action;
 

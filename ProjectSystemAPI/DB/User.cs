@@ -25,6 +25,8 @@ public partial class User
 
     public DateOnly? Birthday { get; set; }
 
+    public string Post { get; set; } = null!;
+
     public virtual Department IdDepartmentNavigation { get; set; } = null!;
 
     public virtual Role IdRoleNavigation { get; set; } = null!;
