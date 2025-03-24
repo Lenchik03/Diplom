@@ -13,6 +13,8 @@ public partial class Department
 
     public int? IdDirector { get; set; }
 
+    public virtual User? IdDirectorNavigation { get; set; }
+
     public virtual Department? IdMainDepNavigation { get; set; }
 
     public virtual ICollection<Department> InverseIdMainDepNavigation { get; set; } = new List<Department>();

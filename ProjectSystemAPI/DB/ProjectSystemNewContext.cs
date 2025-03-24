@@ -39,7 +39,7 @@ public partial class ProjectSystemNewContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySql("server=192.168.200.13;user=student;password=student;database=ProjectSystemNew", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.39-mariadb"));
-    //95.154.107.102
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -88,6 +88,8 @@ public partial class ProjectSystemNewContext : DbContext
 
             entity.HasIndex(e => e.IdMainDep, "FK_Departments_Departments_Id");
 
+            entity.HasIndex(e => e.IdDirector, "FK_Departments_Users_Id");
+
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.IdDirector)
                 .HasColumnType("int(11)")
@@ -98,6 +100,10 @@ public partial class ProjectSystemNewContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''");
+
+            entity.HasOne(d => d.IdDirectorNavigation).WithMany(p => p.Departments)
+                .HasForeignKey(d => d.IdDirector)
+                .HasConstraintName("FK_Departments_Users_Id");
 
             entity.HasOne(d => d.IdMainDepNavigation).WithMany(p => p.InverseIdMainDepNavigation)
                 .HasForeignKey(d => d.IdMainDep)

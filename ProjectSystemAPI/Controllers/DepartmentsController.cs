@@ -24,7 +24,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
         {
-            return await _context.Departments.Include(s => s.Users).ToListAsync();
+            return await _context.Departments.Include(s => s.Users).Include(s=>s.IdDirectorNavigation).ToListAsync();
         }
 
         // GET: api/Departments/5

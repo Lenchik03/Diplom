@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ProjectSystemWPF.Model
+namespace ProjectSystemWPF.Model;
+
+public partial class Department
 {
-    public partial class Department
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Title { get; set; } = null!;
+    public string Title { get; set; } = null!;
 
-        public int? IdMainDep { get; set; }
+    public int? IdMainDep { get; set; }
 
-        public int? IdDirector { get; set; }
+    public int? IdDirector { get; set; }
 
-        public virtual Department IdMainDepNavigation { get; set; } = null!;
+    public virtual User? IdDirectorNavigation { get; set; }
 
-        public virtual ICollection<Department> InverseIdMainDepNavigation { get; set; } = new List<Department>();
+    public virtual Department? IdMainDepNavigation { get; set; }
 
-        public virtual ICollection<User> Users { get; set; } = new List<User>();
-    }
+    public virtual ICollection<Department> InverseIdMainDepNavigation { get; set; } = new List<Department>();
 
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

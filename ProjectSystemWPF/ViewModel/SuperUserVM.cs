@@ -22,9 +22,9 @@ namespace ProjectSystemWPF.ViewModel
         ObservableCollection<Department> allDepartments = new();
         ObservableCollection<User> allEmployees = new();
         public bool CanEdit { get; set; } = true;
-        public VmCommand NewEmployee {  get; set; }
+        public VmCommand NewEmployee { get; set; }
         public User Employee { get; set; }
-        public VmCommand SaveUser {  get; set; }
+        public VmCommand SaveUser { get; set; }
         public Visibility Hidden { get; set; }
         public VmCommand CanEditClick { get; set; }
         public bool CanDelete { get; set; }
@@ -32,9 +32,9 @@ namespace ProjectSystemWPF.ViewModel
         public Department Department { get; set; }
         public ObservableCollection<User> Directors { get; set; } = new();
         public User DepDirector { get; set; }
-        public VmCommand SaveDep {  get; set; }
+        public VmCommand SaveDep { get; set; }
         public VmCommand CanEditDepClick { get; set; }
-        public Button SelectedDepOrUser {  get; set; }
+        public Button SelectedDepOrUser { get; set; }
 
         Brush brush = new SolidColorBrush(Color.FromArgb(255, 223, 196, 01));
 
@@ -66,8 +66,8 @@ namespace ProjectSystemWPF.ViewModel
             {
                 allDepartments = await result.Content.ReadFromJsonAsync<ObservableCollection<Department>>(REST.Instance.options);
             }
-            MainDepartments = new ObservableCollection<Department>( allDepartments.Where(s=>s.IdMainDep==null));
-            Departments = new ObservableCollection<Department>( allDepartments.Where(s=>s.IdMainDep!=0));
+            MainDepartments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep == null));
+            Departments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep != 0));
 
             var result1 = await REST.Instance.client.GetAsync("Users");
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
@@ -83,9 +83,9 @@ namespace ProjectSystemWPF.ViewModel
             Loaded?.Invoke(this, null);
         }
 
-        
 
-        public StackPanel CreateExpanders() 
+
+        public StackPanel CreateExpanders()
         {
             //Button button = ((Expander)sender) as Button;
             StackPanel expanderPanel = new StackPanel();
@@ -93,61 +93,60 @@ namespace ProjectSystemWPF.ViewModel
             var mheader = "";
             var muser = new User();
             var user = new User();
-            foreach (var maindep in MainDepartments) 
+            foreach (var maindep in MainDepartments)
             {
-                //var mdepExp = new Expander { Header = maindep.Title };
-                //if(maindep.Users.Count != 0)
-                //{
-                //    mdepExp.Content = new ListBox { ItemsSource = maindep.Users }; 
-
-                //}
-                //else
-                //{
-                //    StackPanel expanderPanel1 = new StackPanel();
-                //    foreach(var dep in Departments)
-                //    {
-                //        if(dep.IdMainDep == maindep.Id)
-                //        {
-                //            var depExp = new Expander { Header = dep.Title };
-                //            depExp.Content = new ListBox { ItemsSource = dep.Users };
-                //            expanderPanel1.Children.Add(depExp);
-                //        }                     
-                //    }
-                //    mdepExp.Content = expanderPanel1;
-                //}
                 muser = maindep.Users.FirstOrDefault(s => s.Id == maindep.IdDirector);
-                
-                if (muser != null)
-                    mheader = $"{maindep.Title}{muser.FIO}";
+
+                if (maindep.IdDirectorNavigation != null)
+                    mheader = $"{maindep.Title} - {maindep.IdDirectorNavigation.FIO}";
                 else
                     mheader = maindep.Title;
-                var mdepExp = new Expander { Header = mheader, BorderThickness = new Thickness(2), Background=Brushes.White, BorderBrush = brush };
-              
-                    StackPanel expanderPanel1 = new StackPanel();
-                    foreach (var dep in Departments)
-                    {
-                        user = dep.Users.FirstOrDefault(s => s.Id == dep.IdDirector);
-                    
-                    if (user != null)
-                        header = $"{dep.Title}{user.FIO}";
+                var mdepExp = new Expander { Header = mheader, BorderThickness = new Thickness(2), Background = Brushes.White, BorderBrush = brush };
+                mdepExp.PreviewMouseDown += ExpanderClick;
+                mdepExp.Tag = maindep;
+                StackPanel expanderPanel1 = new StackPanel();
+                foreach (var dep in Departments)
+                {
+                    if (dep.IdDirectorNavigation != null)
+                        header = $"{dep.Title} - {dep.IdDirectorNavigation.FIO}";
                     else
-                         header = dep.Title;
-                        if (dep.IdMainDep == maindep.Id)
-                        {
-                            var depExp = new Expander { Margin = new Thickness(20, 0, 0, 0), Header = header, Background = Brushes.White};
-                            depExp.Content = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = dep.Users.Where(s => s.IdRole == 3) };
-                            expanderPanel1.Children.Add(depExp);
-                        }
+                        header = dep.Title;
+                    if (dep.IdMainDep == maindep.Id)
+                    {
+                        var depExp = new Expander { Margin = new Thickness(20, 0, 0, 0), Header = header, Background = Brushes.White };
+                        depExp.PreviewMouseDown += ExpanderClick;
+                        depExp.Tag = dep;
+                        var list = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = dep.Users.Where(s => s.IdRole == 3) };
+                        list.SelectionChanged += UserSelected;
+                        depExp.Content = list;
+                        expanderPanel1.Children.Add(depExp);
                     }
-                expanderPanel1.Children.Add(new Expander { Margin=new Thickness(0,0,0,20), Header = "Сотрудники", Background = Brushes.White, Content = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3) } }); 
-                    mdepExp.Content = expanderPanel1;
-                
+                }
+                var usersListBox = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3) };
+                usersListBox.SelectionChanged += UserSelected;
+                var usersExpander = new Expander { Margin = new Thickness(0, 0, 0, 20), Header = "Сотрудники", Background = Brushes.White, Content = usersListBox };
+                expanderPanel1.Children.Add(usersExpander);
+                mdepExp.Content = expanderPanel1;
+
 
                 expanderPanel.Children.Add(mdepExp);
             }
             return expanderPanel;
         }
-        
-        
+
+        private void UserSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var user = e.AddedItems[0] as User;
+
+            }
+        }
+
+        private void ExpanderClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var dep = ((Expander)sender).Tag as Department;
+
+        }
     }
 }

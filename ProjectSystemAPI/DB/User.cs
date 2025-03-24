@@ -27,6 +27,8 @@ public partial class User
 
     public string Post { get; set; } = null!;
 
+    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
+
     public virtual Department IdDepartmentNavigation { get; set; } = null!;
 
     public virtual Role IdRoleNavigation { get; set; } = null!;
