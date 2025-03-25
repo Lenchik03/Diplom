@@ -138,14 +138,14 @@ namespace ProjectSystemWPF.ViewModel
         {
             if (e.AddedItems.Count > 0)
             {
-                var user = e.AddedItems[0] as User;
+                Employee = e.AddedItems[0] as User;
 
             }
         }
 
         private void ExpanderClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var dep = ((Expander)sender).Tag as Department;
+            Department = ((Expander)sender).Tag as Department;
 
         }
     }

@@ -32,7 +32,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
         </Grid.ColumnDefinitions>
 
         <ScrollViewer Background="#FFFDC401" BorderThickness="1" BorderBrush="Black">
-            <StackPanel x:Name="stack1" Margin="10" Background="White">
+            <StackPanel x:Name="stack1" Margin="10" Background="LightYellow">
 
 
             </StackPanel>
@@ -45,7 +45,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <StackPanel Background="#FFFDC401">
-                    <StackPanel Margin="10,10,10,0" IsEnabled="{Binding CanEdit}" Background="White">
+                    <StackPanel Margin="10,10,10,0" IsEnabled="{Binding CanEdit}" Background="LightYellow">
 
                         <Grid Margin="2">
                             <Grid.ColumnDefinitions>
@@ -79,7 +79,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                     <Button Content="✍︎" Command="{Binding CanEditClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1">
-                    <StackPanel IsEnabled="{Binding CanEditDep}" Background="White"  Margin="10,10,10,0">
+                    <StackPanel IsEnabled="{Binding CanEditDep}" Background="LightYellow"  Margin="10,10,10,0">
                         <Grid Margin="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60*"/>
