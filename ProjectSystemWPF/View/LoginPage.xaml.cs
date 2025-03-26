@@ -25,8 +25,8 @@ namespace ProjectSystemWPF.View
         public LoginPage()
         {
             InitializeComponent();
-            //var vm = ((LoginVM)DataContext);
-            //vm.SetPasswordBox(passwrdBox);
+            var vm = ((LoginVM)DataContext);
+            vm.SetPasswordBox(passwrdBox);
         }
     }
 }

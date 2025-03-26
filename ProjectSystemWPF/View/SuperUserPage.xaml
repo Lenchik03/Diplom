@@ -5,8 +5,10 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
       xmlns:m="clr-namespace:ProjectSystemWPF.Model"
+      xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
       mc:Ignorable="d" 
       d:DesignHeight="750" d:DesignWidth="800"
+      DataContext="{Binding superUserVM}"
       Title=""
             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
 TextElement.FontWeight="Regular"
@@ -16,6 +18,7 @@ TextOptions.TextRenderingMode="Auto"
 Background="{DynamicResource MaterialDesignPaper}"
 FontFamily="{DynamicResource MaterialDesignFont}">
     <Page.Resources>
+        <vm:SuperUserVM x:Key="superUserVM"/>
         <DataTemplate DataType="{x:Type m:User}">
             <StackPanel Orientation="Horizontal" >
                 <TextBlock Text="{Binding FirstName}" Margin="0,0,5,0"/>

@@ -11,12 +11,12 @@
     <Window.Resources>
         <vm:MainVM x:Key="mainVM"/>
     </Window.Resources>
-    <Grid Background="LightYellow">
+    <Grid Background="#FFFDC401">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Image Source="/View/logo.png" Width="2000" Height="60" HorizontalAlignment="Left"/>
+        <Image Source="/View/logo.png" Width="Auto" Height="60" HorizontalAlignment="Stretch"/>
         <Menu HorizontalAlignment="Right">
             <MenuItem Header="Выйти" Command="{Binding SignOut}" Grid.Column="1"/>
         </Menu>

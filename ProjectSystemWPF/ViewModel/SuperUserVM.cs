@@ -69,13 +69,14 @@ namespace ProjectSystemWPF.ViewModel
             MainDepartments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep == null));
             Departments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep != 0));
 
-            var result1 = await REST.Instance.client.GetAsync("Users");
+            var result1 = await REST.Instance.client.GetAsync("Users/GetAllUsers");
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 return;
             }
             else
             {
+                var test = await result1.Content.ReadAsStringAsync();
                 allEmployees = await result1.Content.ReadFromJsonAsync<ObservableCollection<User>>(REST.Instance.options);
             }
 
@@ -95,8 +96,6 @@ namespace ProjectSystemWPF.ViewModel
             var user = new User();
             foreach (var maindep in MainDepartments)
             {
-                muser = maindep.Users.FirstOrDefault(s => s.Id == maindep.IdDirector);
-
                 if (maindep.IdDirectorNavigation != null)
                     mheader = $"{maindep.Title} - {maindep.IdDirectorNavigation.FIO}";
                 else

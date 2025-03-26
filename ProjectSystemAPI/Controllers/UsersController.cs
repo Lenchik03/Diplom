@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using ProjectSystemAPI.DB;
 
 namespace ProjectSystemAPI.Controllers
@@ -13,95 +20,143 @@ namespace ProjectSystemAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ProjectSystemNewContext _context;
-
-        public UsersController(ProjectSystemNewContext context)
+        readonly ProjectSystemNewContext dbContext;
+        public UsersController(ProjectSystemNewContext dbContext)
         {
-            _context = context;
+            this.dbContext = dbContext;
         }
 
-        // GET: api/Users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public class ResponseTokenAndRole
         {
-            return await _context.Users.ToListAsync();
+            public string Token { get; set; }
+            public string Role { get; set; }
+            public User User { get; set; }
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public class AuthOptions
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            public const string ISSUER = "MyAuthServer"; // издатель токена
+            public const string AUDIENCE = "MyAuthClient"; // потребитель токена
+            const string KEY = "mysupersecret_secretsecretsecretkey!123";   // ключ для шифрации
+            public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        //[Authorize(Roles = "Администратор, Клиент")]
+        [HttpGet("ActiveUser{login} {password}")]
+        public ActionResult<ResponseTokenAndRole> ExamClientData(string login, string password)
         {
-            if (id != user.Id)
+            var examUser = dbContext.Users.Include(s => s.IdRoleNavigation).FirstOrDefault(s => s.Email == login);
+            if (examUser == null)
             {
-                return BadRequest();
+                return NotFound("Вы ввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные");
             }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
+                if (examUser.Password != Md5.HashPassword(password))
                 {
-                    return NotFound();
+                    
+
+                    return NotFound("Вы ввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные");
                 }
                 else
                 {
-                    throw;
+
+                    var result = (User)examUser;
+                    dbContext.SaveChanges();
+
+                    if (examUser is null)
+                        return Unauthorized();
+
+                    var role = result.IdRoleNavigation.Title;
+                    int id = examUser.Id;
+
+                    // Создаём полезную нагрузку для токена
+                    var claims = new List<Claim> {
+                //Кладём Id (если нужно)
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                //Кладём роль
+                new Claim(ClaimTypes.Role, role)
+            };
+
+                    // создаем JWT-токен
+                    var jwt = new JwtSecurityToken(
+                            issuer: AuthOptions.ISSUER,
+                            audience: AuthOptions.AUDIENCE,
+                            //кладём полезную нагрузку
+                            claims: claims,
+                            //устанавливаем время жизни токена 2 минуты
+                            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
+                            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+
+                    string token = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+                    return Ok(new ResponseTokenAndRole
+                    {
+                        Token = token,
+                        Role = role,
+                        User = result
+                    });
+                    //return Ok(result);
                 }
             }
-
-            return NoContent();
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        [Authorize(Roles = "Директор отдела, Заместитель директора")]
+        [HttpPost("AddNewUser")]
+        public ActionResult<User> AddNewUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
-
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var user1 = dbContext.Users.FirstOrDefault(s => s.Email == user.Email);
+            if (user1 == null)
             {
-                return NotFound();
+                string str = GetPassword.GetPass();
+                user.IdRole = 3;
+                user.Password = Md5.HashPassword(str);
+                dbContext.Add((User)user);
+                dbContext.SaveChanges();
+                return Ok(user);
+            }
+            else
+            {
+                return BadRequest("Пользователь с таким логином уже существует!");
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
-        private bool UserExists(int id)
+        [Authorize(Roles = "Директор отдела, Заместитель директора")]
+        [HttpPost("UpdateUser")]
+        public ActionResult UpdateUser(User user)
         {
-            return _context.Users.Any(e => e.Id == id);
+            dbContext.Users.Update((User)user);
+            dbContext.SaveChanges();
+            return Ok("Пользователь успешно обновлен!");
         }
+
+        [Authorize(Roles = "Директор отдела, Заместитель директора")]
+        [HttpDelete("DeleteUser")]
+        public ActionResult DeleteUser(User user)
+        {
+            dbContext.Remove((User)user);
+            dbContext.SaveChanges();
+            return Ok("Пользователь успешно удален!");
+        }
+
+        [Authorize(Roles = "Директор отдела, Заместитель директора, Сотрудник")]
+        [HttpPost("ChangePassword")]
+        public void ChangePassword(User user)
+        {
+            dbContext.Users.Update((User)user);
+            dbContext.SaveChanges();
+        }
+
+        [Authorize(Roles = "Директор отдела, Заместитель директора, Сотрудник")]
+        [HttpGet("GetAllUsers")]
+        public async Task<IEnumerable<User>> GetAllUsers()
+        {
+            var users = dbContext.Users.Include(s => s.IdRoleNavigation).OrderByDescending(s => s.Id).ToList();
+            return users.Select(s => (User)s);
+        }
+
+
     }
 }
