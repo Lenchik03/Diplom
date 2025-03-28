@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ProjectSystemWPF.ViewModel;
+using System.Collections;
 
 namespace ProjectSystemWPF.View
 {
@@ -25,8 +26,10 @@ namespace ProjectSystemWPF.View
         public LoginPage()
         {
             InitializeComponent();
-            var vm = ((LoginVM)DataContext);
+            var vm = new LoginVM();  
+            DataContext = vm;
             vm.SetPasswordBox(passwrdBox);
+          
         }
     }
 }

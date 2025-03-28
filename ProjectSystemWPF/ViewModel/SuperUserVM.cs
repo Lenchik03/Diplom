@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,35 +16,109 @@ using System.Windows.Media;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class SuperUserVM
+    public class SuperUserVM: BaseVM
     {
         public ObservableCollection<Department> MainDepartments { get; set; } = new();
         public ObservableCollection<Department> Departments { get; set; } = new();
-        public ObservableCollection<User> Employees { get; set; }
+        public ObservableCollection<User> Employees
+        {
+            get => employees;
+            set { employees = value; Signal(); }
+            
+        }
         ObservableCollection<Department> allDepartments = new();
         ObservableCollection<User> allEmployees = new();
         public bool CanEdit { get; set; } = true;
         public VmCommand NewEmployee { get; set; }
-        public User Employee { get; set; }
+        public User Employee 
+        { get => employee;
+            set
+            {
+                employee = value;
+                Signal();
+            }
+            
+        }
         public VmCommand SaveUser { get; set; }
         public Visibility Hidden { get; set; }
         public VmCommand CanEditClick { get; set; }
         public bool CanDelete { get; set; }
         public VmCommand NewDep { get; set; }
-        public Department Department { get; set; }
-        public ObservableCollection<User> Directors { get; set; } = new();
-        public User DepDirector { get; set; }
+        public Department Department
+        {
+            get => department;
+            set
+            { 
+                department = value;
+                Signal();
+            }
+        }
+        public ObservableCollection<User> Directors 
+        { get => directors; set 
+            { 
+                directors = value;
+                Signal();
+            } }
+        public User DepDirector
+        {
+            get => depDirector;
+            set { depDirector = value; Signal(); }
+        }
         public VmCommand SaveDep { get; set; }
         public VmCommand CanEditDepClick { get; set; }
         public Button SelectedDepOrUser { get; set; }
 
         Brush brush = new SolidColorBrush(Color.FromArgb(255, 223, 196, 01));
+        private User employee;
+        private Department department;
+        private ObservableCollection<User> employees;
+        private User depDirector;
+        private ObservableCollection<User> directors = new();
 
         public event EventHandler Loaded;
 
         public SuperUserVM()
         {
             GetLists();
+            SaveUser = new VmCommand(async () =>
+            {
+                if(Employee != null && Employee.Id !=0)
+                {
+                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        MessageBox.Show("Пользователь успешно обновлен!");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                        return;
+                    }
+                }
+                else
+                {
+                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
+                    var responce = await REST.Instance.client.PostAsync($"Users/AddNewUser",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    //MessageBox.Show(responce.StatusCode.ToString());
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        MessageBox.Show("Всё ок");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Всё не ок " + ex.Message);
+                        return;
+                    }
+                }
+                GetLists();
+            });
             NewEmployee = new VmCommand(() =>
             {
                 Employee = new();
@@ -145,7 +221,9 @@ namespace ProjectSystemWPF.ViewModel
         private void ExpanderClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Department = ((Expander)sender).Tag as Department;
-
+            Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
+            Directors = new ObservableCollection<User>(allEmployees.Where(s => s.IdDepartment == Department.Id));
+            DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
         }
     }
 }

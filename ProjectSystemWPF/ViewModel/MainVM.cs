@@ -32,7 +32,7 @@ namespace ProjectSystemWPF.ViewModel
         public MainVM()
         {
             Instance = this;
-            CurrentPage = new SuperUserPage();
+            CurrentPage = new LoginPage();
             //Search = new VmCommand(() =>
             //{
             //    OpenSearch();

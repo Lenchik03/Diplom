@@ -43,7 +43,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         //[Authorize(Roles = "Администратор, Клиент")]
-        [HttpGet("ActiveUser{login} {password}")]
+        [HttpGet("ActiveUser")]
         public ActionResult<ResponseTokenAndRole> ExamClientData(string login, string password)
         {
             var examUser = dbContext.Users.Include(s => s.IdRoleNavigation).FirstOrDefault(s => s.Email == login);
@@ -102,7 +102,7 @@ namespace ProjectSystemAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Директор отдела, Заместитель директора")]
+        [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
         [HttpPost("AddNewUser")]
         public ActionResult<User> AddNewUser(User user)
         {
@@ -123,8 +123,8 @@ namespace ProjectSystemAPI.Controllers
 
         }
 
-        [Authorize(Roles = "Директор отдела, Заместитель директора")]
-        [HttpPost("UpdateUser")]
+        [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
+        [HttpPut("UpdateUser")]
         public ActionResult UpdateUser(User user)
         {
             dbContext.Users.Update((User)user);
@@ -132,7 +132,7 @@ namespace ProjectSystemAPI.Controllers
             return Ok("Пользователь успешно обновлен!");
         }
 
-        [Authorize(Roles = "Директор отдела, Заместитель директора")]
+        [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
         [HttpDelete("DeleteUser")]
         public ActionResult DeleteUser(User user)
         {
@@ -149,11 +149,10 @@ namespace ProjectSystemAPI.Controllers
             dbContext.SaveChanges();
         }
 
-        [Authorize(Roles = "Директор отдела, Заместитель директора, Сотрудник")]
         [HttpGet("GetAllUsers")]
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            var users = dbContext.Users.Include(s => s.IdRoleNavigation).OrderByDescending(s => s.Id).ToList();
+            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).OrderByDescending(s => s.Id).ToList();
             return users.Select(s => (User)s);
         }
 

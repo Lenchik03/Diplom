@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,6 +31,11 @@ namespace ProjectSystemWPF.ViewModel
                     instance = new REST();
                 return instance;
             }
+        }
+
+        public void SetToken(string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

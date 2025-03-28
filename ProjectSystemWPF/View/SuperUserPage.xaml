@@ -55,7 +55,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                                 <ColumnDefinition Width="45*"/>
                                 <ColumnDefinition Width="30*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Сотрудник" HorizontalAlignment="Center" FontSize="15" Margin="152,0,0,0" Width="83"/>
+                            <Label Content="Сотрудник" HorizontalAlignment="Center" FontSize="15" Margin="130,0,0,0" Width="100"/>
                             <Button Content="✚" HorizontalAlignment="Right" Height="22" Width="43" Grid.Column="1" Command="{Binding NewEmployee}" Margin="80,2,0,2"/>
                         </Grid>
 
@@ -68,13 +68,12 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <Label Content="Отчество"/>
                         <TextBox Text="{Binding Employee.Patronymic}" />
                         <Label Content="Дата рождения"/>
-                        <TextBox Text="{Binding Employee.Birthday, StringFormat=dd.MM.yyyy}" />
+                        <DatePickerTextBox Text="{Binding Employee.Birthday}"/>
+                        <!--<TextBox Text="{Binding Employee.Birthday, StringFormat=dd.MM.yyyy}" />-->
                         <Label Content="Эл.почта"/>
                         <TextBox Text="{Binding Employee.Email}" />
                         <Label Content="Номер телефона"/>
                         <TextBox Text="{Binding Employee.Phone}" />
-                        <Label Content="Отдел"/>
-                        
                         <Label Content="Должность"/>
                         <TextBox Text="{Binding Employee.Post}"/>
                         <Button Content="Сохранить" Command="{Binding SaveUser}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
@@ -88,7 +87,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                                 <ColumnDefinition Width="60*"/>
                                 <ColumnDefinition Width="49*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Отдел" HorizontalAlignment="Right" FontSize="15" Width="50"/>
+                            <Label Content="Отдел" HorizontalAlignment="Right" FontSize="15" Width="60"/>
                             <Button Content="✚" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="22" Width="43" Grid.Column="1" Command="{Binding NewDep}"/>
                         </Grid>
 

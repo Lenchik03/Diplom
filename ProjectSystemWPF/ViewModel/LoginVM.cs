@@ -27,14 +27,21 @@ namespace ProjectSystemWPF.ViewModel
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-       
+        public event EventHandler Loaded;
+
+        public class ResponseTokenAndRole
+        {
+            public string Token { get; set; }
+            public string Role { get; set; }
+            public User User { get; set; }
+        }
 
         public LoginVM()
         {
             // команда на открытие страницы сотрудника или руководителя
             OpenPage = new VmCommand(async () =>
             {
-                var result = await REST.Instance.client.GetAsync($"Users/ActiveUser{Login} {Password}");
+                var result = await REST.Instance.client.GetAsync($"Users/ActiveUser?login={Login}&password={Password}");
                 //todo not ok
 
                 if (result.StatusCode != System.Net.HttpStatusCode.OK)
@@ -43,8 +50,9 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
-                    ActiveUser.GetInstance().User = await result.Content.ReadFromJsonAsync<User>(REST.Instance.options);
-               
+                    var user = await result.Content.ReadFromJsonAsync<ResponseTokenAndRole>(REST.Instance.options);
+                    ActiveUser.GetInstance().User = user.User;
+                    REST.Instance.SetToken(user.Token);
                 }
 
                 if (Validator.TryValidateObject(this, new ValidationContext(this), null))
@@ -81,8 +89,9 @@ namespace ProjectSystemWPF.ViewModel
                     }
                 }
 
-
+                Loaded?.Invoke(this, null);
             });
+
         }
 
         public IEnumerable GetErrors(string? propertyName)
