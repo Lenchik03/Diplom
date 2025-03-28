@@ -1,5 +1,6 @@
 ﻿using ProjectSystemWPF.ViewModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,8 +32,8 @@ namespace ProjectSystemWPF.View
 
         private void Vm_Loaded(object? sender, EventArgs e)
         {
-
-            var stackpanel = (DataContext as SuperUserVM). CreateExpanders();
+            stack1.Children.Clear();
+            var stackpanel = (DataContext as SuperUserVM).CreateExpanders();
             stack1.Children.Add(stackpanel);
         }
     }

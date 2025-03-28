@@ -10,16 +10,52 @@
         Title="MainWindow" Height="800" Width="1200">
     <Window.Resources>
         <vm:MainVM x:Key="mainVM"/>
+        <Storyboard x:Key="MenuOpen">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="menu" Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.8000000" Value="200">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ElasticEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="MenuClose">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="menu" Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="200">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Window.Resources>
     <Grid Background="#FFFDC401">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Image Source="/View/logo.png" Width="Auto" Height="60" HorizontalAlignment="Stretch"/>
-        <Menu HorizontalAlignment="Right">
-            <MenuItem Header="Выйти" Command="{Binding SignOut}" Grid.Column="1"/>
+        <StackPanel Visibility="{Binding ViewSignOut}" Grid.Row="1" Width="0" x:Name="menu">
+            <Button Content="++++"/>
+        </StackPanel>
+        <Image Grid.Column="1" Source="/View/logo.png" Width="Auto" Height="60" HorizontalAlignment="Stretch"/>
+        <Menu HorizontalAlignment="Right" Grid.ColumnSpan="2">
+            <MenuItem Visibility="{Binding ViewSignOut}" Header="Выйти" Command="{Binding SignOut}" Grid.Column="1"/>
         </Menu>
-        <Frame Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden" Grid.Row="1"/>
+        <Frame Grid.Column="1" Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden" Grid.Row="1"/>
+        <Button Visibility="{Binding ViewSignOut}"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Content="➡" Click="CLickMenu"/> 
     </Grid>
 </Window>

@@ -106,6 +106,10 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewUser")]
         public ActionResult<User> AddNewUser(User user)
         {
+            user.IdRole = user.IdRoleNavigation.Id;
+            user.IdRoleNavigation = null;
+            user.IdDepartment = user.IdDepartmentNavigation.Id; 
+            user.IdDepartmentNavigation = null;
             var user1 = dbContext.Users.FirstOrDefault(s => s.Email == user.Email);
             if (user1 == null)
             {

@@ -69,7 +69,12 @@ namespace ProjectSystemWPF.ViewModel
         public Button SelectedDepOrUser { get; set; }
 
         Brush brush = new SolidColorBrush(Color.FromArgb(255, 223, 196, 01));
-        private User employee;
+        private User employee = new User
+        {
+            Password = "",
+            IdRoleNavigation = new Role { Id = 3, Title = "" },
+            IdDepartmentNavigation = new Department { Id = 1, Title = "" }
+        };
         private Department department;
         private ObservableCollection<User> employees;
         private User depDirector;
@@ -80,6 +85,7 @@ namespace ProjectSystemWPF.ViewModel
         public SuperUserVM()
         {
             GetLists();
+
             SaveUser = new VmCommand(async () =>
             {
                 if(Employee != null && Employee.Id !=0)

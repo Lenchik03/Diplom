@@ -9,8 +9,19 @@ namespace ProjectSystemWPF.ViewModel
 {
     public class ActiveUser
     {
-        public User User { get; set; }
+        public User User
+        {
+            get => user;
+            set
+            {
+                user = value;
+                UserChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public event EventHandler UserChanged;
         private static ActiveUser instance;
+        private User user;
 
         private ActiveUser()
         { }
