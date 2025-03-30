@@ -20,6 +20,7 @@ namespace ProjectSystemWPF.ViewModel
     {
         public ObservableCollection<Department> MainDepartments { get; set; } = new();
         public ObservableCollection<Department> Departments { get; set; } = new();
+        public ObservableCollection<Role> Roles { get; set; } = new();
         public ObservableCollection<User> Employees
         {
             get => employees;
@@ -28,21 +29,34 @@ namespace ProjectSystemWPF.ViewModel
         }
         ObservableCollection<Department> allDepartments = new();
         ObservableCollection<User> allEmployees = new();
-        public bool CanEdit { get; set; } = true;
+        public bool CanEdit
+        {
+            get => canEdit;
+            set { canEdit = value;
+                Signal();
+            }
+        }
         public VmCommand NewEmployee { get; set; }
-        public User Employee 
-        { get => employee;
+        public User Employee
+        {
+            get => employee;
             set
             {
                 employee = value;
                 Signal();
             }
-            
+
         }
         public VmCommand SaveUser { get; set; }
         public Visibility Hidden { get; set; }
         public VmCommand CanEditClick { get; set; }
-        public bool CanDelete { get; set; }
+        public bool CanEditDep 
+        { 
+            get => canEditDep;
+            set { canEditDep = value;
+                Signal();
+            }
+        }
         public VmCommand NewDep { get; set; }
         public Department Department
         {
@@ -79,6 +93,8 @@ namespace ProjectSystemWPF.ViewModel
         private ObservableCollection<User> employees;
         private User depDirector;
         private ObservableCollection<User> directors = new();
+        private bool canEdit;
+        private bool canEditDep;
 
         public event EventHandler Loaded;
 
@@ -86,10 +102,27 @@ namespace ProjectSystemWPF.ViewModel
         {
             GetLists();
 
+            if (ActiveUser.GetInstance().User.IdRole == 3)
+            {
+                Hidden = Visibility.Collapsed;
+            }
+            else
+                Hidden = Visibility.Visible;
+
+            CanEditClick = new VmCommand(() =>
+            {
+                CanEdit = !CanEdit;
+            });
+            CanEditDepClick = new VmCommand(() =>
+            {
+                CanEditDep = !CanEditDep;
+            });
+
             SaveUser = new VmCommand(async () =>
             {
                 if(Employee != null && Employee.Id !=0)
                 {
+                    
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
                     var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -107,6 +140,50 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
+                    Employee = new User();
+                    if (ActiveUser.GetInstance().User.IdRole == 4)
+                    {
+                        if(Department == null)
+                        {
+                            MessageBox.Show("Выберите отдел, куда добавить сотрудника!");
+                            return;
+                        }
+                        else
+                        {
+                            Employee.IdDepartment = Department.Id;
+                            Employee.IdDepartmentNavigation = Department;
+                            Employee.IdRole = 1;
+                            Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 1);
+                            Department.IdDirector = Employee.Id;
+                            Department.IdDirectorNavigation = Employee;
+                        }
+                        
+                    }
+                    if (ActiveUser.GetInstance().User.IdRole == 1)
+                    {
+                        if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count > 0)
+                        {
+                            Employee.IdRole = 3;
+                            Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                            Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
+                            Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                        }
+                        else
+                        {
+                            Employee.IdRole = 2;
+                            Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 2);
+                            Employee.IdDepartment = Department.Id;
+                            Employee.IdDepartmentNavigation = Department;
+                        }
+                    }
+                    if (ActiveUser.GetInstance().User.IdRole == 2)
+                    {
+                        Employee.IdRole = 3;
+                        Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                        Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
+                        Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                    }
+                    Employee.Password = "";
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
                     var responce = await REST.Instance.client.PostAsync($"Users/AddNewUser",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -115,6 +192,21 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         responce.EnsureSuccessStatusCode();
                         MessageBox.Show("Всё ок");
+
+                        string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
+                        var responce1 = await REST.Instance.client.PutAsync($"Departments",
+                            new StringContent(arg, Encoding.UTF8, "application/json"));
+                        try
+                        {
+                            responce1.EnsureSuccessStatusCode();
+                            //MessageBox.Show("Пользователь успешно обновлен!");
+
+                        }
+                        catch (Exception ex)
+                        {
+                            //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                            return;
+                        }
 
                     }
                     catch (Exception ex)
@@ -152,7 +244,7 @@ namespace ProjectSystemWPF.ViewModel
             Departments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep != 0));
 
             var result1 = await REST.Instance.client.GetAsync("Users/GetAllUsers");
-            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 return;
             }
@@ -160,6 +252,16 @@ namespace ProjectSystemWPF.ViewModel
             {
                 var test = await result1.Content.ReadAsStringAsync();
                 allEmployees = await result1.Content.ReadFromJsonAsync<ObservableCollection<User>>(REST.Instance.options);
+            }
+            var result2 = await REST.Instance.client.GetAsync("Roles");
+            if (result2.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                var test = await result2.Content.ReadAsStringAsync();
+                Roles = await result2.Content.ReadFromJsonAsync<ObservableCollection<Role>>(REST.Instance.options);
             }
 
 

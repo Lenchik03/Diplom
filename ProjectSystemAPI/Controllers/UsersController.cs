@@ -106,23 +106,23 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewUser")]
         public ActionResult<User> AddNewUser(User user)
         {
-            user.IdRole = user.IdRoleNavigation.Id;
-            user.IdRoleNavigation = null;
-            user.IdDepartment = user.IdDepartmentNavigation.Id; 
-            user.IdDepartmentNavigation = null;
+            //user.IdRole = user.IdRoleNavigation.Id;
+            //user.IdRoleNavigation = null;
+            //user.IdDepartment = user.IdDepartmentNavigation.Id; 
+            //user.IdDepartmentNavigation = null;
             var user1 = dbContext.Users.FirstOrDefault(s => s.Email == user.Email);
             if (user1 == null)
             {
                 string str = GetPassword.GetPass();
-                user.IdRole = 3;
+                //user.IdRole = 3;
                 user.Password = Md5.HashPassword(str);
-                dbContext.Add((User)user);
+                dbContext.Add(user);
                 dbContext.SaveChanges();
                 return Ok(user);
             }
             else
             {
-                return BadRequest("Пользователь с таким логином уже существует!");
+                return BadRequest("Пользователь с такой электронной почтой уже существует!");
             }
 
         }
