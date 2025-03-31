@@ -46,7 +46,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("ActiveUser")]
         public ActionResult<ResponseTokenAndRole> ExamClientData(string login, string password)
         {
-            var examUser = dbContext.Users.Include(s => s.IdRoleNavigation).FirstOrDefault(s => s.Email == login);
+            var examUser = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s=>s.IdDepartmentNavigation).FirstOrDefault(s => s.Email == login);
             if (examUser == null)
             {
                 return NotFound("Вы ввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные");
@@ -86,7 +86,7 @@ namespace ProjectSystemAPI.Controllers
                             //кладём полезную нагрузку
                             claims: claims,
                             //устанавливаем время жизни токена 2 минуты
-                            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
+                            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
                             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
                     string token = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -106,10 +106,10 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewUser")]
         public ActionResult<User> AddNewUser(User user)
         {
-            //user.IdRole = user.IdRoleNavigation.Id;
-            //user.IdRoleNavigation = null;
-            //user.IdDepartment = user.IdDepartmentNavigation.Id; 
-            //user.IdDepartmentNavigation = null;
+            user.IdRole = user.IdRoleNavigation.Id;
+            user.IdRoleNavigation = null;
+            user.IdDepartment = user.IdDepartmentNavigation.Id; 
+            user.IdDepartmentNavigation = null;
             var user1 = dbContext.Users.FirstOrDefault(s => s.Email == user.Email);
             if (user1 == null)
             {
@@ -118,7 +118,7 @@ namespace ProjectSystemAPI.Controllers
                 user.Password = Md5.HashPassword(str);
                 dbContext.Add(user);
                 dbContext.SaveChanges();
-                return Ok(user);
+                return Ok(dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).FirstOrDefault(s => s.Email == user.Email));
             }
             else
             {

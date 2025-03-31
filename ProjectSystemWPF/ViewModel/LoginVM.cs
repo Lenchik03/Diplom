@@ -74,6 +74,8 @@ namespace ProjectSystemWPF.ViewModel
                         else if(user.IdRole == 2)
                         {
                             //страница полученных проектов (от директора)
+                            SuperUserPage superUserPage = new SuperUserPage();
+                            MainVM.Instance.CurrentPage = superUserPage;
                         }
                         else if(user.IdRole == 4)
                         {
@@ -84,6 +86,8 @@ namespace ProjectSystemWPF.ViewModel
                         else // открытие страницы руководителя
                         {
                             //страница отправленных проектов (ты директор)
+                            SuperUserPage superUserPage = new SuperUserPage();
+                            MainVM.Instance.CurrentPage = superUserPage;
                         }
 
                     }

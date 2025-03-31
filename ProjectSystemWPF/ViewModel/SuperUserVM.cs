@@ -9,6 +9,7 @@ using System.Net.Http.Json;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -86,6 +87,7 @@ namespace ProjectSystemWPF.ViewModel
         private User employee = new User
         {
             Password = "",
+            FirstName = "Нажмите на кнопку +",
             IdRoleNavigation = new Role { Id = 3, Title = "" },
             IdDepartmentNavigation = new Department { Id = 1, Title = "" }
         };
@@ -120,7 +122,19 @@ namespace ProjectSystemWPF.ViewModel
 
             SaveUser = new VmCommand(async () =>
             {
-                if(Employee != null && Employee.Id !=0)
+                Regex r = new Regex("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$");
+                Regex r2 = new Regex("^((\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*)\\s*[;]{0,1}\\s*)+$");
+                if (!r.Match(Employee.Phone).Success)
+                {
+                    MessageBox.Show("Телефон должен состоять из цифр и символов “+”, “(”, “)”, “-”, “ ”, “#” ");
+                    return;
+                }              
+                if (!r2.Match(Employee.Email).Success)
+                {
+                    MessageBox.Show("Почта имеет неправильный формат!");
+                    return;
+                }
+                if (Employee != null && Employee.Id !=0)
                 {
                     
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
@@ -140,7 +154,6 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
-                    Employee = new User();
                     if (ActiveUser.GetInstance().User.IdRole == 4)
                     {
                         if(Department == null)
@@ -161,7 +174,8 @@ namespace ProjectSystemWPF.ViewModel
                     }
                     if (ActiveUser.GetInstance().User.IdRole == 1)
                     {
-                        if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count > 0)
+                        var shit = ActiveUser.GetInstance().User;
+                        if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
                         {
                             Employee.IdRole = 3;
                             Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
@@ -183,6 +197,10 @@ namespace ProjectSystemWPF.ViewModel
                         Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
                         Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
                     }
+                    Employee.IdDepartmentNavigation = new Department {
+                        IdMainDep =Employee.IdDepartmentNavigation?.IdMainDep,  
+                        Id = Employee.IdDepartmentNavigation.Id, 
+                        Title = Employee.IdDepartmentNavigation .Title};
                     Employee.Password = "";
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
                     var responce = await REST.Instance.client.PostAsync($"Users/AddNewUser",
@@ -191,27 +209,33 @@ namespace ProjectSystemWPF.ViewModel
                     try
                     {
                         responce.EnsureSuccessStatusCode();
-                        MessageBox.Show("Всё ок");
-
-                        string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
-                        var responce1 = await REST.Instance.client.PutAsync($"Departments",
-                            new StringContent(arg, Encoding.UTF8, "application/json"));
-                        try
+                        MessageBox.Show("Сотрудник был добавлен");
+                        if (Employee.IdRole == 1 || Employee.IdRole == 2)
                         {
-                            responce1.EnsureSuccessStatusCode();
-                            //MessageBox.Show("Пользователь успешно обновлен!");
+                            //var str = await responce.Content.ReadAsStringAsync();
+                            var answerUser = await responce.Content.ReadFromJsonAsync<User>(REST.Instance.options);
 
-                        }
-                        catch (Exception ex)
-                        {
-                            //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
-                            return;
-                        }
+                            Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
 
+                            string arg1 = JsonSerializer.Serialize(Employee.IdDepartmentNavigation, REST.Instance.options);
+                            var responce1 = await REST.Instance.client.PutAsync($"Departments/{Employee.IdDepartmentNavigation.Id}",
+                                new StringContent(arg1, Encoding.UTF8, "application/json"));
+                            try
+                            {
+                                responce1.EnsureSuccessStatusCode();
+                                //MessageBox.Show("Пользователь успешно обновлен!");
+
+                            }
+                            catch (Exception ex)
+                            {
+                                //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                                return;
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Всё не ок " + ex.Message);
+                        MessageBox.Show("Произошла ошибка. Заполните все данные!");
                         return;
                     }
                 }
@@ -229,42 +253,46 @@ namespace ProjectSystemWPF.ViewModel
         }
         public async void GetLists()
         {
-            var result = await REST.Instance.client.GetAsync("Departments");
-            //todo not ok
+            try
+            {
+                var result = await REST.Instance.client.GetAsync("Departments");
+                //todo not ok
 
-            if (result.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return;
-            }
-            else
-            {
-                allDepartments = await result.Content.ReadFromJsonAsync<ObservableCollection<Department>>(REST.Instance.options);
-            }
-            MainDepartments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep == null));
-            Departments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep != 0));
+                if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    return;
+                }
+                else
+                {
+                    allDepartments = await result.Content.ReadFromJsonAsync<ObservableCollection<Department>>(REST.Instance.options);
+                }
+                MainDepartments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep == null));
+                Departments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep != 0));
 
-            var result1 = await REST.Instance.client.GetAsync("Users/GetAllUsers");
-            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return;
-            }
-            else
-            {
-                var test = await result1.Content.ReadAsStringAsync();
-                allEmployees = await result1.Content.ReadFromJsonAsync<ObservableCollection<User>>(REST.Instance.options);
-            }
-            var result2 = await REST.Instance.client.GetAsync("Roles");
-            if (result2.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return;
-            }
-            else
-            {
-                var test = await result2.Content.ReadAsStringAsync();
-                Roles = await result2.Content.ReadFromJsonAsync<ObservableCollection<Role>>(REST.Instance.options);
-            }
+                var result1 = await REST.Instance.client.GetAsync("Users/GetAllUsers");
+                if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    return;
+                }
+                else
+                {
+                    var test = await result1.Content.ReadAsStringAsync();
+                    allEmployees = await result1.Content.ReadFromJsonAsync<ObservableCollection<User>>(REST.Instance.options);
+                    
+                }
+                var result2 = await REST.Instance.client.GetAsync("Roles");
+                if (result2.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    return;
+                }
+                else
+                {
+                    var test = await result2.Content.ReadAsStringAsync();
+                    Roles = await result2.Content.ReadFromJsonAsync<ObservableCollection<Role>>(REST.Instance.options);
+                }
 
-
+            }
+            catch { }
             Loaded?.Invoke(this, null);
         }
 
@@ -329,8 +357,10 @@ namespace ProjectSystemWPF.ViewModel
         private void ExpanderClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Department = ((Expander)sender).Tag as Department;
-            Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
-            Directors = new ObservableCollection<User>(allEmployees.Where(s => s.IdDepartment == Department.Id));
+            Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector && s.IdRole != 4);
+            if (Employee == null)
+                Employee = new User { LastName = "Директор не назначен" };
+            Directors = new ObservableCollection<User>(allEmployees.Where(s => s.IdDepartment == Department.Id && s.IdRole != 4));
             DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
         }
     }

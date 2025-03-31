@@ -28,6 +28,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
+
     <Grid Background="#FFFDC401">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -35,10 +36,15 @@ FontFamily="{DynamicResource MaterialDesignFont}">
         </Grid.ColumnDefinitions>
 
         <ScrollViewer Background="#FFFDC401" BorderThickness="1" BorderBrush="Black">
-            <StackPanel x:Name="stack1" Margin="10" Background="LightYellow">
+            <Border BorderBrush="Black" BorderThickness="1" Margin="10" >
+            <StackPanel x:Name="stack1"  Background="LightYellow">
 
-
+                
+                    
+               
             </StackPanel>
+            </Border>
+
         </ScrollViewer>
         <StackPanel Grid.Column="1">
 
@@ -48,8 +54,8 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <StackPanel Background="#FFFDC401">
-                    <StackPanel Margin="10,10,10,0" IsEnabled="{Binding CanEdit}" Background="LightYellow">
-
+                    <Border BorderBrush="Black" BorderThickness="1" Margin="10,10,10,0">
+                    <StackPanel  IsEnabled="{Binding CanEdit}" Background="LightYellow">
                         <Grid Margin="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="45*"/>
@@ -58,9 +64,6 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                             <Label Content="Сотрудник" HorizontalAlignment="Center" FontSize="15" Margin="130,0,0,0" Width="100"/>
                             <Button Content="✚" HorizontalAlignment="Right" Height="22" Width="43" Grid.Column="1" Command="{Binding NewEmployee}" Margin="80,2,0,2"/>
                         </Grid>
-
-
-
                         <Label Content="Имя"/>
                         <TextBox Text="{Binding Employee.FirstName}" />
                         <Label Content="Фамилия"/>
@@ -68,7 +71,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <Label Content="Отчество"/>
                         <TextBox Text="{Binding Employee.Patronymic}" />
                         <Label Content="Дата рождения"/>
-                        <DatePickerTextBox Text="{Binding Employee.Birthday}"/>
+                        <DatePicker Text="{Binding Employee.Birthday}" Language="ru"/>
                         <!--<TextBox Text="{Binding Employee.Birthday, StringFormat=dd.MM.yyyy}" />-->
                         <Label Content="Эл.почта"/>
                         <TextBox Text="{Binding Employee.Email}" />
@@ -77,11 +80,14 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <Label Content="Должность"/>
                         <TextBox Text="{Binding Employee.Post}"/>
                         <Button Content="Сохранить" Command="{Binding SaveUser}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
+                            
                     </StackPanel>
+                    </Border>
                     <Button Content="✍︎" Command="{Binding CanEditClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1">
-                    <StackPanel IsEnabled="{Binding CanEditDep}" Background="LightYellow"  Margin="10,10,10,0">
+                    <Border BorderBrush="Black" BorderThickness="1" Margin="10,10,10,0">
+                    <StackPanel IsEnabled="{Binding CanEditDep}" Background="LightYellow"  >
                         <Grid Margin="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60*"/>
@@ -97,8 +103,10 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <ComboBox ItemsSource="{Binding Directors}" SelectedItem="{Binding DepDirector}"/>
                         <Button Content="Сохранить" Command="{Binding SaveDep}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
                     </StackPanel>
+                    </Border>
                     <Button Content="✍︎" Command="{Binding CanEditDepClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>
                 </StackPanel>
+                
 
 
             </Grid>
