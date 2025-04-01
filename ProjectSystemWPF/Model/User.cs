@@ -23,7 +23,7 @@ public partial class User
 
     public string Phone { get; set; } = null!;
 
-    public DateOnly? Birthday { get; set; }
+    public DateTime? Birthday { get; set; }
 
     public string Post { get; set; } = null!;
 

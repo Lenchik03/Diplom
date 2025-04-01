@@ -238,6 +238,57 @@ namespace ProjectSystemWPF.ViewModel
                         MessageBox.Show("Произошла ошибка. Заполните все данные!");
                         return;
                     }
+
+                    
+                }
+
+                GetLists();
+            });
+            SaveDep = new VmCommand(async () =>
+            {
+                if (ActiveUser.GetInstance().User.IdRole == 4)
+                {
+                    Department.IdMainDepNavigation = null;
+                }
+                if (ActiveUser.GetInstance().User.IdRole == 1)
+                {
+                        Department.IdMainDep = ActiveUser.GetInstance().User.IdDepartment;
+                        Department.IdMainDepNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;                    
+                }
+                if (Department.Id != 0 && Department != null)
+                {
+                    string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Departments",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        MessageBox.Show("Отдел успешно обновлен!");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка! Обновление отдела приостановлено!");
+                        return;
+                    }
+
+
+                }
+                else
+                {
+                    string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
+                    var responce = await REST.Instance.client.PostAsync($"Departments",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        MessageBox.Show("Отдел был добавлен!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Произошла ошибка. Заполните все данные!");
+                        return;
+                    }
                 }
                 GetLists();
             });

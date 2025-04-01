@@ -71,7 +71,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <Label Content="Отчество"/>
                         <TextBox Text="{Binding Employee.Patronymic}" />
                         <Label Content="Дата рождения"/>
-                        <DatePicker Text="{Binding Employee.Birthday}" Language="ru"/>
+                        <DatePicker SelectedDate="{Binding Employee.Birthday}" Language="ru"/>
                         <!--<TextBox Text="{Binding Employee.Birthday, StringFormat=dd.MM.yyyy}" />-->
                         <Label Content="Эл.почта"/>
                         <TextBox Text="{Binding Employee.Email}" />
@@ -101,7 +101,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <TextBox Text="{Binding Department.Title}" />
                         <Label Content="Начальник отдела"/>
                         <ComboBox ItemsSource="{Binding Directors}" SelectedItem="{Binding DepDirector}"/>
-                        <Button Content="Сохранить" Command="{Binding SaveDep}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
+                            <Button Content="Сохранить" Command="{Binding SaveDep}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
                     </StackPanel>
                     </Border>
                     <Button Content="✍︎" Command="{Binding CanEditDepClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>

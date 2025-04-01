@@ -46,7 +46,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("ActiveUser")]
         public ActionResult<ResponseTokenAndRole> ExamClientData(string login, string password)
         {
-            var examUser = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s=>s.IdDepartmentNavigation).FirstOrDefault(s => s.Email == login);
+            var examUser = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s=>s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).FirstOrDefault(s => s.Email == login);
             if (examUser == null)
             {
                 return NotFound("Вы ввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные");
@@ -118,7 +118,7 @@ namespace ProjectSystemAPI.Controllers
                 user.Password = Md5.HashPassword(str);
                 dbContext.Add(user);
                 dbContext.SaveChanges();
-                return Ok(dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).FirstOrDefault(s => s.Email == user.Email));
+                return Ok(dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).FirstOrDefault(s => s.Email == user.Email));
             }
             else
             {
@@ -156,7 +156,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("GetAllUsers")]
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).OrderByDescending(s => s.Id).ToList();
+            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).OrderByDescending(s => s.Id).ToList();
             return users.Select(s => (User)s);
         }
 

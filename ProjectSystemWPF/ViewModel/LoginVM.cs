@@ -41,58 +41,67 @@ namespace ProjectSystemWPF.ViewModel
             // команда на открытие страницы сотрудника или руководителя
             OpenPage = new VmCommand(async () =>
             {
-                var result = await REST.Instance.client.GetAsync($"Users/ActiveUser?login={Login}&password={Password}");
-                //todo not ok
-
-                if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                if (Login != null && Password != null)
                 {
-                    return;
+                    var result = await REST.Instance.client.GetAsync($"Users/ActiveUser?login={Login}&password={Password}");
+                    //todo not ok
+
+                    if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        var answer = await result.Content.ReadAsStringAsync();
+                        MessageBox.Show(answer);
+                        return;
+                    }
+                    else
+                    {
+                        var user = await result.Content.ReadFromJsonAsync<ResponseTokenAndRole>(REST.Instance.options);
+                        ActiveUser.GetInstance().User = user.User;
+                        REST.Instance.SetToken(user.Token);
+                    }
+
+                    if (Validator.TryValidateObject(this, new ValidationContext(this), null))
+                    {
+                        //var customer = UserRepository.Instance.Customer(Login, passwrdBox.Password);
+                        var user = ActiveUser.GetInstance().User;
+                        if (user.Id == 0)
+                        {
+                            MessageBox.Show("Неверный логин или пароль");
+                        }
+
+                        else
+                        {
+                            if (user.IdRole == 3) // открытие страницы сотрудника
+                            {
+
+                                //страница полученных проектов 
+                            }
+                            else if (user.IdRole == 2)
+                            {
+                                //страница полученных проектов (от директора)
+                                SuperUserPage superUserPage = new SuperUserPage();
+                                MainVM.Instance.CurrentPage = superUserPage;
+                            }
+                            else if (user.IdRole == 4)
+                            {
+                                SuperUserPage superUserPage = new SuperUserPage();
+                                MainVM.Instance.CurrentPage = superUserPage;
+                            }
+
+                            else // открытие страницы руководителя
+                            {
+                                //страница отправленных проектов (ты директор)
+                                SuperUserPage superUserPage = new SuperUserPage();
+                                MainVM.Instance.CurrentPage = superUserPage;
+                            }
+
+                        }
+                    }
                 }
                 else
                 {
-                    var user = await result.Content.ReadFromJsonAsync<ResponseTokenAndRole>(REST.Instance.options);
-                    ActiveUser.GetInstance().User = user.User;
-                    REST.Instance.SetToken(user.Token);
+                    MessageBox.Show("Введите электронную почту и пароль!");
+                    return;
                 }
-
-                if (Validator.TryValidateObject(this, new ValidationContext(this), null))
-                {
-                    //var customer = UserRepository.Instance.Customer(Login, passwrdBox.Password);
-                    var user = ActiveUser.GetInstance().User;
-                    if (user.Id == 0)
-                    {
-                        MessageBox.Show("Неверный логин или пароль");
-                    }
-
-                    else
-                    {
-                        if (user.IdRole == 3) // открытие страницы сотрудника
-                        {
-
-                            //страница полученных проектов 
-                        }
-                        else if(user.IdRole == 2)
-                        {
-                            //страница полученных проектов (от директора)
-                            SuperUserPage superUserPage = new SuperUserPage();
-                            MainVM.Instance.CurrentPage = superUserPage;
-                        }
-                        else if(user.IdRole == 4)
-                        {
-                            SuperUserPage superUserPage = new SuperUserPage();
-                            MainVM.Instance.CurrentPage = superUserPage;
-                        }
-
-                        else // открытие страницы руководителя
-                        {
-                            //страница отправленных проектов (ты директор)
-                            SuperUserPage superUserPage = new SuperUserPage();
-                            MainVM.Instance.CurrentPage = superUserPage;
-                        }
-
-                    }
-                }
-
                 Loaded?.Invoke(this, null);
             });
 

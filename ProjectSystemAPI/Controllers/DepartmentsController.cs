@@ -77,6 +77,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Department>> PostDepartment(Department department)
         {
+            department.IdMainDepNavigation = null;
             _context.Departments.Add(department);
             await _context.SaveChangesAsync();
 

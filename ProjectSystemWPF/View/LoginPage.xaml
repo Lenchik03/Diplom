@@ -13,7 +13,6 @@
         <Storyboard x:Key="Lol">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="stackPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00:5" Value="179"/>
                 <EasingDoubleKeyFrame KeyTime="00:00:01" Value="360">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <BounceEase EasingMode="EaseIn"/>
