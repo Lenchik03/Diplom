@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ChatServerDTO\ChatServerDTO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="View\logo.jpg" />
     <Resource Include="View\logo.png" />
   </ItemGroup>

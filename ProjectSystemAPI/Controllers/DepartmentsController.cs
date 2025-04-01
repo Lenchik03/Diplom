@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 
 namespace ProjectSystemAPI.Controllers
 {
@@ -28,7 +29,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         // GET: api/Departments/5
-        [HttpGet("{id}")]
+        /*[HttpGet("{id}")]
         public async Task<ActionResult<Department>> GetDepartment(int id)
         {
             var department = await _context.Departments.FindAsync(id);
@@ -39,19 +40,63 @@ namespace ProjectSystemAPI.Controllers
             }
 
             return department;
+        }*/
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DepartmentDTO>> GetDepartment(int id)
+        {
+            var department = await _context.Departments.Include(s=>s.Users).
+                Include(s=>s.IdDirectorNavigation).
+                Include(s=>s.InverseIdMainDepNavigation).FirstOrDefaultAsync(s=>s.Id == id);
+
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            return (DepartmentDTO)department;
         }
 
         // PUT: api/Departments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutDepartment(int id, Department department)
+        //{
+        //    if (id != department.Id)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    _context.Entry(department).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!DepartmentExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return NoContent();
+        //}
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDepartment(int id, Department department)
+        public async Task<IActionResult> PutDepartment(int id, DepartmentDTO department)
         {
             if (id != department.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(department).State = EntityState.Modified;
+            _context.Entry((Department)department).State = EntityState.Modified;
 
             try
             {

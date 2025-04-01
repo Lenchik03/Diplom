@@ -11,9 +11,9 @@ using System.Windows.Controls;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
-using ProjectSystemWPF.Model;
 using ProjectSystemWPF.View;
 using MaterialDesignThemes.Wpf;
+using ProjectSystemAPI.DTO;
 
 namespace ProjectSystemWPF.ViewModel
 {
@@ -33,7 +33,7 @@ namespace ProjectSystemWPF.ViewModel
         {
             public string Token { get; set; }
             public string Role { get; set; }
-            public User User { get; set; }
+            public UserDTO User { get; set; }
         }
 
         public LoginVM()

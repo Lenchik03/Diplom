@@ -1,5 +1,6 @@
 ﻿using MaterialDesignColors.Recommended;
-using ProjectSystemWPF.Model;
+using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,17 +20,17 @@ namespace ProjectSystemWPF.ViewModel
 {
     public class SuperUserVM: BaseVM
     {
-        public ObservableCollection<Department> MainDepartments { get; set; } = new();
-        public ObservableCollection<Department> Departments { get; set; } = new();
+        public ObservableCollection<DepartmentDTO> MainDepartments { get; set; } = new();
+        public ObservableCollection<DepartmentDTO> Departments { get; set; } = new();
         public ObservableCollection<Role> Roles { get; set; } = new();
-        public ObservableCollection<User> Employees
+        public ObservableCollection<UserDTO> Employees
         {
             get => employees;
             set { employees = value; Signal(); }
             
         }
-        ObservableCollection<Department> allDepartments = new();
-        ObservableCollection<User> allEmployees = new();
+        ObservableCollection<DepartmentDTO> allDepartments = new();
+        ObservableCollection<UserDTO> allEmployees = new();
         public bool CanEdit
         {
             get => canEdit;
@@ -38,7 +39,7 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
         public VmCommand NewEmployee { get; set; }
-        public User Employee
+        public UserDTO Employee
         {
             get => employee;
             set
@@ -59,7 +60,7 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
         public VmCommand NewDep { get; set; }
-        public Department Department
+        public DepartmentDTO Department
         {
             get => department;
             set
@@ -68,13 +69,13 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
-        public ObservableCollection<User> Directors 
+        public ObservableCollection<UserDTO> Directors 
         { get => directors; set 
             { 
                 directors = value;
                 Signal();
             } }
-        public User DepDirector
+        public UserDTO DepDirector
         {
             get => depDirector;
             set { depDirector = value; Signal(); }
@@ -84,17 +85,17 @@ namespace ProjectSystemWPF.ViewModel
         public Button SelectedDepOrUser { get; set; }
 
         Brush brush = new SolidColorBrush(Color.FromArgb(255, 223, 196, 01));
-        private User employee = new User
+        private UserDTO employee = new UserDTO
         {
             Password = "",
             FirstName = "Нажмите на кнопку +",
-            IdRoleNavigation = new Role { Id = 3, Title = "" },
-            IdDepartmentNavigation = new Department { Id = 1, Title = "" }
+            //IdRoleNavigation = new Role { Id = 3, Title = "" },
+            //IdDepartmentNavigation = new DepartmentDTO { Id = 1, Title = "" }
         };
-        private Department department;
-        private ObservableCollection<User> employees;
-        private User depDirector;
-        private ObservableCollection<User> directors = new();
+        private DepartmentDTO department;
+        private ObservableCollection<UserDTO> employees;
+        private UserDTO depDirector;
+        private ObservableCollection<UserDTO> directors = new();
         private bool canEdit;
         private bool canEditDep;
 
@@ -136,7 +137,9 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 if (Employee != null && Employee.Id !=0)
                 {
-                    
+                    //Employee.Departments = new ObservableCollection<DepartmentDTO>();
+                    //Employee.IdDepartmentNavigation = new DepartmentDTO { Title = "", Id = Employee.IdDepartment};
+                    //Employee.IdRoleNavigation = new Role { Title = "", Id = Employee.IdRole};
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
                     var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -164,11 +167,11 @@ namespace ProjectSystemWPF.ViewModel
                         else
                         {
                             Employee.IdDepartment = Department.Id;
-                            Employee.IdDepartmentNavigation = Department;
+                            //Employee.IdDepartmentNavigation = Department;
                             Employee.IdRole = 1;
-                            Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 1);
+                            //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 1);
                             Department.IdDirector = Employee.Id;
-                            Department.IdDirectorNavigation = Employee;
+                           // Department.IdDirectorNavigation = Employee;
                         }
                         
                     }
@@ -178,30 +181,33 @@ namespace ProjectSystemWPF.ViewModel
                         if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
                         {
                             Employee.IdRole = 3;
-                            Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                           // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
                             Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
-                            Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                            //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
                         }
                         else
                         {
                             Employee.IdRole = 2;
-                            Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 2);
+                            //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 2);
                             Employee.IdDepartment = Department.Id;
-                            Employee.IdDepartmentNavigation = Department;
+                            //Employee.IdDepartmentNavigation = Department;
                         }
                     }
                     if (ActiveUser.GetInstance().User.IdRole == 2)
                     {
                         Employee.IdRole = 3;
-                        Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                        //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
                         Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
-                        Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                        //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
                     }
-                    Employee.IdDepartmentNavigation = new Department {
-                        IdMainDep =Employee.IdDepartmentNavigation?.IdMainDep,  
-                        Id = Employee.IdDepartmentNavigation.Id, 
-                        Title = Employee.IdDepartmentNavigation .Title};
-                    Employee.Password = "";
+
+                    //Employee.IdDepartmentNavigation = new DepartmentDTO
+                    //{
+                    //    IdMainDep =Employee.IdDepartmentNavigation?.IdMainDep,  
+                    //    Id = Employee.IdDepartmentNavigation.Id, 
+                    //    Title = Employee.IdDepartmentNavigation .Title};
+                    //Employee.Password = "";
+
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
                     var responce = await REST.Instance.client.PostAsync($"Users/AddNewUser",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -213,12 +219,12 @@ namespace ProjectSystemWPF.ViewModel
                         if (Employee.IdRole == 1 || Employee.IdRole == 2)
                         {
                             //var str = await responce.Content.ReadAsStringAsync();
-                            var answerUser = await responce.Content.ReadFromJsonAsync<User>(REST.Instance.options);
+                            var answerUser = await responce.Content.ReadFromJsonAsync<UserDTO>(REST.Instance.options);
 
-                            Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
+                           // Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
 
-                            string arg1 = JsonSerializer.Serialize(Employee.IdDepartmentNavigation, REST.Instance.options);
-                            var responce1 = await REST.Instance.client.PutAsync($"Departments/{Employee.IdDepartmentNavigation.Id}",
+                            string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
+                            var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
                                 new StringContent(arg1, Encoding.UTF8, "application/json"));
                             try
                             {
@@ -245,16 +251,7 @@ namespace ProjectSystemWPF.ViewModel
                 GetLists();
             });
             SaveDep = new VmCommand(async () =>
-            {
-                if (ActiveUser.GetInstance().User.IdRole == 4)
-                {
-                    Department.IdMainDepNavigation = null;
-                }
-                if (ActiveUser.GetInstance().User.IdRole == 1)
-                {
-                        Department.IdMainDep = ActiveUser.GetInstance().User.IdDepartment;
-                        Department.IdMainDepNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;                    
-                }
+            {              
                 if (Department.Id != 0 && Department != null)
                 {
                     string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
@@ -276,6 +273,16 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
+                    if (ActiveUser.GetInstance().User.IdRole == 4)
+                    {
+                        //Department.IdMainDepNavigation = null;
+                    }
+                    if (ActiveUser.GetInstance().User.IdRole == 1)
+                    {
+                        Department.IdMainDep = ActiveUser.GetInstance().User.IdDepartment;
+                        //Department.IdMainDepNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                    }
+
                     string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
                     var responce = await REST.Instance.client.PostAsync($"Departments",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -315,10 +322,10 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
-                    allDepartments = await result.Content.ReadFromJsonAsync<ObservableCollection<Department>>(REST.Instance.options);
+                    allDepartments = await result.Content.ReadFromJsonAsync<ObservableCollection<DepartmentDTO>>(REST.Instance.options);
                 }
-                MainDepartments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep == null));
-                Departments = new ObservableCollection<Department>(allDepartments.Where(s => s.IdMainDep != 0));
+                MainDepartments = new ObservableCollection<DepartmentDTO>(allDepartments.Where(s => s.IdMainDep == null));
+                Departments = new ObservableCollection<DepartmentDTO>(allDepartments.Where(s => s.IdMainDep != 0));
 
                 var result1 = await REST.Instance.client.GetAsync("Users/GetAllUsers");
                 if (result1.StatusCode != System.Net.HttpStatusCode.OK)
@@ -328,7 +335,7 @@ namespace ProjectSystemWPF.ViewModel
                 else
                 {
                     var test = await result1.Content.ReadAsStringAsync();
-                    allEmployees = await result1.Content.ReadFromJsonAsync<ObservableCollection<User>>(REST.Instance.options);
+                    allEmployees = await result1.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
                     
                 }
                 var result2 = await REST.Instance.client.GetAsync("Roles");
@@ -355,8 +362,8 @@ namespace ProjectSystemWPF.ViewModel
             StackPanel expanderPanel = new StackPanel();
             var header = "";
             var mheader = "";
-            var muser = new User();
-            var user = new User();
+            var muser = new UserDTO();
+            var user = new UserDTO();
             foreach (var maindep in MainDepartments)
             {
                 if (maindep.IdDirectorNavigation != null)
@@ -400,18 +407,18 @@ namespace ProjectSystemWPF.ViewModel
         {
             if (e.AddedItems.Count > 0)
             {
-                Employee = e.AddedItems[0] as User;
+                Employee = e.AddedItems[0] as UserDTO;
 
             }
         }
 
         private void ExpanderClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Department = ((Expander)sender).Tag as Department;
+            Department = ((Expander)sender).Tag as DepartmentDTO;
             Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector && s.IdRole != 4);
             if (Employee == null)
-                Employee = new User { LastName = "Директор не назначен" };
-            Directors = new ObservableCollection<User>(allEmployees.Where(s => s.IdDepartment == Department.Id && s.IdRole != 4));
+                Employee = new UserDTO { LastName = "Директор не назначен" };
+            Directors = new ObservableCollection<UserDTO>(allEmployees.Where(s => s.IdDepartment == Department.Id && s.IdRole != 4));
             DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
         }
     }
