@@ -1,4 +1,4 @@
-﻿using ProjectSystemWPF.Model;
+﻿using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace ProjectSystemWPF.ViewModel
 {
     public class ActiveUser
     {
-        public User User
+        public UserDTO User
         {
             get => user;
             set
@@ -21,7 +21,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public event EventHandler UserChanged;
         private static ActiveUser instance;
-        private User user;
+        private UserDTO user;
 
         private ActiveUser()
         { }

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.ExceptionServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.Json;
@@ -51,6 +52,8 @@ namespace ProjectSystemWPF.ViewModel
         }
         public VmCommand SaveUser { get; set; }
         public Visibility Hidden { get; set; }
+        public Visibility HiddenEditUser { get; set; }
+        public Visibility HiddenEditDep { get; set; }
         public VmCommand CanEditClick { get; set; }
         public bool CanEditDep 
         { 
@@ -104,13 +107,56 @@ namespace ProjectSystemWPF.ViewModel
         public SuperUserVM()
         {
             GetLists();
-
+            var dep = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
             if (ActiveUser.GetInstance().User.IdRole == 3)
             {
                 Hidden = Visibility.Collapsed;
+                HiddenEditUser = Visibility.Collapsed;
             }
             else
+            {
                 Hidden = Visibility.Visible;
+                
+                foreach(var emp in allEmployees)
+                {
+                    if (emp.IdDepartment == dep.Id)
+                    {
+                        HiddenEditUser = Visibility.Visible;
+                    }
+                        
+                    else
+                    {
+                        HiddenEditUser = Visibility.Collapsed;
+                    }
+                        
+                }
+            }
+            if(ActiveUser.GetInstance().User.IdRole == 3 || ActiveUser.GetInstance().User.IdRole == 2)
+            {
+                HiddenEditDep = Visibility.Collapsed;
+            }
+            if(ActiveUser.GetInstance().User.IdRole == 2 && dep == Department)
+            {
+                HiddenEditDep = Visibility.Visible;
+            }
+            else
+            {
+                Hidden = Visibility.Collapsed;
+            }
+            if (ActiveUser.GetInstance().User.IdRole == 1 && dep == Department)
+            {
+                HiddenEditDep = Visibility.Visible;
+            }
+            else
+            {
+                Hidden = Visibility.Collapsed;
+            }
+            if (ActiveUser.GetInstance().User.IdRole == 4)
+            {
+                HiddenEditDep = Visibility.Visible;
+                HiddenEditUser = Visibility.Visible;
+            }
+
 
             CanEditClick = new VmCommand(() =>
             {
@@ -178,7 +224,9 @@ namespace ProjectSystemWPF.ViewModel
                     if (ActiveUser.GetInstance().User.IdRole == 1)
                     {
                         var shit = ActiveUser.GetInstance().User;
-                        if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
+                        var department = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
+                        //if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
+                        if (department.ChildDepartments.Count == 0)
                         {
                             Employee.IdRole = 3;
                            // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
@@ -276,6 +324,7 @@ namespace ProjectSystemWPF.ViewModel
                     if (ActiveUser.GetInstance().User.IdRole == 4)
                     {
                         //Department.IdMainDepNavigation = null;
+                        Department.IdMainDep = null;
                     }
                     if (ActiveUser.GetInstance().User.IdRole == 1)
                     {
@@ -364,10 +413,14 @@ namespace ProjectSystemWPF.ViewModel
             var mheader = "";
             var muser = new UserDTO();
             var user = new UserDTO();
+            var mdirector = new UserDTO();
+            var director = new UserDTO();
             foreach (var maindep in MainDepartments)
             {
-                if (maindep.IdDirectorNavigation != null)
-                    mheader = $"{maindep.Title} - {maindep.IdDirectorNavigation.FIO}";
+                mdirector = allEmployees.FirstOrDefault(s => s.IdDepartment == maindep.Id);
+                //if (maindep.IdDirectorNavigation != null)
+                if (mdirector != null)
+                    mheader = $"{maindep.Title} - {mdirector.FIO}";
                 else
                     mheader = maindep.Title;
                 var mdepExp = new Expander { Header = mheader, BorderThickness = new Thickness(2), Background = Brushes.White, BorderBrush = brush };
@@ -376,8 +429,10 @@ namespace ProjectSystemWPF.ViewModel
                 StackPanel expanderPanel1 = new StackPanel();
                 foreach (var dep in Departments)
                 {
-                    if (dep.IdDirectorNavigation != null)
-                        header = $"{dep.Title} - {dep.IdDirectorNavigation.FIO}";
+                    director = allEmployees.FirstOrDefault(s => s.IdDepartment == dep.Id);
+                    //if (dep.IdDirectorNavigation != null)
+                    if (director != null)
+                        header = $"{dep.Title} - {director.FIO}";
                     else
                         header = dep.Title;
                     if (dep.IdMainDep == maindep.Id)

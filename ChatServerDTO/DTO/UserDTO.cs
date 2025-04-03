@@ -2,7 +2,7 @@
 
 namespace ProjectSystemAPI.DTO
 {
-    public class UserDTO
+    public partial class UserDTO
     {
         public int Id { get; set; }
 

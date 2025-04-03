@@ -83,7 +83,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                             
                     </StackPanel>
                     </Border>
-                    <Button Content="✍︎" Command="{Binding CanEditClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>
+                    <Button Content="✍︎" Command="{Binding CanEditClick}" BorderBrush="Black" Visibility="{Binding HiddenEditUser}" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1">
                     <Border BorderBrush="Black" BorderThickness="1" Margin="10,10,10,0">
@@ -104,7 +104,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                             <Button Content="Сохранить" Command="{Binding SaveDep}" Visibility="{Binding Hidden}" Height="25"  Width="110" Margin="7"/>
                     </StackPanel>
                     </Border>
-                    <Button Content="✍︎" Command="{Binding CanEditDepClick}" BorderBrush="Black" Visibility="{Binding Hidden}" Margin="10,0,10,0"/>
+                    <Button Content="✍︎" Command="{Binding CanEditDepClick}" BorderBrush="Black" Visibility="{Binding HiddenEditDep}" Margin="10,0,10,0"/>
                 </StackPanel>
                 
 
