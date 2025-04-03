@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Net.Mail;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
@@ -264,6 +266,22 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         responce.EnsureSuccessStatusCode();
                         MessageBox.Show("Сотрудник был добавлен");
+                        MailAddress fromAdress = new MailAddress("nikitina@suz-ppk.ru", ActiveUser.GetInstance().User.FIO);
+                        MailAddress toAdress = new MailAddress(Employee.Email);
+                        MailMessage message = new MailMessage(fromAdress, toAdress);
+                        message.Body = "Добрый день, " + Employee.FIO + "! " + Environment.NewLine + "Ваш новый логин: " + Employee.Email + " " + Environment.NewLine + "Ваш новый пароль: " + Employee.Password + " ";
+                        message.Subject = "Регистрация нового пользователя";
+
+                        SmtpClient smtpClient = new SmtpClient();
+                        smtpClient.Host = "smtp.beget.com";
+                        smtpClient.Port = 25;
+                        //smtpClient.EnableSsl = true;
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.UseDefaultCredentials = false;
+                        smtpClient.Credentials = new NetworkCredential(fromAdress.Address, "zzPwr%j0");
+
+                        smtpClient.Send(message);
+
                         if (Employee.IdRole == 1 || Employee.IdRole == 2)
                         {
                             //var str = await responce.Content.ReadAsStringAsync();
