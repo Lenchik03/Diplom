@@ -25,7 +25,8 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
         {
-            return await _context.Departments.Include(s => s.Users).Include(s=>s.IdDirectorNavigation).ToListAsync();
+            var deps = await _context.Departments.Include(s => s.Users).Include(s=>s.IdDirectorNavigation).ToListAsync();
+            return deps;
         }
 
         // GET: api/Departments/5
@@ -120,10 +121,10 @@ namespace ProjectSystemAPI.Controllers
         // POST: api/Departments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Department>> PostDepartment(Department department)
+        public async Task<ActionResult<Department>> PostDepartment(DepartmentDTO department)
         {
-            department.IdMainDepNavigation = null;
-            _context.Departments.Add(department);
+           // department.IdMainDepNavigation = null;
+            _context.Departments.Add((Department)department);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetDepartment", new { id = department.Id }, department);
