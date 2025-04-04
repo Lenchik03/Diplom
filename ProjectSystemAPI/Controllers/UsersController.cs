@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ChatServerDTO.DB;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 
 namespace ProjectSystemAPI.Controllers
 {
@@ -30,7 +32,7 @@ namespace ProjectSystemAPI.Controllers
         {
             public string Token { get; set; }
             public string Role { get; set; }
-            public User User { get; set; }
+            public UserDTO User { get; set; }
         }
 
         public class AuthOptions
@@ -62,7 +64,7 @@ namespace ProjectSystemAPI.Controllers
                 else
                 {
 
-                    var result = (User)examUser;
+                    var result = examUser;
                     dbContext.SaveChanges();
 
                     if (examUser is null)
@@ -95,7 +97,7 @@ namespace ProjectSystemAPI.Controllers
                     {
                         Token = token,
                         Role = role,
-                        User = result
+                        User = (UserDTO)result
                     });
                     //return Ok(result);
                 }
@@ -104,21 +106,23 @@ namespace ProjectSystemAPI.Controllers
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
         [HttpPost("AddNewUser")]
-        public ActionResult<User> AddNewUser(User user)
+        public ActionResult<UserDTO> AddNewUser(UserDTO user)
         {
-            user.IdRole = user.IdRoleNavigation.Id;
-            user.IdRoleNavigation = null;
-            user.IdDepartment = user.IdDepartmentNavigation.Id; 
-            user.IdDepartmentNavigation = null;
             var user1 = dbContext.Users.FirstOrDefault(s => s.Email == user.Email);
             if (user1 == null)
             {
                 string str = GetPassword.GetPass();
+                var claim = HttpContext.User.Claims.FirstOrDefault(s => s.Type == ClaimTypes.NameIdentifier);
+                int idFrom = int.Parse(claim.Value);
+                UserDTO from = (UserDTO)dbContext.Users.Find(idFrom);
                 //user.IdRole = 3;
+                bool mailResult = PostPassword.PostPass(user, str, from);
+                if (!mailResult)
+                    return BadRequest("stupid email. fuck up");
                 user.Password = Md5.HashPassword(str);
-                dbContext.Add(user);
+                dbContext.Users.Add((User)user);
                 dbContext.SaveChanges();
-                return Ok(dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).FirstOrDefault(s => s.Email == user.Email));
+                return Ok((UserDTO)dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).FirstOrDefault(s => s.Email == user.Email));
             }
             else
             {
@@ -129,7 +133,7 @@ namespace ProjectSystemAPI.Controllers
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
         [HttpPut("UpdateUser")]
-        public ActionResult UpdateUser(User user)
+        public ActionResult UpdateUser(UserDTO user)
         {
             dbContext.Users.Update((User)user);
             dbContext.SaveChanges();
@@ -138,7 +142,7 @@ namespace ProjectSystemAPI.Controllers
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
         [HttpDelete("DeleteUser")]
-        public ActionResult DeleteUser(User user)
+        public ActionResult DeleteUser(UserDTO user)
         {
             dbContext.Remove((User)user);
             dbContext.SaveChanges();
@@ -147,17 +151,17 @@ namespace ProjectSystemAPI.Controllers
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Сотрудник")]
         [HttpPost("ChangePassword")]
-        public void ChangePassword(User user)
+        public void ChangePassword(UserDTO user)
         {
             dbContext.Users.Update((User)user);
             dbContext.SaveChanges();
         }
 
         [HttpGet("GetAllUsers")]
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<UserDTO>> GetAllUsers()
         {
             var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).OrderByDescending(s => s.Id).ToList();
-            return users.Select(s => (User)s);
+            return users.Select(s => (UserDTO)s);
         }
 
 

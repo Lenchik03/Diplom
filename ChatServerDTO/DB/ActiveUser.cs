@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectSystemWPF.ViewModel
-{
-    public class ActiveUser
+namespace ProjectSystemAPI.DB;
+    
+public class ActiveUser
     {
         public UserDTO User
         {
@@ -33,4 +33,4 @@ namespace ProjectSystemWPF.ViewModel
             return instance;
         }
     }
-}
+

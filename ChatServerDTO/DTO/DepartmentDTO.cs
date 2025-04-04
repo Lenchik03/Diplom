@@ -13,8 +13,8 @@ namespace ProjectSystemAPI.DTO
         public int? IdDirector { get; set; }
 
         public UserDTO? Director { get; set; }
-        public List<UserDTO> Users { get; set; }
-        public List<DepartmentDTO> ChildDepartments { get; set; }
+        public List<UserDTO>? Users { get; set; }
+        public List<DepartmentDTO>? ChildDepartments { get; set; }
 
         public static explicit operator DepartmentDTO(Department from)
         {

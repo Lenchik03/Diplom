@@ -20,6 +20,7 @@ namespace ProjectSystemWPF.ViewModel
             client.BaseAddress = new Uri("http://localhost:5281/api/");
             options.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
             options.PropertyNameCaseInsensitive = true;
+            options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
         }
 
         static REST instance = new REST();

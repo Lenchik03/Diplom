@@ -14,6 +14,7 @@ using System.Net.Http.Json;
 using ProjectSystemWPF.View;
 using MaterialDesignThemes.Wpf;
 using ProjectSystemAPI.DTO;
+using ProjectSystemAPI.DB;
 
 namespace ProjectSystemWPF.ViewModel
 {

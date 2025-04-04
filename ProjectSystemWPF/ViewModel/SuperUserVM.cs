@@ -53,9 +53,27 @@ namespace ProjectSystemWPF.ViewModel
 
         }
         public VmCommand SaveUser { get; set; }
-        public Visibility Hidden { get; set; }
-        public Visibility HiddenEditUser { get; set; }
-        public Visibility HiddenEditDep { get; set; }
+        public Visibility Hidden
+        {
+            get => hidden;
+            set { hidden = value;
+                Signal();
+            }
+        }
+        public Visibility HiddenEditUser
+        {
+            get => hiddenEditUser;
+            set { hiddenEditUser = value;
+                Signal();
+            }
+        }
+        public Visibility HiddenEditDep
+        {
+            get => hiddenEditDep;
+            set { hiddenEditDep = value;
+                Signal();        
+            }
+        }
         public VmCommand CanEditClick { get; set; }
         public bool CanEditDep 
         { 
@@ -71,6 +89,7 @@ namespace ProjectSystemWPF.ViewModel
             set
             { 
                 department = value;
+                SetHiddenButtons();
                 Signal();
             }
         }
@@ -103,62 +122,45 @@ namespace ProjectSystemWPF.ViewModel
         private ObservableCollection<UserDTO> directors = new();
         private bool canEdit;
         private bool canEditDep;
+        private Visibility hidden;
+        private Visibility hiddenEditUser;
+        private Visibility hiddenEditDep;
 
         public event EventHandler Loaded;
 
-        public SuperUserVM()
+        void SetHiddenButtons()
         {
-            GetLists();
+            Hidden = Visibility.Collapsed;
+            HiddenEditUser = Visibility.Collapsed;
+            HiddenEditDep = Visibility.Collapsed;
+
+            if (ActiveUser.GetInstance().User.IdRole == 2)
+            {
+                HiddenEditUser = Visibility.Visible;
+            }
             var dep = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
-            if (ActiveUser.GetInstance().User.IdRole == 3)
-            {
-                Hidden = Visibility.Collapsed;
-                HiddenEditUser = Visibility.Collapsed;
-            }
-            else
-            {
-                Hidden = Visibility.Visible;
-                
-                foreach(var emp in allEmployees)
-                {
-                    if (emp.IdDepartment == dep.Id)
-                    {
-                        HiddenEditUser = Visibility.Visible;
-                    }
-                        
-                    else
-                    {
-                        HiddenEditUser = Visibility.Collapsed;
-                    }
-                        
-                }
-            }
-            if(ActiveUser.GetInstance().User.IdRole == 3 || ActiveUser.GetInstance().User.IdRole == 2)
-            {
-                HiddenEditDep = Visibility.Collapsed;
-            }
-            if(ActiveUser.GetInstance().User.IdRole == 2 && dep == Department)
-            {
-                HiddenEditDep = Visibility.Visible;
-            }
-            else
-            {
-                Hidden = Visibility.Collapsed;
-            }
             if (ActiveUser.GetInstance().User.IdRole == 1 && dep == Department)
             {
                 HiddenEditDep = Visibility.Visible;
+                HiddenEditUser = Visibility.Visible;
+                Hidden = Visibility.Visible;
             }
-            else
-            {
-                Hidden = Visibility.Collapsed;
-            }
+
             if (ActiveUser.GetInstance().User.IdRole == 4)
             {
                 HiddenEditDep = Visibility.Visible;
                 HiddenEditUser = Visibility.Visible;
+                Hidden = Visibility.Visible;
             }
 
+        }
+
+        public SuperUserVM()
+        {
+            GetLists();
+            
+
+            SetHiddenButtons();
 
             CanEditClick = new VmCommand(() =>
             {
@@ -214,11 +216,13 @@ namespace ProjectSystemWPF.ViewModel
                         }
                         else
                         {
+                            if (Department.IdMainDep != null)
+                                Department = MainDepartments.FirstOrDefault(s => s.Id == Department.IdMainDep);
                             Employee.IdDepartment = Department.Id;
                             //Employee.IdDepartmentNavigation = Department;
                             Employee.IdRole = 1;
                             //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 1);
-                            Department.IdDirector = Employee.Id;
+                            
                            // Department.IdDirectorNavigation = Employee;
                         }
                         
@@ -266,28 +270,14 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         responce.EnsureSuccessStatusCode();
                         MessageBox.Show("Сотрудник был добавлен");
-                        MailAddress fromAdress = new MailAddress("nikitina@suz-ppk.ru", ActiveUser.GetInstance().User.FIO);
-                        MailAddress toAdress = new MailAddress(Employee.Email);
-                        MailMessage message = new MailMessage(fromAdress, toAdress);
-                        message.Body = "Добрый день, " + Employee.FIO + "! " + Environment.NewLine + "Ваш новый логин: " + Employee.Email + " " + Environment.NewLine + "Ваш новый пароль: " + Employee.Password + " ";
-                        message.Subject = "Регистрация нового пользователя";
-
-                        SmtpClient smtpClient = new SmtpClient();
-                        smtpClient.Host = "smtp.beget.com";
-                        smtpClient.Port = 25;
-                        //smtpClient.EnableSsl = true;
-                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtpClient.UseDefaultCredentials = false;
-                        smtpClient.Credentials = new NetworkCredential(fromAdress.Address, "zzPwr%j0");
-
-                        smtpClient.Send(message);
+                        
 
                         if (Employee.IdRole == 1 || Employee.IdRole == 2)
                         {
                             //var str = await responce.Content.ReadAsStringAsync();
                             var answerUser = await responce.Content.ReadFromJsonAsync<UserDTO>(REST.Instance.options);
-
-                           // Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
+                            Department.IdDirector = answerUser.Id;
+                            // Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
 
                             string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
                             var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
@@ -321,7 +311,7 @@ namespace ProjectSystemWPF.ViewModel
                 if (Department.Id != 0 && Department != null)
                 {
                     string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Departments",
+                    var responce = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
                     try
                     {
@@ -374,6 +364,7 @@ namespace ProjectSystemWPF.ViewModel
             NewDep = new VmCommand(() =>
             {
                 Department = new();
+                DepDirector = null;
             });
         }
         public async void GetLists()
@@ -490,8 +481,7 @@ namespace ProjectSystemWPF.ViewModel
             Department = ((Expander)sender).Tag as DepartmentDTO;
             Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector && s.IdRole != 4);
             if (Employee == null)
-                Employee = new UserDTO { LastName = "Директор не назначен" };
-            Directors = new ObservableCollection<UserDTO>(allEmployees.Where(s => s.IdDepartment == Department.Id && s.IdRole != 4));
+                Employee = new UserDTO { LastName = "Директор не назначен" };      
             DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
         }
     }
