@@ -139,7 +139,7 @@ namespace ProjectSystemAPI.Controllers
             {
                 return NotFound();
             }
-
+               
             _context.Departments.Remove(department);
             await _context.SaveChangesAsync();
 

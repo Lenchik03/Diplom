@@ -1,9 +1,11 @@
-﻿using MaterialDesignColors.Recommended;
+﻿using MaterialDesignColors;
+using MaterialDesignColors.Recommended;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -107,6 +109,16 @@ namespace ProjectSystemWPF.ViewModel
         public VmCommand SaveDep { get; set; }
         public VmCommand CanEditDepClick { get; set; }
         public Button SelectedDepOrUser { get; set; }
+        public VmCommand DeleteEmployee { get; set; }
+        public VmCommand DeleteDepartment { get; set; }
+
+        public string Search
+        {
+            get => search;
+            set { search = value;
+                GetLists();
+            }
+        }
 
         Brush brush = new SolidColorBrush(Color.FromArgb(255, 223, 196, 01));
         private UserDTO employee = new UserDTO
@@ -125,6 +137,7 @@ namespace ProjectSystemWPF.ViewModel
         private Visibility hidden;
         private Visibility hiddenEditUser;
         private Visibility hiddenEditDep;
+        private string search;
 
         public event EventHandler Loaded;
 
@@ -161,6 +174,67 @@ namespace ProjectSystemWPF.ViewModel
             
 
             SetHiddenButtons();
+
+            DeleteEmployee = new VmCommand(async () =>
+            {
+                if (Employee == null)
+                    MessageBox.Show("Выберите сотрудника для увольнения!");
+                else
+                {
+                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
+                    var responce = await REST.Instance.client.PostAsync($"DeleteUser",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        return;
+                    }
+                }
+            });
+
+            DeleteDepartment = new VmCommand(async () =>
+            {
+                if (Department == null)
+                    MessageBox.Show("Выберите отдел для удаления!");
+                if (Department.ChildDepartments.Count != 0)
+                {
+                    foreach (var dep in Department.ChildDepartments)
+                    {
+                        if (dep.Users.Count != 0)
+                        {
+                            MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их");
+                            return;
+                        }
+                        else
+                        {
+                            var result = await REST.Instance.client.DeleteAsync($"Departments/{dep.Id}");
+                            //todo not ok
+
+                            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                            {
+                                return;
+                            }
+
+                        }
+                    }
+                }
+                else
+                {
+                    if (Department.Users.Count != 0)
+                        MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их!");
+
+                    else
+                    {
+                        var result = await REST.Instance.client.DeleteAsync($"Departments/{Department.Id}");
+                        //todo not ok
+
+                        if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                        {
+                            return;
+                        }
+                    }
+                }
+                
+            });
 
             CanEditClick = new VmCommand(() =>
             {
@@ -369,6 +443,12 @@ namespace ProjectSystemWPF.ViewModel
         }
         public async void GetLists()
         {
+            var searchRezult = allEmployees.Where(s => string.IsNullOrEmpty(search) ||
+                        (s.FirstName.Contains(search) ||
+                        s.LastName.Contains(search) ||
+                        s.Patronymic.Contains(search) ||
+                        s.Email.Contains(search) ||
+                        s.Phone.Contains(search)));
             try
             {
                 var result = await REST.Instance.client.GetAsync("Departments");

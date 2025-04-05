@@ -49,9 +49,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Visibility="{Binding ViewSignOut}" Grid.Row="1" Width="0" x:Name="menu">
-            <StackPanel>
-                <Image  />
-            </StackPanel>
+            <Image Source="/View/header.png"/>
             <Button Content="Гланвая"/>
             <Button Content="Мои проекты"/>
             <Button Content="Сотрудники"/>

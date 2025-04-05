@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="View\header.png" />
     <None Remove="View\logo.jpg" />
     <None Remove="View\logo.png" />
   </ItemGroup>
@@ -23,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="View\header.png" />
     <Resource Include="View\logo.jpg" />
     <Resource Include="View\logo.png" />
   </ItemGroup>

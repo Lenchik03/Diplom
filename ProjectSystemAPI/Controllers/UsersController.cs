@@ -141,7 +141,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
-        [HttpDelete("DeleteUser")]
+        [HttpPost("DeleteUser")]
         public ActionResult DeleteUser(UserDTO user)
         {
             dbContext.Remove((User)user);
