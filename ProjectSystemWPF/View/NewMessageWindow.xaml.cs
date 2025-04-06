@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ProjectSystemWPF.ViewModel;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,10 +24,16 @@ namespace ProjectSystemWPF
         public NewMessageWindow()
         {
             InitializeComponent();
+            var vm = new MessageVM();
+            vm.Loaded += Vm_Loaded;
+            DataContext = vm;
         }
-        public void NewMessage(int sender_Id, string text)
-        {
 
+        private void Vm_Loaded(object? sender, EventArgs e)
+        {
+            stackpanel.Children.Clear();
+            var stackpanel1 = (DataContext as MessageVM).CreateTreeView();
+            stackpanel.Children.Add(stackpanel1);
         }
     }
 }
