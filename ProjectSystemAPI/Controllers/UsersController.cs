@@ -141,12 +141,19 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
-        [HttpPost("DeleteUser")]
-        public ActionResult DeleteUser(UserDTO user)
+        [HttpDelete("DeleteEmployee/{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
         {
-            dbContext.Remove((User)user);
-            dbContext.SaveChanges();
-            return Ok("Пользователь успешно удален!");
+            var department = await dbContext.Users.FindAsync(id);
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            dbContext.Users.Remove(department);
+            await dbContext.SaveChangesAsync();
+
+            return NoContent();
         }
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Сотрудник")]

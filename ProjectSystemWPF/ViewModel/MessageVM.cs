@@ -31,6 +31,11 @@ namespace ProjectSystemWPF.ViewModel
         ObservableCollection<UserDTO> allEmployees = new();
         public event EventHandler Loaded;
 
+
+        public MessageVM()
+        {
+            GetLists();
+        }
         public async void GetLists()
         {
             
@@ -92,7 +97,7 @@ namespace ProjectSystemWPF.ViewModel
             //TreeViewItem mtreeviewitem;
             foreach (var maindep in MainDepartments)
             {
-                TreeViewItem mtreeviewitem = new TreeViewItem();
+                TreeViewItem mtreeviewitem = new TreeViewItem { Background = Brushes.LightYellow};
                 mtreeviewitem.Tag = maindep;
                 mtreeviewitem.Header = maindep.Title;
                 if (maindep.ChildDepartments.Count != 0)
@@ -106,13 +111,13 @@ namespace ProjectSystemWPF.ViewModel
                             treeViewItem.Header = dep.Title;
                             foreach(var emps in dep.Users)
                             {
-                                treeViewItem.Items.Add(emps);
+                                treeViewItem.Items.Add(new TreeViewItem { Tag = emps, Header = emps.FIO });
                             }
                             mtreeviewitem.Items.Add(treeViewItem);
                         }
                         else
                         {
-                            mtreeviewitem.Items.Add(dep);
+                            mtreeviewitem.Items.Add(new TreeViewItem { Tag = dep, Header = dep.Title });
                         }
 
                     }

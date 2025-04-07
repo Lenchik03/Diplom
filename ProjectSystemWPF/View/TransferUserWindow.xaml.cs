@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ProjectSystemAPI.DTO;
+using ProjectSystemWPF.ViewModel;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +22,25 @@ namespace ProjectSystemWPF.View
     /// </summary>
     public partial class TransferUserWindow : Window
     {
-        public TransferUserWindow()
+        public TransferUserWindow(UserDTO user)
         {
             InitializeComponent();
+            var vm = new TransferUserVM();
+            vm.Loaded += Vm_Loaded;
+            if (user != null)
+            {
+                vm.GetUser(user);
+            }
+            DataContext = vm;
+           
         }
+        private void Vm_Loaded(object? sender, EventArgs e)
+        {
+            var vm = DataContext as SuperUserVM;
+            vm.CreateExpanders();
+            
+        }
+
+
     }
 }

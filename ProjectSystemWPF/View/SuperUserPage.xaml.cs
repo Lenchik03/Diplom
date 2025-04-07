@@ -32,9 +32,9 @@ namespace ProjectSystemWPF.View
 
         private void Vm_Loaded(object? sender, EventArgs e)
         {
-            stack1.Children.Clear();
-            var stackpanel = (DataContext as SuperUserVM).CreateExpanders();
-            stack1.Children.Add(stackpanel);
+            var vm = DataContext as SuperUserVM;
+            vm.SetStackDepartment(stack1);
+            vm.CreateExpanders();
         }
     }
 }

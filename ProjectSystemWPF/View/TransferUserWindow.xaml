@@ -5,8 +5,65 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectSystemWPF.View"
         mc:Ignorable="d"
-        Title="TransferUserWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="TransferUserWindow" Height="500" Width="500"
+                    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+TextElement.FontWeight="Regular"
+TextElement.FontSize="13"
+TextOptions.TextFormattingMode="Ideal"
+TextOptions.TextRenderingMode="Auto"
+Background="{DynamicResource MaterialDesignPaper}"
+FontFamily="{DynamicResource MaterialDesignFont}">
+    <Grid Background="#FFFDC401">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <Border BorderBrush="Black" BorderThickness="1" Margin="10,10,10,0">
+                <StackPanel  IsEnabled="{Binding CanEdit}" Background="LightYellow">
+                    <Grid Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Сотрудник" HorizontalAlignment="Center" FontSize="15" Grid.ColumnSpan="3"/>
+
+                    </Grid>
+                    <Label Content="Имя"/>
+                    <TextBox Text="{Binding Employee.FirstName}" />
+                    <Label Content="Фамилия"/>
+                    <TextBox Text="{Binding Employee.LastName}" />
+                    <Label Content="Отчество"/>
+                    <TextBox Text="{Binding Employee.Patronymic}" />
+                    <Label Content="Дата рождения"/>
+                    <DatePicker SelectedDate="{Binding Employee.Birthday}" Language="ru"/>
+                    <!--<TextBox Text="{Binding Employee.Birthday, StringFormat=dd.MM.yyyy}" />-->
+                    <Label Content="Эл.почта"/>
+                    <TextBox Text="{Binding Employee.Email}" />
+                    <Label Content="Номер телефона"/>
+                    <TextBox Text="{Binding Employee.Phone}" />
+                    <Label Content="Должность"/>
+                    <TextBox Text="{Binding Employee.Post}"/>
+                    
+
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Margin="10">
+            <Border Background="LightYellow" BorderThickness="1" BorderBrush="Black" Height="400">
+                <StackPanel>
+                    <StackPanel>
+                        <Label Content="Список отделов" HorizontalAlignment="Center"/>
+                        <ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDep}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <Label Content="Назначить в качестве:" HorizontalAlignment="Center"/>
+                        <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}"/>
+                    </StackPanel>
+                    <Button Content="Сохранить" Command="{Binding Save}" Height="25"  Width="110" Margin="7"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
     </Grid>
 </Window>

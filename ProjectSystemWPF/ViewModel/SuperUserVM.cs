@@ -2,10 +2,13 @@
 using MaterialDesignColors.Recommended;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
+using ProjectSystemWPF.View;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Eventing.Reader;
+using System.DirectoryServices;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -23,7 +26,7 @@ using System.Windows.Media;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class SuperUserVM: BaseVM
+    public class SuperUserVM : BaseVM
     {
         public ObservableCollection<DepartmentDTO> MainDepartments { get; set; } = new();
         public ObservableCollection<DepartmentDTO> Departments { get; set; } = new();
@@ -32,14 +35,16 @@ namespace ProjectSystemWPF.ViewModel
         {
             get => employees;
             set { employees = value; Signal(); }
-            
+
         }
         ObservableCollection<DepartmentDTO> allDepartments = new();
         ObservableCollection<UserDTO> allEmployees = new();
         public bool CanEdit
         {
             get => canEdit;
-            set { canEdit = value;
+            set
+            {
+                canEdit = value;
                 Signal();
             }
         }
@@ -58,29 +63,37 @@ namespace ProjectSystemWPF.ViewModel
         public Visibility Hidden
         {
             get => hidden;
-            set { hidden = value;
+            set
+            {
+                hidden = value;
                 Signal();
             }
         }
         public Visibility HiddenEditUser
         {
             get => hiddenEditUser;
-            set { hiddenEditUser = value;
+            set
+            {
+                hiddenEditUser = value;
                 Signal();
             }
         }
         public Visibility HiddenEditDep
         {
             get => hiddenEditDep;
-            set { hiddenEditDep = value;
-                Signal();        
+            set
+            {
+                hiddenEditDep = value;
+                Signal();
             }
         }
         public VmCommand CanEditClick { get; set; }
-        public bool CanEditDep 
-        { 
+        public bool CanEditDep
+        {
             get => canEditDep;
-            set { canEditDep = value;
+            set
+            {
+                canEditDep = value;
                 Signal();
             }
         }
@@ -89,34 +102,43 @@ namespace ProjectSystemWPF.ViewModel
         {
             get => department;
             set
-            { 
+            {
                 department = value;
                 SetHiddenButtons();
                 Signal();
             }
         }
-        public ObservableCollection<UserDTO> Directors 
-        { get => directors; set 
-            { 
+        public ObservableCollection<UserDTO> Directors
+        {
+            get => directors; set
+            {
                 directors = value;
                 Signal();
-            } }
+            }
+        }
         public UserDTO DepDirector
         {
             get => depDirector;
             set { depDirector = value; Signal(); }
         }
+        public List<Expander> Expanders { get; set; } = new List<Expander>();
+
         public VmCommand SaveDep { get; set; }
         public VmCommand CanEditDepClick { get; set; }
         public Button SelectedDepOrUser { get; set; }
         public VmCommand DeleteEmployee { get; set; }
         public VmCommand DeleteDepartment { get; set; }
+        public VmCommand test { get; set; }
+        public VmCommand TransferClick { get; set; }
 
         public string Search
         {
             get => search;
-            set { search = value;
+            set
+            {
+                search = value;
                 GetLists();
+                
             }
         }
 
@@ -152,7 +174,7 @@ namespace ProjectSystemWPF.ViewModel
                 HiddenEditUser = Visibility.Visible;
             }
             var dep = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
-            if (ActiveUser.GetInstance().User.IdRole == 1 && dep == Department)
+            if (ActiveUser.GetInstance().User.IdRole == 1 && (dep == Department || CheckSubDepartment(dep, Department)))
             {
                 HiddenEditDep = Visibility.Visible;
                 HiddenEditUser = Visibility.Visible;
@@ -171,25 +193,58 @@ namespace ProjectSystemWPF.ViewModel
         public SuperUserVM()
         {
             GetLists();
-            
+
 
             SetHiddenButtons();
+            TransferClick = new VmCommand(async () =>
+                {
+                    TransferUserWindow transferUserWindow = new TransferUserWindow(Employee);
+                    transferUserWindow.Show();
+                });
+            test = new VmCommand(() =>
+            {
 
+                Expanders[1].IsExpanded = true;
+            });
             DeleteEmployee = new VmCommand(async () =>
             {
                 if (Employee == null)
                     MessageBox.Show("Выберите сотрудника для увольнения!");
                 else
                 {
-                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
-                    var responce = await REST.Instance.client.PostAsync($"DeleteUser",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
-                    if (responce.StatusCode != System.Net.HttpStatusCode.OK)
+                    if (Employee.Id == Department.IdDirector)
+                    {
+                        Department.Director = null;
+                        Department.IdDirector = null;
+                        string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
+                        var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
+                            new StringContent(arg1, Encoding.UTF8, "application/json"));
+                        try
+                        {
+                            responce1.EnsureSuccessStatusCode();
+                            //MessageBox.Show("Пользователь успешно обновлен!");
+
+                        }
+                        catch (Exception ex)
+                        {
+                            //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                            return;
+                        }
+
+                    }
+                    var result = await REST.Instance.client.DeleteAsync($"Users/DeleteEmployee/{Employee.Id}");
+                    //todo not ok
+
+                    if (result.StatusCode != System.Net.HttpStatusCode.NoContent)
                     {
                         return;
                     }
+
+                    Employee = new UserDTO();
                 }
             });
+
+            
 
             DeleteDepartment = new VmCommand(async () =>
             {
@@ -209,11 +264,12 @@ namespace ProjectSystemWPF.ViewModel
                             var result = await REST.Instance.client.DeleteAsync($"Departments/{dep.Id}");
                             //todo not ok
 
-                            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                            if (result.StatusCode != System.Net.HttpStatusCode.NoContent)
                             {
                                 return;
                             }
 
+                            Department = new DepartmentDTO();
                         }
                     }
                 }
@@ -233,7 +289,7 @@ namespace ProjectSystemWPF.ViewModel
                         }
                     }
                 }
-                
+
             });
 
             CanEditClick = new VmCommand(() =>
@@ -253,13 +309,13 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     MessageBox.Show("Телефон должен состоять из цифр и символов “+”, “(”, “)”, “-”, “ ”, “#” ");
                     return;
-                }              
+                }
                 if (!r2.Match(Employee.Email).Success)
                 {
                     MessageBox.Show("Почта имеет неправильный формат!");
                     return;
                 }
-                if (Employee != null && Employee.Id !=0)
+                if (Employee != null && Employee.Id != 0)
                 {
                     //Employee.Departments = new ObservableCollection<DepartmentDTO>();
                     //Employee.IdDepartmentNavigation = new DepartmentDTO { Title = "", Id = Employee.IdDepartment};
@@ -283,7 +339,7 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     if (ActiveUser.GetInstance().User.IdRole == 4)
                     {
-                        if(Department == null)
+                        if (Department == null)
                         {
                             MessageBox.Show("Выберите отдел, куда добавить сотрудника!");
                             return;
@@ -296,10 +352,10 @@ namespace ProjectSystemWPF.ViewModel
                             //Employee.IdDepartmentNavigation = Department;
                             Employee.IdRole = 1;
                             //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 1);
-                            
-                           // Department.IdDirectorNavigation = Employee;
+
+                            // Department.IdDirectorNavigation = Employee;
                         }
-                        
+
                     }
                     if (ActiveUser.GetInstance().User.IdRole == 1)
                     {
@@ -309,7 +365,7 @@ namespace ProjectSystemWPF.ViewModel
                         if (department.ChildDepartments.Count == 0)
                         {
                             Employee.IdRole = 3;
-                           // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                            // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
                             Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
                             //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
                         }
@@ -344,7 +400,7 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         responce.EnsureSuccessStatusCode();
                         MessageBox.Show("Сотрудник был добавлен");
-                        
+
 
                         if (Employee.IdRole == 1 || Employee.IdRole == 2)
                         {
@@ -371,17 +427,17 @@ namespace ProjectSystemWPF.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Произошла ошибка. Заполните все данные!");
+                        MessageBox.Show("Произошла ошибка!");
                         return;
                     }
 
-                    
+
                 }
 
                 GetLists();
             });
             SaveDep = new VmCommand(async () =>
-            {              
+            {
                 if (Department.Id != 0 && Department != null)
                 {
                     string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
@@ -437,10 +493,23 @@ namespace ProjectSystemWPF.ViewModel
             });
             NewDep = new VmCommand(() =>
             {
-                Department = new();
+                DepartmentDTO dep = new DepartmentDTO { IdMainDep = Department.Id};
+                Department.ChildDepartments.Add(dep);
+                Department = dep;
                 DepDirector = null;
             });
         }
+
+        private bool CheckSubDepartment(DepartmentDTO depMain, DepartmentDTO department)
+        {
+            foreach (var dep in depMain.ChildDepartments)
+            {
+                if (dep.Id == department.Id)
+                    return true;
+            }
+            return false;
+        }
+
         public async void GetLists()
         {
             var searchRezult = allEmployees.Where(s => string.IsNullOrEmpty(search) ||
@@ -474,7 +543,7 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     var test = await result1.Content.ReadAsStringAsync();
                     allEmployees = await result1.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
-                    
+
                 }
                 var result2 = await REST.Instance.client.GetAsync("Roles");
                 if (result2.StatusCode != System.Net.HttpStatusCode.OK)
@@ -494,10 +563,12 @@ namespace ProjectSystemWPF.ViewModel
 
 
 
-        public StackPanel CreateExpanders()
+        public void CreateExpanders()
         {
+            stack1.Children.Clear();
             //Button button = ((Expander)sender) as Button;
             StackPanel expanderPanel = new StackPanel();
+            stack1.Children.Add(expanderPanel);
             var header = "";
             var mheader = "";
             var muser = new UserDTO();
@@ -513,6 +584,7 @@ namespace ProjectSystemWPF.ViewModel
                 else
                     mheader = maindep.Title;
                 var mdepExp = new Expander { Header = mheader, BorderThickness = new Thickness(2), Background = Brushes.White, BorderBrush = brush };
+                Expanders.Add(mdepExp);
                 mdepExp.PreviewMouseDown += ExpanderClick;
                 mdepExp.Tag = maindep;
                 StackPanel expanderPanel1 = new StackPanel();
@@ -527,9 +599,18 @@ namespace ProjectSystemWPF.ViewModel
                     if (dep.IdMainDep == maindep.Id)
                     {
                         var depExp = new Expander { Margin = new Thickness(20, 0, 0, 0), Header = header, Background = Brushes.White };
+                        Expanders.Add(depExp);
                         depExp.PreviewMouseDown += ExpanderClick;
                         depExp.Tag = dep;
-                        var list = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = dep.Users.Where(s => s.IdRole == 3) };
+                        var users = dep.Users.Where(s => s.IdRole == 3);
+                        //if (users.Where(s => string.IsNullOrEmpty(search) ||
+                        //(s.FirstName.Contains(search) ||
+                        //s.LastName.Contains(search) ||
+                        //s.Patronymic.Contains(search) ||
+                        //s.Email.Contains(search) ||
+                        //s.Phone.Contains(search))).Count() > 0)
+                        //    depExp.IsExpanded = false;
+                        var list = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = users };
                         list.SelectionChanged += UserSelected;
                         depExp.Content = list;
                         expanderPanel1.Children.Add(depExp);
@@ -538,13 +619,13 @@ namespace ProjectSystemWPF.ViewModel
                 var usersListBox = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3) };
                 usersListBox.SelectionChanged += UserSelected;
                 var usersExpander = new Expander { Margin = new Thickness(0, 0, 0, 20), Header = "Сотрудники", Background = Brushes.White, Content = usersListBox };
+                Expanders.Add(usersExpander);
                 expanderPanel1.Children.Add(usersExpander);
                 mdepExp.Content = expanderPanel1;
 
 
                 expanderPanel.Children.Add(mdepExp);
             }
-            return expanderPanel;
         }
 
         private void UserSelected(object sender, SelectionChangedEventArgs e)
@@ -561,8 +642,13 @@ namespace ProjectSystemWPF.ViewModel
             Department = ((Expander)sender).Tag as DepartmentDTO;
             Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector && s.IdRole != 4);
             if (Employee == null)
-                Employee = new UserDTO { LastName = "Директор не назначен" };      
+                Employee = new UserDTO { LastName = "Директор не назначен" };
             DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
+        }
+        StackPanel stack1;
+        internal void SetStackDepartment(StackPanel stack1)
+        {
+            this.stack1 = stack1;
         }
     }
 }

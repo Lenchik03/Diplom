@@ -4,11 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectSystemWPF"
+        xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
-        Title="NewMessageWindow" Height="450" Width="800">
+        Title="NewMessageWindow" Height="450" Width="800"
+        DataContext="{DynamicResource messageVM}">
+
+    <Window.Resources>
+        <vm:MessageVM x:Key="messageVM"/>
+    </Window.Resources>
     <Grid>
         <StackPanel x:Name="stackpanel">
-            
+           
         </StackPanel>
 
         

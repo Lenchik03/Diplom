@@ -24,9 +24,7 @@ namespace ProjectSystemWPF
         public NewMessageWindow()
         {
             InitializeComponent();
-            var vm = new MessageVM();
-            vm.Loaded += Vm_Loaded;
-            DataContext = vm;
+            (DataContext as MessageVM).Loaded += Vm_Loaded;
         }
 
         private void Vm_Loaded(object? sender, EventArgs e)
