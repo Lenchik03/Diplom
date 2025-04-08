@@ -7,16 +7,239 @@
         xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
         Title="NewMessageWindow" Height="450" Width="800"
-        DataContext="{DynamicResource messageVM}">
+        DataContext="{DynamicResource messageVM}"
+    xmlns:converters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
+    xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf">
 
     <Window.Resources>
         <vm:MessageVM x:Key="messageVM"/>
-    </Window.Resources>
-    <Grid>
-        <StackPanel x:Name="stackpanel">
-           
-        </StackPanel>
+        <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
+        <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
+        <Style x:Key="ExpandCollapseToggleStyle"
+   TargetType="ToggleButton">
+            <Setter Property="Focusable"
+      Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid Width="15"
+          Height="13"
+          Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                             Storyboard.TargetName="Collapsed">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                        Value="{x:Static Visibility.Hidden}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                             Storyboard.TargetName="Expanded">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                        Value="{x:Static Visibility.Visible}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Path x:Name="Collapsed"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Margin="1,1,1,1"
+            Data="M 4 0 L 8 4 L 4 8 Z">
+                                <Path.Fill>
+                                    <SolidColorBrush Color="{DynamicResource GlyphColor}" />
+                                </Path.Fill>
+                            </Path>
+                            <Path x:Name="Expanded"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Margin="1,1,1,1"
+            Data="M 0 4 L 8 4 L 4 8 Z"
+            Visibility="Hidden">
+                                <Path.Fill>
+                                    <SolidColorBrush Color="{DynamicResource GlyphColor}" />
+                                </Path.Fill>
+                            </Path>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TreeViewItemFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border>
+                            <Rectangle Margin="0,0,0,0"
+                 StrokeThickness="5"
+                 Stroke="Black"
+                 StrokeDashArray="1 2"
+                 Opacity="0" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="treeView"
+   TargetType="{x:Type TreeViewItem}">
+            <Setter Property="Background"
+      Value="Transparent" />
+            <Setter Property="HorizontalContentAlignment"
+      Value="{Binding Path=HorizontalContentAlignment,
+RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+            <Setter Property="VerticalContentAlignment"
+      Value="{Binding Path=VerticalContentAlignment,
+RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+            <Setter Property="Padding"
+      Value="1,0,0,0" />
+            <Setter Property="Foreground"
+      Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+            <Setter Property="FocusVisualStyle"
+      Value="{StaticResource TreeViewItemFocusVisual}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="19"
+                          Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Bd"
+                                            Storyboard.TargetProperty="(Panel.Background).
+                (SolidColorBrush.Color)"
+                                            >
+                                                <EasingColorKeyFrame KeyTime="0"
+                                     Value="{StaticResource SelectedBackgroundColor}" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unselected" />
+                                    <VisualState x:Name="SelectedInactive">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Bd"
+                                            Storyboard.TargetProperty="(Panel.Background).
+                (SolidColorBrush.Color)">
+                                                <EasingColorKeyFrame KeyTime="0"
+                                     Value="{StaticResource SelectedUnfocusedColor}" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ExpansionStates">
+                                    <VisualState x:Name="Expanded">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                             Storyboard.TargetName="ItemsHost">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                        Value="{x:Static Visibility.Visible}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Collapsed" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ToggleButton x:Name="Expander"
+                    Style="{StaticResource ExpandCollapseToggleStyle}"
+                    ClickMode="Hover"
+                    IsChecked="{Binding IsExpanded, 
+        RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <Border x:Name="Bd"
+              Grid.Column="1"
+              Background="{TemplateBinding Background}"
+              BorderBrush="{TemplateBinding BorderBrush}"
+              BorderThickness="{TemplateBinding BorderThickness}"
+              Padding="{TemplateBinding Padding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Tag="{Binding}" Checked="CheckedDepartment" Unchecked="UncheckedDepartment"  />
 
-        
+                                    <ContentPresenter x:Name="PART_Header"
+                          ContentSource="Header"
+                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                </StackPanel>
+                            </Border>
+                            <ItemsPresenter x:Name="ItemsHost"
+                      Grid.Row="1"
+                      Grid.Column="1"
+                      Grid.ColumnSpan="2"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems"
+               Value="false">
+                                <Setter TargetName="Expander"
+                Property="Visibility"
+                Value="Hidden" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="HasHeader"
+                     Value="false" />
+                                    <Condition Property="Width"
+                     Value="Auto" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PART_Header"
+                Property="MinWidth"
+                Value="75" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="HasHeader"
+                     Value="false" />
+                                    <Condition Property="Height"
+                     Value="Auto" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PART_Header"
+                Property="MinHeight"
+                Value="19" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#FFFDC401">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Участнки чата:"/>
+                    <TextBlock Text="{Binding CountPart}" Grid.Column="1" Margin="5"/>
+                </Grid>
+                
+                <StackPanel x:Name="stackpanel">
+                <TreeViewItem Style="{DynamicResource treeView}"/>
+            </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1" Grid.Column="1">
+            <StackPanel>
+                
+                <Label Content="Название чата:"/>
+                <TextBox Text="{Binding ChatTitle}" Margin="5"/>
+                <Button Command="{Binding NewChat}" Content="Создать чат" Width="150" Margin="5"/>
+            </StackPanel>
+        </Border>
+
     </Grid>
 </Window>

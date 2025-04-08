@@ -30,8 +30,18 @@ namespace ProjectSystemWPF
         private void Vm_Loaded(object? sender, EventArgs e)
         {
             stackpanel.Children.Clear();
-            var stackpanel1 = (DataContext as MessageVM).CreateTreeView();
+            var stackpanel1 = (DataContext as MessageVM).CreateTreeView(this);
             stackpanel.Children.Add(stackpanel1);
+        }
+
+        private void CheckedDepartment(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UncheckedDepartment(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

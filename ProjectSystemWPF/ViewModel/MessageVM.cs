@@ -83,7 +83,7 @@ namespace ProjectSystemWPF.ViewModel
         }
 
         ObservableCollection<Node> nodes;
-        public StackPanel CreateTreeView()
+        public StackPanel CreateTreeView(NewMessageWindow newMessageWindow)
         {
             StackPanel panel = new StackPanel();
             var header = "";
@@ -94,10 +94,12 @@ namespace ProjectSystemWPF.ViewModel
             var director = new UserDTO();
             var treeview = new TreeView();
 
+            var controlStyle = newMessageWindow.FindResource("treeView") as Style;
+
             //TreeViewItem mtreeviewitem;
             foreach (var maindep in MainDepartments)
             {
-                TreeViewItem mtreeviewitem = new TreeViewItem { Background = Brushes.LightYellow};
+                TreeViewItem mtreeviewitem = new TreeViewItem { Style = controlStyle, Background = Brushes.LightYellow};
                 mtreeviewitem.Tag = maindep;
                 mtreeviewitem.Header = maindep.Title;
                 if (maindep.ChildDepartments.Count != 0)
@@ -106,18 +108,18 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         if (dep.Users.Count != 0)
                         {
-                            TreeViewItem treeViewItem = new TreeViewItem();
+                            TreeViewItem treeViewItem = new TreeViewItem{ Style = controlStyle };
                             treeViewItem.Tag = dep;
                             treeViewItem.Header = dep.Title;
                             foreach(var emps in dep.Users)
                             {
-                                treeViewItem.Items.Add(new TreeViewItem { Tag = emps, Header = emps.FIO });
+                                treeViewItem.Items.Add(new TreeViewItem { Style = controlStyle, Tag = emps, Header = emps.FIO });
                             }
                             mtreeviewitem.Items.Add(treeViewItem);
                         }
                         else
                         {
-                            mtreeviewitem.Items.Add(new TreeViewItem { Tag = dep, Header = dep.Title });
+                            mtreeviewitem.Items.Add(new TreeViewItem { Style = controlStyle, Tag = dep, Header = dep.Title });
                         }
 
                     }
