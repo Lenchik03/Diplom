@@ -68,7 +68,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Button Content="ggf" HorizontalAlignment="Left" Height="25" Width="49" Command="{Binding TransferClick}"/>
+                                <Button Content="🗘" HorizontalAlignment="Left" Height="25" Width="49" Command="{Binding TransferClick}"/>
                                 <Label Content="Сотрудник" HorizontalAlignment="Center" FontSize="15" Grid.ColumnSpan="3"/>
                                 <Button Content="🗑" Height="25" Width="49" Margin="5" HorizontalAlignment="Center" Grid.Column="1" Command="{Binding DeleteEmployee}" />
                                 <Button Content="✚" Height="25" Width="49" Margin="5" HorizontalAlignment="Left" Grid.Column="2" Command="{Binding NewEmployee}"/>

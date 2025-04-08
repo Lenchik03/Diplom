@@ -163,8 +163,8 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
               BorderBrush="{TemplateBinding BorderBrush}"
               BorderThickness="{TemplateBinding BorderThickness}"
               Padding="{TemplateBinding Padding}">
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox Tag="{Binding}" Checked="CheckedDepartment" Unchecked="UncheckedDepartment"  />
+                                <StackPanel DataContext="{Binding}"  Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Path=DataContext.Selected, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}" Checked="CheckedDepartment" Unchecked="UncheckedDepartment"  />
 
                                     <ContentPresenter x:Name="PART_Header"
                           ContentSource="Header"

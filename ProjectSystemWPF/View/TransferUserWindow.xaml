@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectSystemWPF.View"
+        xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
         Title="TransferUserWindow" Height="500" Width="500"
                     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -12,7 +13,11 @@ TextElement.FontSize="13"
 TextOptions.TextFormattingMode="Ideal"
 TextOptions.TextRenderingMode="Auto"
 Background="{DynamicResource MaterialDesignPaper}"
-FontFamily="{DynamicResource MaterialDesignFont}">
+FontFamily="{DynamicResource MaterialDesignFont}"
+        DataContext="{DynamicResource transferuser}">
+    <Window.Resources>
+        <vm:TransferUserVM x:Key="transferuser"/>
+    </Window.Resources>
     <Grid Background="#FFFDC401">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -20,7 +25,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
         </Grid.ColumnDefinitions>
         <StackPanel>
             <Border BorderBrush="Black" BorderThickness="1" Margin="10,10,10,0">
-                <StackPanel  IsEnabled="{Binding CanEdit}" Background="LightYellow">
+                <StackPanel Background="LightYellow">
                     <Grid Margin="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -30,6 +35,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                         <Label Content="Сотрудник" HorizontalAlignment="Center" FontSize="15" Grid.ColumnSpan="3"/>
 
                     </Grid>
+                    <StackPanel IsEnabled="False">
                     <Label Content="Имя"/>
                     <TextBox Text="{Binding Employee.FirstName}" />
                     <Label Content="Фамилия"/>
@@ -45,7 +51,8 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                     <TextBox Text="{Binding Employee.Phone}" />
                     <Label Content="Должность"/>
                     <TextBox Text="{Binding Employee.Post}"/>
-                    
+                    </StackPanel>
+
 
                 </StackPanel>
             </Border>
@@ -55,11 +62,11 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                 <StackPanel>
                     <StackPanel>
                         <Label Content="Список отделов" HorizontalAlignment="Center"/>
-                        <ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDep}"/>
+                        <ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDep}" DisplayMemberPath="Title"/>
                     </StackPanel>
                     <StackPanel>
                         <Label Content="Назначить в качестве:" HorizontalAlignment="Center"/>
-                        <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}"/>
+                        <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}" DisplayMemberPath="Title"/>
                     </StackPanel>
                     <Button Content="Сохранить" Command="{Binding Save}" Height="25"  Width="110" Margin="7"/>
                 </StackPanel>

@@ -25,6 +25,9 @@ namespace ProjectSystemWPF.View
         public TransferUserWindow(UserDTO user)
         {
             InitializeComponent();
+            (DataContext as TransferUserVM).GetUser(user);
+            (DataContext as TransferUserVM).Loaded += Vm_Loaded;
+            /*
             var vm = new TransferUserVM();
             vm.Loaded += Vm_Loaded;
             if (user != null)
@@ -32,12 +35,12 @@ namespace ProjectSystemWPF.View
                 vm.GetUser(user);
             }
             DataContext = vm;
-           
+            */
         }
         private void Vm_Loaded(object? sender, EventArgs e)
         {
-            var vm = DataContext as SuperUserVM;
-            vm.CreateExpanders();
+            //var vm = DataContext as TransferUserVM;
+            //vm.CreateExpanders();
             
         }
 

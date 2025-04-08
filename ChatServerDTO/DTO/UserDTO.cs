@@ -1,9 +1,14 @@
 ﻿using ProjectSystemAPI.DB;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace ProjectSystemAPI.DTO
 {
-    public partial class UserDTO
+    public partial class UserDTO : INotifyPropertyChanged
     {
+        private bool selected;
+
         public int Id { get; set; }
 
         public string? LastName { get; set; }
@@ -26,6 +31,24 @@ namespace ProjectSystemAPI.DTO
         public DateTime? Birthday { get; set; }
 
         public string? Post { get; set; }
+
+        [JsonIgnore]
+        public bool Selected
+        {
+            get => selected;
+            set
+            {
+                selected = value;
+                Signal();
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void Signal([CallerMemberName] string prop = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
 
         public static explicit operator UserDTO(User from)
         {

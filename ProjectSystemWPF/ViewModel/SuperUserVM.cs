@@ -161,6 +161,7 @@ namespace ProjectSystemWPF.ViewModel
         private Visibility hiddenEditDep;
         private string search;
 
+
         public event EventHandler Loaded;
 
         void SetHiddenButtons()

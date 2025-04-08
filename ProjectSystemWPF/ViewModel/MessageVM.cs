@@ -99,27 +99,27 @@ namespace ProjectSystemWPF.ViewModel
             //TreeViewItem mtreeviewitem;
             foreach (var maindep in MainDepartments)
             {
-                TreeViewItem mtreeviewitem = new TreeViewItem { Style = controlStyle, Background = Brushes.LightYellow};
+                TreeViewItem mtreeviewitem = new TreeViewItem { DataContext = maindep, Style = controlStyle, Background = Brushes.LightYellow};
                 mtreeviewitem.Tag = maindep;
                 mtreeviewitem.Header = maindep.Title;
                 if (maindep.ChildDepartments.Count != 0)
                 {
-                    foreach (var dep in Departments.Where(s => s.IdMainDep == maindep.Id))
+                    foreach (var dep in maindep.ChildDepartments)
                     {
                         if (dep.Users.Count != 0)
                         {
-                            TreeViewItem treeViewItem = new TreeViewItem{ Style = controlStyle };
+                            TreeViewItem treeViewItem = new TreeViewItem{ DataContext = dep, Style = controlStyle };
                             treeViewItem.Tag = dep;
                             treeViewItem.Header = dep.Title;
                             foreach(var emps in dep.Users)
                             {
-                                treeViewItem.Items.Add(new TreeViewItem { Style = controlStyle, Tag = emps, Header = emps.FIO });
+                                treeViewItem.Items.Add(new TreeViewItem { DataContext = emps, Style = controlStyle, Tag = emps, Header = emps.FIO });
                             }
                             mtreeviewitem.Items.Add(treeViewItem);
                         }
                         else
                         {
-                            mtreeviewitem.Items.Add(new TreeViewItem { Style = controlStyle, Tag = dep, Header = dep.Title });
+                            mtreeviewitem.Items.Add(new TreeViewItem { DataContext = dep, Style = controlStyle, Tag = dep, Header = dep.Title });
                         }
 
                     }
@@ -132,7 +132,7 @@ namespace ProjectSystemWPF.ViewModel
                         foreach(var emp in maindep.Users)
                         {
                             if (emp.Id != maindep.IdDirector)
-                                mtreeviewitem.Items.Add(emp);
+                                mtreeviewitem.Items.Add(new TreeViewItem { DataContext = emp, Style = controlStyle, Tag = emp, Header = emp.FIO });
                         }
                     }
                 }
@@ -180,6 +180,11 @@ namespace ProjectSystemWPF.ViewModel
                 //expanderPanel.Children.Add(mdepExp);
             //}
             //return expanderPanel;
+        }
+
+        internal void DoThings(List<UserDTO> selectedUser)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ProjectSystemWPF.ViewModel;
+﻿using ProjectSystemAPI.DTO;
+using ProjectSystemWPF.ViewModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,12 +37,39 @@ namespace ProjectSystemWPF
 
         private void CheckedDepartment(object sender, RoutedEventArgs e)
         {
-
+            SetChecked(sender, true);
         }
-
+       
         private void UncheckedDepartment(object sender, RoutedEventArgs e)
         {
-
+            SetChecked(sender, false);
         }
+
+        private void SetChecked(object sender, bool result)
+        {
+            var tag = ((CheckBox)sender).DataContext;
+            var selectedUser = new List<UserDTO>();
+            if (tag is DepartmentDTO dep)
+            {
+                foreach (var depChild in dep.ChildDepartments)
+                {
+                    depChild.Selected = result;
+                    foreach (var user in depChild.Users)
+                    {
+                        user.Selected = result;
+                        if (result)
+                            selectedUser.Add(user);
+                    }
+                }
+                foreach (var user in dep.Users)
+                {
+                    user.Selected = result;
+                    if (result)
+                        selectedUser.Add(user);
+                }
+                 (DataContext as MessageVM).DoThings(selectedUser);
+            }
+        }
+
     }
 }
