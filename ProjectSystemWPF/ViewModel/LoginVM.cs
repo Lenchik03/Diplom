@@ -91,8 +91,9 @@ namespace ProjectSystemWPF.ViewModel
                             else // открытие страницы руководителя
                             {
                                 //страница отправленных проектов (ты директор)
-                                SuperUserPage superUserPage = new SuperUserPage();
-                                MainVM.Instance.CurrentPage = superUserPage;
+                                //SuperUserPage superUserPage = new SuperUserPage();
+                                ProjectPage projectPage = new ProjectPage();
+                                MainVM.Instance.CurrentPage = projectPage;
                             }
 
                         }
