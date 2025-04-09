@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,14 +29,59 @@ namespace ProjectSystemWPF.ViewModel
             set { employees = value; Signal(); }
 
         }
+        public int CountPart {  get; set; }
+        public Chat Chat { get; set; } = new();       
+
+        public VmCommand NewChat {  get; set; }
         ObservableCollection<DepartmentDTO> allDepartments = new();
         ObservableCollection<UserDTO> allEmployees = new();
+
+        private List<UserDTO> selectedUser = new();
+
+
         public event EventHandler Loaded;
+
+        public Dictionary<int, List<UserDTO>> ChatMembers { get; set; } = new Dictionary<int, List<UserDTO>>();
 
 
         public MessageVM()
         {
             GetLists();
+
+            NewChat = new VmCommand(async () =>
+            {
+                
+                string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
+                var responce = await REST.Instance.client.PostAsync($"Chats",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+                try
+                {
+                    responce.EnsureSuccessStatusCode();
+                    Chat = await responce.Content.ReadFromJsonAsync<Chat>(REST.Instance.options);
+                    //MessageBox.Show("Отдел был добавлен!");
+                }
+                catch (Exception ex)
+                {
+                    //MessageBox.Show("Произошла ошибка. Заполните все данные!");
+                    return;
+                }
+
+                ChatMembers.Add(Chat.Id, selectedUser);
+                string arg1 = JsonSerializer.Serialize(ChatMembers, REST.Instance.options);
+                var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers",
+                    new StringContent(arg1, Encoding.UTF8, "application/json"));
+                try
+                {
+                    responce.EnsureSuccessStatusCode();
+                    //MessageBox.Show("Отдел был добавлен!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Произошла ошибка при добавлении участников!");
+                    return;
+                }
+                ChatMembers.Clear();
+            });
         }
         public async void GetLists()
         {
@@ -83,6 +130,8 @@ namespace ProjectSystemWPF.ViewModel
         }
 
         ObservableCollection<Node> nodes;
+        private Chat chat;
+
         public StackPanel CreateTreeView(NewMessageWindow newMessageWindow)
         {
             StackPanel panel = new StackPanel();
@@ -141,50 +190,11 @@ namespace ProjectSystemWPF.ViewModel
 
             panel.Children.Add(treeview);
             return panel;
-
-
-                
-
-                
-
-
-                //var mdepExp = new Expander { Header = maindep.Title, BorderThickness = new Thickness(2), Background = Brushes.White, BorderBrush = brush };
-                //mdepExp.Tag = maindep;
-                //StackPanel expanderPanel1 = new StackPanel();
-                //foreach (var dep in Departments)
-                //{
-                //    director = allEmployees.FirstOrDefault(s => s.IdDepartment == dep.Id);
-                //    //if (dep.IdDirectorNavigation != null)
-                //    if (director != null)
-                //        header = $"{dep.Title} - {director.FIO}";
-                //    else
-                //        header = dep.Title;
-                //    if (dep.IdMainDep == maindep.Id)
-                //    {
-                //        var depExp = new Expander { Margin = new Thickness(20, 0, 0, 0), Header = header, Background = Brushes.White };
-                //        depExp.PreviewMouseDown += ExpanderClick;
-                //        depExp.Tag = dep;
-                //        var list = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = dep.Users.Where(s => s.IdRole == 3) };
-                //        list.SelectionChanged += UserSelected;
-                //        depExp.Content = list;
-                //        expanderPanel1.Children.Add(depExp);
-                //    }
-                //}
-                //var usersListBox = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3) };
-                //usersListBox.SelectionChanged += UserSelected;
-                //var usersExpander = new Expander { Margin = new Thickness(0, 0, 0, 20), Header = "Сотрудники", Background = Brushes.White, Content = usersListBox };
-                //expanderPanel1.Children.Add(usersExpander);
-                //mdepExp.Content = expanderPanel1;
-
-
-                //expanderPanel.Children.Add(mdepExp);
-            //}
-            //return expanderPanel;
         }
 
-        internal void DoThings(List<UserDTO> selectedUser)
+        internal async System.Threading.Tasks.Task DoThingsAsync(List<UserDTO> selectedUser)
         {
-            throw new NotImplementedException();
+            this.selectedUser = selectedUser;    
         }
     }
 }

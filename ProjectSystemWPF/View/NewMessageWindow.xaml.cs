@@ -67,7 +67,7 @@ namespace ProjectSystemWPF
                     if (result)
                         selectedUser.Add(user);
                 }
-                 (DataContext as MessageVM).DoThings(selectedUser);
+                 (DataContext as MessageVM).DoThingsAsync(selectedUser);
             }
         }
 

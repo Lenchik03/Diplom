@@ -236,7 +236,7 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <StackPanel>
                 
                 <Label Content="Название чата:"/>
-                <TextBox Text="{Binding ChatTitle}" Margin="5"/>
+                <TextBox Text="{Binding Chat.Title}" Margin="5"/>
                 <Button Command="{Binding NewChat}" Content="Создать чат" Width="150" Margin="5"/>
             </StackPanel>
         </Border>

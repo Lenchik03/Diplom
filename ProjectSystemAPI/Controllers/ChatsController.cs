@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 
 namespace ProjectSystemAPI.Controllers
 {
@@ -83,6 +84,20 @@ namespace ProjectSystemAPI.Controllers
             return CreatedAtAction("GetChat", new { id = chat.Id }, chat);
         }
 
+        [HttpPost("AddNewMembers")]
+        public async Task<ActionResult> AddNewMembers(Dictionary<int, List<UserDTO>> chatUsers)
+        {
+            ChatUser chatUser = new ChatUser();
+            
+            var users = chatUsers[0];
+            foreach (var member in users)
+            {
+                chatUser = new ChatUser { IdChat = chatUsers.Keys.First(), IdUser = member.Id };
+                _context.ChatUsers.Add(chatUser);
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
         // DELETE: api/Chats/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteChat(int id)
