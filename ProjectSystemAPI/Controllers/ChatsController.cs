@@ -84,19 +84,37 @@ namespace ProjectSystemAPI.Controllers
             return CreatedAtAction("GetChat", new { id = chat.Id }, chat);
         }
 
-        [HttpPost("AddNewMembers")]
-        public async Task<ActionResult> AddNewMembers(Dictionary<int, List<UserDTO>> chatUsers)
+        [HttpPost("AddNewMembers/{id}")]
+        public async Task<ActionResult> AddNewMembers(int id, [FromBody] List<UserDTO> chatUsers)
         {
             ChatUser chatUser = new ChatUser();
-            
-            var users = chatUsers[0];
-            foreach (var member in users)
+
+            foreach (var member in chatUsers)
             {
-                chatUser = new ChatUser { IdChat = chatUsers.Keys.First(), IdUser = member.Id };
+                chatUser = new ChatUser
+                {
+                    IdChat = id,
+                    IdUser = member.Id,
+                    IdChatNavigation = _context.Chats.Find(id),
+                    IdUserNavigation = _context.Users.Find(member.Id)
+                };
                 _context.ChatUsers.Add(chatUser);
             }
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpPost("FindChat")]
+        public async Task<ActionResult<List<Chat>>> FindChat(string find, int idUser)
+        {
+            List<Chat> chatList = new List<Chat>();
+            chatList.AddRange(_context.Chats.Where(s => s.Title.Contains(find)).AsNoTracking().ToList());
+            chatList = chatList.Union(_context.ChatUsers.Include(s => s.IdUserNavigation).
+                Where(s => s.IdUserNavigation.LastName.Contains(find)).AsNoTracking().ToList().
+                Select(s => _context.Chats.Find(s.IdChat))).ToList();
+
+            chatList.RemoveAll(s => _context.ChatUsers.FirstOrDefault(u => u.IdChat == s.Id && u.IdUser == idUser) == null);
+            return Ok(chatList);
         }
         // DELETE: api/Chats/5
         [HttpDelete("{id}")]

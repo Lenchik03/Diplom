@@ -5,6 +5,8 @@ namespace ProjectSystemAPI.DB;
 
 public partial class ChatUser
 {
+    public int Id { get; set; }
+
     public int IdChat { get; set; }
 
     public int IdUser { get; set; }

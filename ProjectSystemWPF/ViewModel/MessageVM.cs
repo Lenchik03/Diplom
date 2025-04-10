@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,7 +18,7 @@ using System.Xml.Linq;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class MessageVM: BaseVM
+    public class MessageVM : BaseVM
     {
         private ObservableCollection<UserDTO> employees;
         public ObservableCollection<DepartmentDTO> MainDepartments { get; set; } = new();
@@ -29,10 +30,18 @@ namespace ProjectSystemWPF.ViewModel
             set { employees = value; Signal(); }
 
         }
-        public int CountPart {  get; set; }
-        public Chat Chat { get; set; } = new();       
+        public int CountPart
+        {
+            get => countPart;
+            set
+            {
+                countPart = value;
+                Signal();
+            }
+        }
+        public Chat Chat { get; set; } = new();
 
-        public VmCommand NewChat {  get; set; }
+        public VmCommand NewChat { get; set; }
         ObservableCollection<DepartmentDTO> allDepartments = new();
         ObservableCollection<UserDTO> allEmployees = new();
 
@@ -41,16 +50,13 @@ namespace ProjectSystemWPF.ViewModel
 
         public event EventHandler Loaded;
 
-        public Dictionary<int, List<UserDTO>> ChatMembers { get; set; } = new Dictionary<int, List<UserDTO>>();
-
-
         public MessageVM()
         {
             GetLists();
 
             NewChat = new VmCommand(async () =>
             {
-                
+
                 string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
                 var responce = await REST.Instance.client.PostAsync($"Chats",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -66,9 +72,9 @@ namespace ProjectSystemWPF.ViewModel
                     return;
                 }
 
-                ChatMembers.Add(Chat.Id, selectedUser);
-                string arg1 = JsonSerializer.Serialize(ChatMembers, REST.Instance.options);
-                var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers",
+                selectedUser.Add(ActiveUser.GetInstance().User);
+                string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
+                var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
                     new StringContent(arg1, Encoding.UTF8, "application/json"));
                 try
                 {
@@ -80,12 +86,14 @@ namespace ProjectSystemWPF.ViewModel
                     MessageBox.Show("Произошла ошибка при добавлении участников!");
                     return;
                 }
-                ChatMembers.Clear();
+                newMessageWindow.Close();
             });
+            
+
         }
         public async void GetLists()
         {
-            
+
             try
             {
                 var result = await REST.Instance.client.GetAsync("Departments");
@@ -131,16 +139,11 @@ namespace ProjectSystemWPF.ViewModel
 
         ObservableCollection<Node> nodes;
         private Chat chat;
+        private int countPart;
 
         public StackPanel CreateTreeView(NewMessageWindow newMessageWindow)
         {
             StackPanel panel = new StackPanel();
-            var header = "";
-            var mheader = "";
-            var muser = new UserDTO();
-            var user = new UserDTO();
-            var mdirector = new UserDTO();
-            var director = new UserDTO();
             var treeview = new TreeView();
 
             var controlStyle = newMessageWindow.FindResource("treeView") as Style;
@@ -148,19 +151,27 @@ namespace ProjectSystemWPF.ViewModel
             //TreeViewItem mtreeviewitem;
             foreach (var maindep in MainDepartments)
             {
-                TreeViewItem mtreeviewitem = new TreeViewItem { DataContext = maindep, Style = controlStyle, Background = Brushes.LightYellow};
+                TreeViewItem mtreeviewitem = new TreeViewItem { DataContext = maindep, Style = controlStyle, Background = Brushes.LightYellow };
                 mtreeviewitem.Tag = maindep;
                 mtreeviewitem.Header = maindep.Title;
+                if (maindep.Users.Count != 0)
+                {
+                    foreach (var emp in maindep.Users.Where(s => s.IdRole != 4))
+                    {
+                        if (emp.Id != maindep.IdDirector)
+                            mtreeviewitem.Items.Add(new TreeViewItem { DataContext = emp, Style = controlStyle, Tag = emp, Header = emp.FIO });
+                    }
+                }
                 if (maindep.ChildDepartments.Count != 0)
                 {
                     foreach (var dep in maindep.ChildDepartments)
                     {
                         if (dep.Users.Count != 0)
                         {
-                            TreeViewItem treeViewItem = new TreeViewItem{ DataContext = dep, Style = controlStyle };
+                            TreeViewItem treeViewItem = new TreeViewItem { DataContext = dep, Style = controlStyle };
                             treeViewItem.Tag = dep;
                             treeViewItem.Header = dep.Title;
-                            foreach(var emps in dep.Users)
+                            foreach (var emps in dep.Users.Where(s => s.IdRole != 4))
                             {
                                 treeViewItem.Items.Add(new TreeViewItem { DataContext = emps, Style = controlStyle, Tag = emps, Header = emps.FIO });
                             }
@@ -176,9 +187,9 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
-                    if(maindep.Users.Count != 0)
+                    if (maindep.Users.Count != 0)
                     {
-                        foreach(var emp in maindep.Users)
+                        foreach (var emp in maindep.Users.Where(s => s.IdRole != 4))
                         {
                             if (emp.Id != maindep.IdDirector)
                                 mtreeviewitem.Items.Add(new TreeViewItem { DataContext = emp, Style = controlStyle, Tag = emp, Header = emp.FIO });
@@ -192,9 +203,18 @@ namespace ProjectSystemWPF.ViewModel
             return panel;
         }
 
-        internal async System.Threading.Tasks.Task DoThingsAsync(List<UserDTO> selectedUser)
+        internal async System.Threading.Tasks.Task DoThingsAsync(List<UserDTO> selectedUser, bool result)
         {
-            this.selectedUser = selectedUser;    
+            if (result)
+                this.selectedUser = this.selectedUser.Union(selectedUser).ToList();
+            else
+                this.selectedUser = this.selectedUser.Except(selectedUser).ToList();
+            CountPart = this.selectedUser.Count;
+        }
+        NewMessageWindow newMessageWindow;
+        internal void SetWindow(NewMessageWindow newMessageWindow)
+        {
+            this.newMessageWindow = newMessageWindow;
         }
     }
 }
