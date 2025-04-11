@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
         DataContext="{DynamicResource mainVM}"
-        Title="MainWindow" Height="800" Width="1200">
+        Title="" Height="800" Width="1200">
     <Window.Resources>
         <vm:MainVM x:Key="mainVM"/>
         <Storyboard x:Key="MenuOpen">
@@ -52,8 +52,8 @@
             <Image Source="/View/header.png"/>
             <Button Content="Гланвая"/>
             <Button Content="Мои проекты"/>
-            <Button Content="Сотрудники"/>
-            <Button Content="Профиль"/>
+            <Button Content="Сотрудники" Command="{Binding OpenEmployeesClick}"/>
+            <Button Content="Профиль" Command="{Binding OpenProfileClick}"/>
         </StackPanel>
         <Image Grid.Column="1" Source="/View/logo.png" Width="Auto" Height="60" HorizontalAlignment="Stretch"/>
         <Menu HorizontalAlignment="Right" Grid.ColumnSpan="2">

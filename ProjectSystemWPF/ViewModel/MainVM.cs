@@ -38,6 +38,8 @@ namespace ProjectSystemWPF.ViewModel
 
         //public VmCommand Search { get; set; }
         public VmCommand SignOut { get; set; }
+        public VmCommand OpenEmployeesClick { get; set; }
+        public VmCommand OpenProfileClick { get; set; }
         //public VmCommand MainPage { get; set; }
 
         public MainVM()
@@ -55,6 +57,14 @@ namespace ProjectSystemWPF.ViewModel
             {
                 ActiveUser.GetInstance().User = null;
                 CurrentPage = new LoginPage();
+            });
+            OpenEmployeesClick = new VmCommand(() =>
+            {
+                CurrentPage = new SuperUserPage();
+            });
+            OpenProfileClick = new VmCommand(async () =>
+            {
+                CurrentPage = new NewUserPage();
             });
 
             //MainPage = new VmCommand(() =>

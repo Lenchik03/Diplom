@@ -1,28 +1,52 @@
-﻿<Window x:Class="ProjectSystemWPF.View.NewUserPage"
+﻿<Page x:Class="ProjectSystemWPF.View.NewUserPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectSystemWPF.View"
+        xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
-        Title="Новый сотрудник" Height="450" Width="600"
-        Style="{StaticResource MaterialDesignWindow}">
-    
-    <StackPanel Margin="20">
+        Title="Ваш профиль" Height="600" Width="600"
+                    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+TextElement.FontWeight="Regular"
+TextElement.FontSize="13"
+TextOptions.TextFormattingMode="Ideal"
+TextOptions.TextRenderingMode="Auto"
+FontFamily="{DynamicResource MaterialDesignFont}"
+        Background="#FFFDC401"
+        DataContext="{DynamicResource profileVM}">
+    <Page.Resources>
+        <vm:ProfileVM x:Key="profileVM"/>
+    </Page.Resources>
+    <Border Background="LightYellow" Margin="20" BorderBrush="Black" BorderThickness="1">
+    <StackPanel >
+        <Label Content="Ваш профиль" HorizontalAlignment="Center" FontWeight="Bold" FontSize="25"/> 
         <Label Content="Имя"/>
-        <TextBox Text="{Binding User.FirstName}"/>
+        <TextBox Text="{Binding User.FirstName}" IsEnabled="False"/>
         <Label Content="Фамилия"/>
-        <TextBox Text="{Binding User.LastName}"/>
+        <TextBox Text="{Binding User.LastName}" IsEnabled="False"/>
         <Label Content="Отчество"/>
-        <TextBox Text="{Binding User.Patronymic}"/>
-        <Label Content="Дата рождения"/>
-        <TextBox Text=""/>
+            <TextBox Text="{Binding User.Patronymic}" IsEnabled="False"/>
+            
+            
+            <Label Content="Дата рождения" />
+        <DatePicker SelectedDate="{Binding User.Birthday}" IsEnabled="False"/>
         <Label Content="Эл.почта"/>
         <TextBox Text="{Binding User.Email}"/>
         <Label Content="Должность"/>
-        <TextBox Text=""/>
+        <TextBox Text="{Binding User.Post}" IsEnabled="False"/>
         <Label Content="Номер телефона"/>
-        <TextBox Text="{Binding Phone}"/>
-        <Button Content="Сохранить" Command="Save" Width="110" Margin="0,10,0,0"/>
+        <TextBox Text="{Binding User.Phone}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Пароль" Margin="0,0,0,10"/>
+                <Button Content="Изменить" Command="{Binding ResetPassword}" Padding="5" Height="30" Width="80" Grid.Column="1" Margin="2"/>
+                <Border BorderBrush="Black" BorderThickness="0.1" VerticalAlignment="Bottom" Margin="0,50,0,0"/>
+            </Grid>
+            <Button Content="Сохранить" Command="{Binding Save}" Width="110" Margin="0,10,0,0"/>
     </StackPanel>
-</Window>
+    </Border>
+</Page>

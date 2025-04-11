@@ -17,7 +17,7 @@ namespace ProjectSystemWPF.View
     /// <summary>
     /// Логика взаимодействия для NewUserPage.xaml
     /// </summary>
-    public partial class NewUserPage : Window
+    public partial class NewUserPage : Page
     {
         public NewUserPage()
         {

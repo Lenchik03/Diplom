@@ -137,7 +137,7 @@ namespace ProjectSystemWPF.ViewModel
             Loaded?.Invoke(this, null);
         }
 
-        ObservableCollection<Node> nodes;
+       
         private Chat chat;
         private int countPart;
 
