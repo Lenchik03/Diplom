@@ -5,6 +5,8 @@ namespace ProjectSystemAPI.DB;
 
 public partial class TaskForUser
 {
+    public int Id { get; set; }
+
     public int IdTask { get; set; }
 
     public int IdUser { get; set; }

@@ -15,6 +15,10 @@ public partial class Message
 
     public bool? IsReadIt { get; set; }
 
+    public byte[]? Document { get; set; }
+
+    public string? DocumentTitle { get; set; }
+
     public virtual Chat IdChatNavigation { get; set; } = null!;
 
     public virtual User IdSenderNavigation { get; set; } = null!;

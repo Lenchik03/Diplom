@@ -27,6 +27,8 @@ public partial class User
 
     public string Post { get; set; } = null!;
 
+    public virtual ICollection<ChatUser> ChatUsers { get; set; } = new List<ChatUser>();
+
     public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
 
     public virtual Department IdDepartmentNavigation { get; set; } = null!;
@@ -34,4 +36,8 @@ public partial class User
     public virtual Role IdRoleNavigation { get; set; } = null!;
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+
+    public virtual ICollection<TaskForUser> TaskForUsers { get; set; } = new List<TaskForUser>();
+
+    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 }

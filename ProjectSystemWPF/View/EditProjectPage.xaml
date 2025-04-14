@@ -18,7 +18,7 @@
                 <TextBox Text="{Binding Project.Description}" Height="100"/>
                 <Label Content="Дедлайн"/>
                 <DatePicker SelectedDate="{Binding Project.CompletionDate}" Language="ru"/>
-                <Button Content="Сохранить" Height="30" Width="110" Margin="20"/>
+                <Button Content="Сохранить" Height="30" Width="110" Margin="20" Command="{Binding Save}"/>
             </StackPanel>
             </StackPanel>
         </Border>

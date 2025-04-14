@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ProjectPage">
+      Title="Главная страница">
 
     <Grid Background="#FFFDC401">
         <Grid.ColumnDefinitions>

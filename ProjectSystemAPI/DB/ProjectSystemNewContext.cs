@@ -39,7 +39,7 @@ public partial class ProjectSystemNewContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySql("server=192.168.200.13;user=student;password=student;database=ProjectSystemNew", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.39-mariadb"));
-    //95.154.107.102
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -51,6 +51,7 @@ public partial class ProjectSystemNewContext : DbContext
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.ImagePath).HasColumnType("blob");
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''");
@@ -64,6 +65,9 @@ public partial class ProjectSystemNewContext : DbContext
 
             entity.HasIndex(e => e.IdUser, "FK_ChatUsers_Users_Id");
 
+            entity.Property(e => e.Id)
+                .HasColumnType("int(11)")
+                .HasColumnName("id");
             entity.Property(e => e.IdChat)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_chat");
@@ -71,12 +75,12 @@ public partial class ProjectSystemNewContext : DbContext
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_user");
 
-            entity.HasOne(d => d.IdChatNavigation).WithMany()
+            entity.HasOne(d => d.IdChatNavigation).WithMany(p => p.ChatUsers)
                 .HasForeignKey(d => d.IdChat)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ChatUsers_Chats_Id");
 
-            entity.HasOne(d => d.IdUserNavigation).WithMany()
+            entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.ChatUsers)
                 .HasForeignKey(d => d.IdUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ChatUsers_Users_Id");
@@ -119,6 +123,10 @@ public partial class ProjectSystemNewContext : DbContext
             entity.HasIndex(e => e.IdSender, "FK_Messages_Users_Id");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Document).HasColumnName("document");
+            entity.Property(e => e.DocumentTitle)
+                .HasMaxLength(255)
+                .HasColumnName("documentTitle");
             entity.Property(e => e.IdChat)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_chat");
@@ -186,20 +194,17 @@ public partial class ProjectSystemNewContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
+            entity.HasIndex(e => e.IdCreator, "FK_TasksCreator_Users_Id");
+
             entity.HasIndex(e => e.IdProject, "FK_Tasks_Projects_Id");
 
             entity.HasIndex(e => e.IdStatus, "FK_Tasks_Statuses_Id");
-
-            entity.HasIndex(e => e.IdExecutor, "FK_Tasks_Users_Id");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.IdCreator)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_creator");
-            entity.Property(e => e.IdExecutor)
-                .HasColumnType("int(11)")
-                .HasColumnName("Id_executor");
             entity.Property(e => e.IdProject)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_project");
@@ -209,6 +214,11 @@ public partial class ProjectSystemNewContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''");
+
+            entity.HasOne(d => d.IdCreatorNavigation).WithMany(p => p.Tasks)
+                .HasForeignKey(d => d.IdCreator)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TasksCreator_Users_Id");
 
             entity.HasOne(d => d.IdProjectNavigation).WithMany(p => p.Tasks)
                 .HasForeignKey(d => d.IdProject)
@@ -223,12 +233,15 @@ public partial class ProjectSystemNewContext : DbContext
 
         modelBuilder.Entity<TaskForUser>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.HasIndex(e => e.IdTask, "FK_TaskForUsers_Tasks_Id");
 
             entity.HasIndex(e => e.IdUser, "FK_TaskForUsers_Users_Id");
 
+            entity.Property(e => e.Id)
+                .HasColumnType("int(11)")
+                .HasColumnName("id");
             entity.Property(e => e.IdTask)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_task");
@@ -236,12 +249,12 @@ public partial class ProjectSystemNewContext : DbContext
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_user");
 
-            entity.HasOne(d => d.IdTaskNavigation).WithMany()
+            entity.HasOne(d => d.IdTaskNavigation).WithMany(p => p.TaskForUsers)
                 .HasForeignKey(d => d.IdTask)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TaskForUsers_Tasks_Id");
 
-            entity.HasOne(d => d.IdUserNavigation).WithMany()
+            entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.TaskForUsers)
                 .HasForeignKey(d => d.IdUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TaskForUsers_Users_Id");
@@ -256,7 +269,9 @@ public partial class ProjectSystemNewContext : DbContext
             entity.HasIndex(e => e.IdRole, "FK_Users_Roles_Id");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
-            entity.Property(e => e.Birthday).HasColumnName("birthday");
+            entity.Property(e => e.Birthday)
+                .HasColumnType("datetime")
+                .HasColumnName("birthday");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("''");
