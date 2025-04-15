@@ -27,6 +27,7 @@ namespace ProjectSystemAPI.Controllers
             return await _context.Messages.ToListAsync();
         }
 
+
         // GET: api/Messages/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Message>> GetMessage(int id)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ProjectSystemAPI.DB;
 
@@ -18,7 +19,7 @@ public partial class Task
     public int IdCreator { get; set; }
 
     public virtual User IdCreatorNavigation { get; set; } = null!;
-
+ 
     public virtual Project IdProjectNavigation { get; set; } = null!;
 
     public virtual Status IdStatusNavigation { get; set; } = null!;

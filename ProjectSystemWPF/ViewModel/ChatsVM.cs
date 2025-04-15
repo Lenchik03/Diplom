@@ -13,12 +13,14 @@ using System.Windows;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class ChatsVM: BaseVM
+    public class ChatsVM : BaseVM
     {
-        public VmCommand NewChat {  get; set; }
-        public string SearchText 
-        { get => searchText;
-            set { 
+        public VmCommand NewChat { get; set; }
+        public string SearchText
+        {
+            get => searchText;
+            set
+            {
                 searchText = value;
                 FindChatAsync();
             }
@@ -27,7 +29,7 @@ namespace ProjectSystemWPF.ViewModel
         public Chat Chat { get; set; } = new Chat();
         public int CountMess { get; set; }
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>();
-        public Message Message { get; set; } = new Message();   
+        public Message Message { get; set; } = new Message();
         public UserDTO Sender { get; set; }
         public string Text { get; set; }
         public VmCommand AttachFile { get; set; }
@@ -58,21 +60,26 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void FindChatAsync()
         {
-            string arg = JsonSerializer.Serialize(SearchText, REST.Instance.options);
-            var responce = await REST.Instance.client.PutAsync($"FindChat/{ActiveUser.GetInstance().User.Id}",
-                new StringContent(arg, Encoding.UTF8, "application/json"));
-            try
+            if (SearchText.Length > 3)
             {
-                responce.EnsureSuccessStatusCode();
-                Chats = await responce.Content.ReadFromJsonAsync<ObservableCollection<Chat>>(REST.Instance.options);
-                //MessageBox.Show("Отдел успешно обновлен!");
+                string arg = JsonSerializer.Serialize(SearchText, REST.Instance.options);
+                var responce = await REST.Instance.client.PutAsync($"FindChat/{ActiveUser.GetInstance().User.Id}",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+                try
+                {
+                    responce.EnsureSuccessStatusCode();
+                    Chats = await responce.Content.ReadFromJsonAsync<ObservableCollection<Chat>>(REST.Instance.options);
+                    //MessageBox.Show("Отдел успешно обновлен!");
 
+                }
+                catch (Exception ex)
+                {
+                    //MessageBox.Show("Ошибка! Обновление отдела приостановлено!");
+                    return;
+                }
             }
-            catch (Exception ex)
-            {
-                //MessageBox.Show("Ошибка! Обновление отдела приостановлено!");
-                return;
-            }
+
+
         }
 
         public async void GetLists()

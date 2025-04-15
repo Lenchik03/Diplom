@@ -18,7 +18,7 @@ namespace ProjectSystemWPF.View
     /// <summary>
     /// Логика взаимодействия для EditTaskPage.xaml
     /// </summary>
-    public partial class EditTaskPage : Page
+    public partial class EditTaskPage : Window
     {
         public EditTaskPage()
         {

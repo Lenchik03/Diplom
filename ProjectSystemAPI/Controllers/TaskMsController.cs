@@ -1,107 +1,133 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using ProjectSystemAPI.DB;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ChatServerDTO.DTO;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProjectSystemAPI.DB;
+using Task = ProjectSystemAPI.DB.Task;
 
-//namespace ProjectSystemAPI.Controllers
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class TaskMsController : ControllerBase
-//    {
-//        private readonly ProjectSystemNewContext _context;
+namespace ProjectSystemAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TaskMsController : ControllerBase
+    {
+        private readonly ProjectSystemNewContext _context;
 
-//        public TaskMsController(ProjectSystemNewContext context)
-//        {
-//            _context = context;
-//        }
+        public TaskMsController(ProjectSystemNewContext context)
+        {
+            _context = context;
+        }
 
-//        // GET: api/TaskMs
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<TaskM>>> GetTasks()
-//        {
-//            return await _context.Tasks.ToListAsync();
-//        }
 
-//        // GET: api/TaskMs/5
-//        [HttpGet("{id}")]
-//        public async Task<ActionResult<TaskM>> GetTaskM(int id)
-//        {
-//            var taskM = await _context.Tasks.FindAsync(id);
+        [HttpGet("My/{idUser}")]
+        public async Task<ActionResult<IEnumerable<TaskDTO>>> GetMyTasks(int idUser)
+        {
+            var list = _context.Tasks.Include(d=>d.TaskForUsers)
+                .Where(s=>s.TaskForUsers.FirstOrDefault(u=>u.Id == idUser) != null)
+                .ToList();
+            //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
+            return Ok(list);
+        }
 
-//            if (taskM == null)
-//            {
-//                return NotFound();
-//            }
+        [HttpGet("MyProject/{idUser}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjects(int idUser)
+        {
+            var list = _context.Tasks.Include(d => d.TaskForUsers)
+                .Where(s => s.TaskForUsers.FirstOrDefault(u => u.Id == idUser) != null)
+                .Select(s=>s.IdProject).Distinct().ToList();
+            var result = _context.Projects.Where(s=>list.Contains(s.Id)).ToList();
+            //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
+            return Ok(result);
+        }
 
-//            return taskM;
-//        }
+        // GET: api/TaskMs
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TaskDTO>>> GetTasks()
+        {
+            var lists = await _context.Tasks.Include(s => s.IdProjectNavigation).Include(s => s.IdCreatorNavigation).Include(s => s.IdStatusNavigation).ToListAsync();
+            return Ok(lists.Select(s => (TaskDTO)s));
+            
+        }
 
-//        // PUT: api/TaskMs/5
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPut("{id}")]
-//        public async Task<IActionResult> PutTaskM(int id, TaskM taskM)
-//        {
-//            if (id != taskM.Id)
-//            {
-//                return BadRequest();
-//            }
+        // GET: api/TaskMs/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TaskDTO>> GetTaskM(int id)
+        {
+            var taskM = await _context.Tasks.FindAsync(id);
 
-//            _context.Entry(taskM).State = EntityState.Modified;
+            if (taskM == null)
+            {
+                return NotFound();
+            }
 
-//            try
-//            {
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (DbUpdateConcurrencyException)
-//            {
-//                if (!TaskMExists(id))
-//                {
-//                    return NotFound();
-//                }
-//                else
-//                {
-//                    throw;
-//                }
-//            }
+            return (TaskDTO)taskM;
+        }
 
-//            return NoContent();
-//        }
+        // PUT: api/TaskMs/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTaskM(int id, TaskDTO taskM)
+        {
+            if (id != taskM.Id)
+            {
+                return BadRequest();
+            }
 
-//        // POST: api/TaskMs
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPost]
-//        public async Task<ActionResult<TaskM>> PostTaskM(TaskM taskM)
-//        {
-//            _context.Tasks.Add(taskM);
-//            await _context.SaveChangesAsync();
+            _context.Entry((TaskDTO)taskM).State = EntityState.Modified;
 
-//            return CreatedAtAction("GetTaskM", new { id = taskM.Id }, taskM);
-//        }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TaskMExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-//        // DELETE: api/TaskMs/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> DeleteTaskM(int id)
-//        {
-//            var taskM = await _context.Tasks.FindAsync(id);
-//            if (taskM == null)
-//            {
-//                return NotFound();
-//            }
+            return NoContent();
+        }
 
-//            _context.Tasks.Remove(taskM);
-//            await _context.SaveChangesAsync();
+        // POST: api/TaskMs
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Task>> PostTaskM(TaskDTO taskM)
+        {
+            _context.Tasks.Add((Task)taskM);
+            await _context.SaveChangesAsync();
 
-//            return NoContent();
-//        }
+            return CreatedAtAction("GetTaskM", new { id = taskM.Id }, taskM);
+        }
 
-//        private bool TaskMExists(int id)
-//        {
-//            return _context.Tasks.Any(e => e.Id == id);
-//        }
-//    }
-//}
+        // DELETE: api/TaskMs/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTaskM(int id)
+        {
+            var taskM = await _context.Tasks.FindAsync(id);
+            if (taskM == null)
+            {
+                return NotFound();
+            }
+
+            _context.Tasks.Remove(taskM);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool TaskMExists(int id)
+        {
+            return _context.Tasks.Any(e => e.Id == id);
+        }
+    }
+}

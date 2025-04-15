@@ -51,7 +51,7 @@
         <StackPanel Visibility="{Binding ViewSignOut}" Grid.Row="1" Width="0" x:Name="menu">
             <Image Source="/View/header.png"/>
             <Button Content="Гланвая"/>
-            <Button Content="Мои проекты"/>
+            <Button Content="Мои проекты" Command="{Binding OpenProjectClick}"/>
             <Button Content="Сотрудники" Command="{Binding OpenEmployeesClick}"/>
             <Button Content="Чаты" Command="{Binding OpenChatsClick}"/>
             <Button Content="Профиль" Command="{Binding OpenProfileClick}"/>

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 
 namespace ProjectSystemAPI.Controllers
 {
@@ -22,14 +24,17 @@ namespace ProjectSystemAPI.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
         {
-            return await _context.Projects.ToListAsync();
+            var projects = await _context.Projects.Include(s => s.Tasks).ToListAsync();
+            return Ok(projects.Select(s => (ProjectDTO)s));
         }
+
+        
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
 
@@ -38,20 +43,20 @@ namespace ProjectSystemAPI.Controllers
                 return NotFound();
             }
 
-            return project;
+            return (ProjectDTO)project;
         }
 
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, Project project)
+        public async Task<IActionResult> PutProject(int id, ProjectDTO project)
         {
             if (id != project.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(project).State = EntityState.Modified;
+            _context.Entry((Project)project).State = EntityState.Modified;
 
             try
             {
@@ -75,9 +80,9 @@ namespace ProjectSystemAPI.Controllers
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        public async Task<ActionResult<ProjectDTO>> PostProject(ProjectDTO project)
         {
-            _context.Projects.Add(project);
+            _context.Projects.Add((Project)project);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProject", new { id = project.Id }, project);

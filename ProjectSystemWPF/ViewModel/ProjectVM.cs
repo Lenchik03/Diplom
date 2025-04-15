@@ -1,32 +1,101 @@
-﻿using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
+using ProjectSystemWPF.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using Task = ProjectSystemAPI.DB.Task;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class ProjectVM
+    public class ProjectVM: BaseVM
     {
         public VmCommand DeleteProject {  get; set; }
         public VmCommand NewProject { get; set; }
-        public ObservableCollection<Project> Projects { get; set; }
-        public Project Project { get; set; }
+        public ObservableCollection<ProjectDTO> Projects 
+        { 
+            get => projects1;
+            set { projects1 = value;
+                Signal();
+            }
+        }
+        public ProjectDTO Project 
+        { get => project;
+            set { project = value;
+                Signal();
+            }
+        }
         public VmCommand DeleteTask { get; set; }
         public VmCommand NewTask { get; set; }
-        public ObservableCollection<Task> Tasks { get; set; }
-        public Task SelectedTask { get; set; }
+        public ObservableCollection<TaskDTO> Tasks 
+        { get => tasks1;
+            set { tasks1 = value;
+                Signal();
+            }
+        }
+        public Task SelectedTask 
+        { get => selectedTask;
+            set { selectedTask = value;
+                Signal();
+            }
+        }
         public string Executor { get; set; }
-        public string Status { get; set; }
+        ObservableCollection<ProjectDTO> projects = new ObservableCollection<ProjectDTO>(); 
+        ObservableCollection<TaskDTO> tasks = new ObservableCollection<TaskDTO>();
+        private ObservableCollection<ProjectDTO> projects1;
+        private ObservableCollection<TaskDTO> tasks1;
+        private ProjectDTO project;
+        private Task selectedTask;
 
         public ProjectVM()
         {
+            GetLists();
             NewProject = new VmCommand(async () =>
             {
-
+                EditProjectPage editProjectPage = new EditProjectPage();
+                editProjectPage.ShowDialog();
             });
+        }
+
+        public async System.Threading.Tasks.Task GetLists()
+        {
+            var result = await REST.Instance.client.GetAsync("Projects");
+            //todo not ok
+
+            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
+            }
+            
+            Projects = new ObservableCollection<ProjectDTO>(projects);
+
+            var result1 = await REST.Instance.client.GetAsync($"TaskMs/My/{ActiveUser.GetInstance().User.Id}");
+            //todo not ok
+
+            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                tasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
+            }
+
+            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id && s.IdStatus != 4 && s.IdStatus !=3 ));
+            
+        }
+
+        internal void Select(ProjectDTO p)
+        {
+            throw new NotImplementedException();
         }
     }
 }

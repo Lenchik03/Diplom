@@ -22,7 +22,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         // GET: api/Chats
-        [HttpGet("{idUser}")]
+        [HttpGet("My/{idUser}")]
         public async Task<ActionResult<IEnumerable<Chat>>> GetChats(int idUser)
         {
             var list = _context.Chats.ToList();

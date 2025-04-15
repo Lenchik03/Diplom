@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemAPI.DB;
+using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +26,14 @@ namespace ProjectSystemWPF.View
         public ProjectPage()
         {
             InitializeComponent();
+        }
+
+        private void EditProjectClick(object sender, MouseButtonEventArgs e)
+        {
+            var list = sender as ListBox;
+            var  p = list.SelectedItem as ProjectDTO;
+            if (p != null)
+                ((ProjectVM)DataContext).Select(p);
         }
     }
 }
