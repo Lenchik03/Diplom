@@ -4,10 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
+      xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Главная страница">
+      Title="Главная страница"
+      DataContext="{DynamicResource projectVM}">
 
+    <Page.Resources>
+        <vm:ProjectVM x:Key="projectVM"/>
+    </Page.Resources>
     <Grid Background="#FFFDC401">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -22,8 +27,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="ПРОЕКТЫ" Grid.ColumnSpan="3" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
-                    <Button Content="🗑" Height="26" Width="49" Margin="5" HorizontalAlignment="Center" Grid.Column="1" Command="{Binding DeleteEmployee}" />
-                    <Button Content="✚" Height="26" Width="49" Margin="5" HorizontalAlignment="Left" Grid.Column="2" Command="{Binding NewEmployee}"/>
+                    <Button Content="🗑" Height="26" Width="49" Margin="5" HorizontalAlignment="Center" Grid.Column="1" Command="{Binding DeleteProject}" Cursor="Hand" />
+                    <Button Content="✚" Height="26" Width="49" Margin="5" HorizontalAlignment="Left" Grid.Column="2" Command="{Binding NewProject}"/>
 
                 </Grid>
                 
@@ -53,8 +58,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="ЗАДАЧИ" Grid.ColumnSpan="3" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
-                    <Button Content="🗑" Height="26" Width="49" Margin="5" HorizontalAlignment="Center" Grid.Column="1" Command="{Binding DeleteEmployee}" />
-                    <Button Content="✚" Height="26" Width="49" Margin="5" HorizontalAlignment="Left" Grid.Column="2" Command="{Binding NewEmployee}"/>
+                    <Button Content="🗑" Height="26" Width="49" Margin="5" HorizontalAlignment="Center" Grid.Column="1" Command="{Binding DeleteTask}" />
+                    <Button Content="✚" Height="26" Width="49" Margin="5" HorizontalAlignment="Left" Grid.Column="2" Command="{Binding NewTask}"/>
 
                 </Grid>
                 <ScrollViewer>

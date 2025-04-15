@@ -53,6 +53,7 @@
             <Button Content="Гланвая"/>
             <Button Content="Мои проекты"/>
             <Button Content="Сотрудники" Command="{Binding OpenEmployeesClick}"/>
+            <Button Content="Чаты" Command="{Binding OpenChatsClick}"/>
             <Button Content="Профиль" Command="{Binding OpenProfileClick}"/>
         </StackPanel>
         <Image Grid.Column="1" Source="/View/logo.png" Width="Auto" Height="60" HorizontalAlignment="Stretch"/>

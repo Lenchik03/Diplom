@@ -40,6 +40,7 @@ namespace ProjectSystemWPF.ViewModel
         public VmCommand SignOut { get; set; }
         public VmCommand OpenEmployeesClick { get; set; }
         public VmCommand OpenProfileClick { get; set; }
+        public VmCommand OpenChatsClick { get; set; }
         //public VmCommand MainPage { get; set; }
 
         public MainVM()
@@ -67,6 +68,10 @@ namespace ProjectSystemWPF.ViewModel
                 CurrentPage = new NewUserPage();
             });
 
+            OpenChatsClick = new VmCommand(async () =>
+            {
+                CurrentPage = new ChatsPage();
+            });
             //MainPage = new VmCommand(() =>
             //{
             //    CurrentPage = new DirectorPage();

@@ -22,10 +22,12 @@ namespace ProjectSystemAPI.Controllers
         }
 
         // GET: api/Chats
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Chat>>> GetChats()
+        [HttpGet("{idUser}")]
+        public async Task<ActionResult<IEnumerable<Chat>>> GetChats(int idUser)
         {
-            return await _context.Chats.ToListAsync();
+            var list = _context.Chats.ToList();
+            list.RemoveAll(s => _context.ChatUsers.FirstOrDefault(u => u.IdChat == s.Id && u.IdUser == idUser) == null);
+            return Ok(list);
         }
 
         // GET: api/Chats/5
@@ -104,7 +106,7 @@ namespace ProjectSystemAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("FindChat")]
+        [HttpPost("FindChat/{idUser}")]
         public async Task<ActionResult<List<Chat>>> FindChat(string find, int idUser)
         {
             List<Chat> chatList = new List<Chat>();
