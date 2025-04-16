@@ -25,10 +25,31 @@ namespace ProjectSystemWPF.ViewModel
                 FindChatAsync();
             }
         }
-        public ObservableCollection<Chat> Chats { get; set; } = new ObservableCollection<Chat>();
-        public Chat Chat { get; set; } = new Chat();
+        public ObservableCollection<Chat> Chats
+        {
+            get => chats;
+            set { chats = value;
+                Signal();
+            }
+        }
+        public Chat Chat 
+        { get => chat;
+            set { chat = value;
+                Signal();
+                if (chat != null)
+                    GetMessage();
+            }
+        }
         public int CountMess { get; set; }
-        public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>();
+        public ObservableCollection<Message> Messages
+        {
+            get => messages;
+            set { messages = value;
+                Signal();
+            }
+
+        }
+
         public Message Message { get; set; } = new Message();
         public UserDTO Sender { get; set; }
         public string Text { get; set; }
@@ -38,10 +59,14 @@ namespace ProjectSystemWPF.ViewModel
         public ObservableCollection<Chat> allChats = new ObservableCollection<Chat>();
         public ObservableCollection<Message> allMessages = new ObservableCollection<Message>();
         private string searchText;
+        private Chat chat = new Chat();
+        private ObservableCollection<Chat> chats = new ObservableCollection<Chat>();
+        private ObservableCollection<Message> messages = new ObservableCollection<Message>();
 
         public ChatsVM()
         {
-            GetLists();
+            GetChats();
+            GetMessage();
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow();
@@ -83,7 +108,7 @@ namespace ProjectSystemWPF.ViewModel
 
         }
 
-        public async void GetLists()
+        public async void GetMessage()
         {
             var result = await REST.Instance.client.GetAsync("Messages");
             //todo not ok
@@ -99,6 +124,12 @@ namespace ProjectSystemWPF.ViewModel
             Messages = new ObservableCollection<Message>(allMessages.Where(s => s.IdChat == Chat.Id));
 
 
+            
+
+        }
+
+        public async void GetChats()
+        {
             var result1 = await REST.Instance.client.GetAsync($"Chats/My/{ActiveUser.GetInstance().User.Id}");
             //todo not ok
 
@@ -110,7 +141,6 @@ namespace ProjectSystemWPF.ViewModel
             {
                 Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<Chat>>(REST.Instance.options);
             }
-
         }
     }
 }

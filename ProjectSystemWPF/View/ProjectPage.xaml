@@ -68,9 +68,9 @@
                             <DataTemplate>
                                 <StackPanel Background="#FFFDC401" Margin="5">
                                     <StackPanel Orientation="Horizontal">
-                                        <Label Content="{Binding SelectedTask.Title}" FontSize="15"/>
-                                        <Label Content="{Binding Executor}" FontSize="15"/>
-                                        <Label Content="{Binding SelectedTask.StatusTitle}" FontSize="15"/>
+                                        <Label Content="{Binding Title}" FontSize="15"/>
+                                        <!--<Label Content="{Binding Executor}" FontSize="15"/>-->
+                                        <Label Content="{Binding StatusTitle}" FontSize="15"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>

@@ -27,6 +27,10 @@ namespace ProjectSystemWPF.ViewModel
         { get => project;
             set { project = value;
                 Signal();
+                if (project != null)
+                {
+                    GetTasks();
+                }
             }
         }
         public VmCommand DeleteTask { get; set; }
@@ -53,17 +57,18 @@ namespace ProjectSystemWPF.ViewModel
 
         public ProjectVM()
         {
-            GetLists();
+            GetProjects();
+            //GetTasks();
             NewProject = new VmCommand(async () =>
             {
-                EditProjectPage editProjectPage = new EditProjectPage();
+                EditProjectPage editProjectPage = new EditProjectPage(new ProjectDTO());
                 editProjectPage.ShowDialog();
             });
         }
 
-        public async System.Threading.Tasks.Task GetLists()
+        public async System.Threading.Tasks.Task GetProjects()
         {
-            var result = await REST.Instance.client.GetAsync("Projects");
+            var result = await REST.Instance.client.GetAsync($"Projects/MyProject/{ActiveUser.GetInstance().User.Id}");
             //todo not ok
 
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
@@ -77,6 +82,12 @@ namespace ProjectSystemWPF.ViewModel
             
             Projects = new ObservableCollection<ProjectDTO>(projects);
 
+           
+            
+        }
+
+        public async void GetTasks()
+        {
             var result1 = await REST.Instance.client.GetAsync($"TaskMs/My/{ActiveUser.GetInstance().User.Id}");
             //todo not ok
 
@@ -89,13 +100,13 @@ namespace ProjectSystemWPF.ViewModel
                 tasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
             }
 
-            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id && s.IdStatus != 4 && s.IdStatus !=3 ));
-            
+            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id && s.IdStatus != 4 && s.IdStatus != 3));
         }
 
         internal void Select(ProjectDTO p)
         {
-            throw new NotImplementedException();
+            EditProjectPage editProjectPage = new EditProjectPage(p);
+            editProjectPage.ShowDialog();
         }
     }
 }

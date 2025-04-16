@@ -46,16 +46,18 @@
 
                    
                         <StackPanel Margin="10,20,10,0" Grid.Row="2">
-                            <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding Chats}" SelectedItem="{Binding Chat}" Background="LightYellow">
-                            <ListBoxItem BorderBrush="Black" BorderThickness="1">
+                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding Chats}" SelectedItem="{Binding Chat}" Background="LightYellow">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="/logo.jpg" Width="50" Height="50"/>
-                                        <Label Content="{Binding Chat.Title}"/>
-                                        <Label Content="{Binding CountMess}"/>
+                                        <Label Content="{Binding Title}"/>
+                                        <!--<Label Content="{Binding CountMess}"/>-->
                                     </StackPanel>
-                                </ListBoxItem>
-                            </ListBox>
-                        </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                     
                 </StackPanel>
 
@@ -68,12 +70,16 @@
                         <Label Content="{Binding Chat.Title}" FontSize="25" FontWeight="Bold"/>
                         <StackPanel Margin="10,20,10,0" >
                             <ListBox ItemsSource="{Binding Messages}" Background="LightYellow" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                <ListBoxItem >
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="{Binding Sender}"/>
-                                        <Label Content="{Binding Message.Text}"/>
-                                    </StackPanel>
-                                </ListBoxItem>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="{Binding Sender}"/>
+                                            <Label Content="{Binding Message.Text}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                
+                                    
                             </ListBox>
                         </StackPanel>
                         

@@ -40,6 +40,7 @@
         </Storyboard>
     </Window.Resources>
     <Grid Background="#FFFDC401">
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
@@ -48,7 +49,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+
         <StackPanel Visibility="{Binding ViewSignOut}" Grid.Row="1" Width="0" x:Name="menu">
+            
             <Image Source="/View/header.png"/>
             <Button Content="Гланвая"/>
             <Button Content="Мои проекты" Command="{Binding OpenProjectClick}"/>
@@ -56,11 +59,14 @@
             <Button Content="Чаты" Command="{Binding OpenChatsClick}"/>
             <Button Content="Профиль" Command="{Binding OpenProfileClick}"/>
         </StackPanel>
+        
         <Image Grid.Column="1" Source="/View/logo.png" Width="Auto" Height="60" HorizontalAlignment="Stretch"/>
         <Menu HorizontalAlignment="Right" Grid.ColumnSpan="2">
             <MenuItem Visibility="{Binding ViewSignOut}" Header="Выйти" Command="{Binding SignOut}" Grid.Column="1"/>
         </Menu>
         <Frame Grid.Column="1" Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden" Grid.Row="1"/>
-        <Button Visibility="{Binding ViewSignOut}"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Content="➡" Click="CLickMenu"/> 
+        <Button Visibility="{Binding ViewSignOut}"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Content="➡" Click="CLickMenu"/>
+        <Border Grid.RowSpan="5" BorderThickness="2" BorderBrush="Black"/>
+
     </Grid>
 </Window>

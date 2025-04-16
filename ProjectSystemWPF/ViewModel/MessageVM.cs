@@ -87,6 +87,7 @@ namespace ProjectSystemWPF.ViewModel
                     return;
                 }
                 newMessageWindow.Close();
+                GetLists();
             });
             
 

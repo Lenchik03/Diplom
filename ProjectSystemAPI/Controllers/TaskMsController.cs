@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,19 +31,10 @@ namespace ProjectSystemAPI.Controllers
                 .Where(s=>s.TaskForUsers.FirstOrDefault(u=>u.Id == idUser) != null)
                 .ToList();
             //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
-            return Ok(list);
+            return Ok(list.Select(s => (TaskDTO)s));
         }
 
-        [HttpGet("MyProject/{idUser}")]
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjects(int idUser)
-        {
-            var list = _context.Tasks.Include(d => d.TaskForUsers)
-                .Where(s => s.TaskForUsers.FirstOrDefault(u => u.Id == idUser) != null)
-                .Select(s=>s.IdProject).Distinct().ToList();
-            var result = _context.Projects.Where(s=>list.Contains(s.Id)).ToList();
-            //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
-            return Ok(result);
-        }
+        
 
         // GET: api/TaskMs
         [HttpGet]

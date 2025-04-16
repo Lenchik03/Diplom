@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +21,10 @@ namespace ProjectSystemWPF.View
     /// </summary>
     public partial class EditProjectPage : Window
     {
-        public EditProjectPage()
+        public EditProjectPage(ProjectDTO project)
         {
             InitializeComponent();
+            (DataContext as EditProjectVM).GetProject(project);
         }
     }
 }
