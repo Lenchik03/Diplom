@@ -41,6 +41,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public ChatsVM()
         {
+            GetLists();
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow();
@@ -98,7 +99,7 @@ namespace ProjectSystemWPF.ViewModel
             Messages = new ObservableCollection<Message>(allMessages.Where(s => s.IdChat == Chat.Id));
 
 
-            var result1 = await REST.Instance.client.GetAsync("Chats");
+            var result1 = await REST.Instance.client.GetAsync($"Chats/My/{ActiveUser.GetInstance().User.Id}");
             //todo not ok
 
             if (result1.StatusCode != System.Net.HttpStatusCode.OK)
@@ -107,7 +108,7 @@ namespace ProjectSystemWPF.ViewModel
             }
             else
             {
-                allChats = await result1.Content.ReadFromJsonAsync<ObservableCollection<Chat>>(REST.Instance.options);
+                Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<Chat>>(REST.Instance.options);
             }
 
         }

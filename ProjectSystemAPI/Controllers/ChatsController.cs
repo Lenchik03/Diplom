@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +24,12 @@ namespace ProjectSystemAPI.Controllers
 
         // GET: api/Chats
         [HttpGet("My/{idUser}")]
-        public async Task<ActionResult<IEnumerable<Chat>>> GetChats(int idUser)
+        public async Task<ActionResult<IEnumerable<TaskDTO>>> GetMyChats(int idUser)
         {
-            var list = _context.Chats.ToList();
-            list.RemoveAll(s => _context.ChatUsers.FirstOrDefault(u => u.IdChat == s.Id && u.IdUser == idUser) == null);
+            var list = _context.Chats.Include(d => d.ChatUsers)
+                .Where(s => s.ChatUsers.FirstOrDefault(u => u.Id == idUser) != null)
+                .ToList();
+            //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
             return Ok(list);
         }
 
