@@ -169,12 +169,13 @@ namespace ProjectSystemWPF.ViewModel
             Hidden = Visibility.Collapsed;
             HiddenEditUser = Visibility.Collapsed;
             HiddenEditDep = Visibility.Collapsed;
-
-            if (ActiveUser.GetInstance().User.IdRole == 2)
+            var dep = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
+            if (ActiveUser.GetInstance().User.IdRole == 2 && (dep == Department || CheckSubDepartment(dep, Department)))
             {
                 HiddenEditUser = Visibility.Visible;
+                Hidden = Visibility.Visible;
             }
-            var dep = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
+            
             if (ActiveUser.GetInstance().User.IdRole == 1 && (dep == Department || CheckSubDepartment(dep, Department)))
             {
                 HiddenEditDep = Visibility.Visible;

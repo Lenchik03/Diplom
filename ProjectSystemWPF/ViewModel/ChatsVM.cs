@@ -58,13 +58,13 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
-        public string Sender
-        {
-            get => sender;
-            set { sender = value;
+        //public UserDTO Sender
+        //{
+        //    get => sender;
+        //    set { sender = value;
             
-            }
-        }
+        //    }
+        //}
         public string Text { get; set; }
         public VmCommand AttachFile { get; set; }
         public VmCommand SendMessage { get; set; }
@@ -76,7 +76,7 @@ namespace ProjectSystemWPF.ViewModel
         private ObservableCollection<ChatDTO> chats = new ObservableCollection<ChatDTO>();
         private ObservableCollection<MessageDTO> messages = new ObservableCollection<MessageDTO>();
         private MessageDTO message = new MessageDTO();
-        private string sender;
+        //private UserDTO sender;
 
         public ChatsVM()
         {

@@ -73,8 +73,8 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <Label Content="{Binding Sender}"/>
-                                            <Label Content="{Binding Message.Text}"/>
+                                            <Label Content="{Binding Sender.FIO}"/>
+                                            <Label Content="{Binding Text}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
