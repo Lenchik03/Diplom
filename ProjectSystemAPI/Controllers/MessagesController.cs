@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 
 namespace ProjectSystemAPI.Controllers
 {
@@ -22,15 +24,17 @@ namespace ProjectSystemAPI.Controllers
 
         // GET: api/Messages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages()
         {
-            return await _context.Messages.ToListAsync();
+
+            var list = await _context.Messages.ToListAsync();
+            return Ok(list.Select(s => (MessageDTO)s));
         }
 
 
         // GET: api/Messages/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Message>> GetMessage(int id)
+        public async Task<ActionResult<MessageDTO>> GetMessage(int id)
         {
             var message = await _context.Messages.FindAsync(id);
 
@@ -39,20 +43,20 @@ namespace ProjectSystemAPI.Controllers
                 return NotFound();
             }
 
-            return message;
+            return (MessageDTO)message;
         }
 
         // PUT: api/Messages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMessage(int id, Message message)
+        public async Task<IActionResult> PutMessage(int id, MessageDTO message)
         {
             if (id != message.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(message).State = EntityState.Modified;
+            _context.Entry((Message)message).State = EntityState.Modified;
 
             try
             {
@@ -76,9 +80,9 @@ namespace ProjectSystemAPI.Controllers
         // POST: api/Messages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Message>> PostMessage(Message message)
+        public async Task<ActionResult<MessageDTO>> PostMessage(MessageDTO message)
         {
-            _context.Messages.Add(message);
+            _context.Messages.Add((Message)message);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);

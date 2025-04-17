@@ -25,7 +25,7 @@ namespace ChatServerDTO.DTO
 
         public int IdCreator { get; set; }
 
-        public List<Task> Tasks { get; set; } = new List<Task>();
+        public List<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -47,7 +47,7 @@ namespace ChatServerDTO.DTO
             };
 
             if (project.Tasks != null)
-                result.Tasks = project.Tasks.Select(s => (Task)s).ToList();
+                result.Tasks = project.Tasks.Select(s => (TaskDTO)s).ToList();
 
             return result;
 

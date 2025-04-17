@@ -69,7 +69,7 @@
                     <StackPanel Grid.Column="1" Grid.RowSpan="3">
                         <Label Content="{Binding Chat.Title}" FontSize="25" FontWeight="Bold"/>
                         <StackPanel Margin="10,20,10,0" >
-                            <ListBox ItemsSource="{Binding Messages}" Background="LightYellow" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox ItemsSource="{Binding Messages}" SelectedItem="{Binding Message}" Background="LightYellow" ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">

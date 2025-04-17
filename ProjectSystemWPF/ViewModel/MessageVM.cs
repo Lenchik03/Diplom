@@ -1,4 +1,5 @@
-﻿using MaterialDesignColors;
+﻿using ChatServerDTO.DTO;
+using MaterialDesignColors;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
@@ -39,7 +40,7 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
-        public Chat Chat { get; set; } = new();
+        public ChatDTO Chat { get; set; } = new();
 
         public VmCommand NewChat { get; set; }
         ObservableCollection<DepartmentDTO> allDepartments = new();
@@ -63,7 +64,7 @@ namespace ProjectSystemWPF.ViewModel
                 try
                 {
                     responce.EnsureSuccessStatusCode();
-                    Chat = await responce.Content.ReadFromJsonAsync<Chat>(REST.Instance.options);
+                    Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
                     //MessageBox.Show("Отдел был добавлен!");
                 }
                 catch (Exception ex)
@@ -139,7 +140,7 @@ namespace ProjectSystemWPF.ViewModel
         }
 
        
-        private Chat chat;
+        private ChatDTO chat;
         private int countPart;
 
         public StackPanel CreateTreeView(NewMessageWindow newMessageWindow)

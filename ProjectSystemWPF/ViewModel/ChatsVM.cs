@@ -1,4 +1,5 @@
-﻿using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,14 @@ namespace ProjectSystemWPF.ViewModel
                 FindChatAsync();
             }
         }
-        public ObservableCollection<Chat> Chats
+        public ObservableCollection<ChatDTO> Chats
         {
             get => chats;
             set { chats = value;
                 Signal();
             }
         }
-        public Chat Chat 
+        public ChatDTO Chat 
         { get => chat;
             set { chat = value;
                 Signal();
@@ -41,7 +42,7 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
         public int CountMess { get; set; }
-        public ObservableCollection<Message> Messages
+        public ObservableCollection<MessageDTO> Messages
         {
             get => messages;
             set { messages = value;
@@ -50,18 +51,32 @@ namespace ProjectSystemWPF.ViewModel
 
         }
 
-        public Message Message { get; set; } = new Message();
-        public UserDTO Sender { get; set; }
+        public MessageDTO Message
+        {
+            get => message;
+            set { message = value;
+                Signal();
+            }
+        }
+        public string Sender
+        {
+            get => sender;
+            set { sender = value;
+            
+            }
+        }
         public string Text { get; set; }
         public VmCommand AttachFile { get; set; }
         public VmCommand SendMessage { get; set; }
 
-        public ObservableCollection<Chat> allChats = new ObservableCollection<Chat>();
-        public ObservableCollection<Message> allMessages = new ObservableCollection<Message>();
+        public ObservableCollection<ChatDTO> allChats = new ObservableCollection<ChatDTO>();
+        public ObservableCollection<MessageDTO> allMessages = new ObservableCollection<MessageDTO>();
         private string searchText;
-        private Chat chat = new Chat();
-        private ObservableCollection<Chat> chats = new ObservableCollection<Chat>();
-        private ObservableCollection<Message> messages = new ObservableCollection<Message>();
+        private ChatDTO chat = new ChatDTO();
+        private ObservableCollection<ChatDTO> chats = new ObservableCollection<ChatDTO>();
+        private ObservableCollection<MessageDTO> messages = new ObservableCollection<MessageDTO>();
+        private MessageDTO message = new MessageDTO();
+        private string sender;
 
         public ChatsVM()
         {
@@ -94,7 +109,7 @@ namespace ProjectSystemWPF.ViewModel
                 try
                 {
                     responce.EnsureSuccessStatusCode();
-                    Chats = await responce.Content.ReadFromJsonAsync<ObservableCollection<Chat>>(REST.Instance.options);
+                    Chats = await responce.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
                     //MessageBox.Show("Отдел успешно обновлен!");
 
                 }
@@ -119,9 +134,9 @@ namespace ProjectSystemWPF.ViewModel
             }
             else
             {
-                allMessages = await result.Content.ReadFromJsonAsync<ObservableCollection<Message>>(REST.Instance.options);
+                allMessages = await result.Content.ReadFromJsonAsync<ObservableCollection<MessageDTO>>(REST.Instance.options);
             }
-            Messages = new ObservableCollection<Message>(allMessages.Where(s => s.IdChat == Chat.Id));
+            Messages = new ObservableCollection<MessageDTO>(allMessages.Where(s => s.IdChat == Chat.Id));
 
 
             
@@ -139,7 +154,7 @@ namespace ProjectSystemWPF.ViewModel
             }
             else
             {
-                Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<Chat>>(REST.Instance.options);
+                Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
             }
         }
     }

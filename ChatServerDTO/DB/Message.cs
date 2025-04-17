@@ -20,9 +20,7 @@ public partial class Message
 
     public string? DocumentTitle { get; set; }
 
-    [JsonIgnore]
     public virtual Chat IdChatNavigation { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual User IdSenderNavigation { get; set; } = null!;
 }

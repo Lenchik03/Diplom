@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,18 +25,18 @@ namespace ProjectSystemAPI.Controllers
 
         // GET: api/Chats
         [HttpGet("My/{idUser}")]
-        public async Task<ActionResult<IEnumerable<TaskDTO>>> GetMyChats(int idUser)
+        public async Task<ActionResult<IEnumerable<ChatDTO>>> GetMyChats(int idUser)
         {
             var list = _context.Chats.Include(d => d.ChatUsers)
                 .Where(s => s.ChatUsers.FirstOrDefault(u => u.Id == idUser) != null)
                 .ToList();
             //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
-            return Ok(list);
+            return Ok(list.Select(s => (ChatDTO)s));
         }
 
         // GET: api/Chats/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Chat>> GetChat(int id)
+        public async Task<ActionResult<ChatDTO>> GetChat(int id)
         {
             var chat = await _context.Chats.FindAsync(id);
 
@@ -44,20 +45,20 @@ namespace ProjectSystemAPI.Controllers
                 return NotFound();
             }
 
-            return chat;
+            return (ChatDTO)chat;
         }
 
         // PUT: api/Chats/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutChat(int id, Chat chat)
+        public async Task<IActionResult> PutChat(int id, ChatDTO chat)
         {
             if (id != chat.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(chat).State = EntityState.Modified;
+            _context.Entry((Chat)chat).State = EntityState.Modified;
 
             try
             {
@@ -81,9 +82,9 @@ namespace ProjectSystemAPI.Controllers
         // POST: api/Chats
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Chat>> PostChat(Chat chat)
+        public async Task<ActionResult<ChatDTO>> PostChat(ChatDTO chat)
         {
-            _context.Chats.Add(chat);
+            _context.Chats.Add((Chat)chat);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetChat", new { id = chat.Id }, chat);
@@ -110,7 +111,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [HttpPost("FindChat/{idUser}")]
-        public async Task<ActionResult<List<Chat>>> FindChat(string find, int idUser)
+        public async Task<ActionResult<List<ChatDTO>>> FindChat(string find, int idUser)
         {
             List<Chat> chatList = new List<Chat>();
             chatList.AddRange(_context.Chats.Where(s => s.Title.Contains(find)).AsNoTracking().ToList());
@@ -119,7 +120,7 @@ namespace ProjectSystemAPI.Controllers
                 Select(s => _context.Chats.Find(s.IdChat))).ToList();
 
             chatList.RemoveAll(s => _context.ChatUsers.FirstOrDefault(u => u.IdChat == s.Id && u.IdUser == idUser) == null);
-            return Ok(chatList);
+            return Ok(chatList.Select(s => (ChatDTO)s));
         }
         // DELETE: api/Chats/5
         [HttpDelete("{id}")]
