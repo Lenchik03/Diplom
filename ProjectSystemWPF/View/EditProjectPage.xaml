@@ -4,8 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectSystemWPF.View"
+        xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
-        Title="" Height="400" Width="500">
+        Title="" Height="400" Width="500"
+        DataContext="{DynamicResource editprojectVM}">
+    <Window.Resources>
+        <vm:EditProjectVM x:Key="editprojectVM"/>
+    </Window.Resources>
     <Grid Background="#FFFDC401">
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
             <StackPanel>

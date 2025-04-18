@@ -24,7 +24,21 @@ namespace ProjectSystemWPF.View
         public EditProjectPage(ProjectDTO project)
         {
             InitializeComponent();
-            (DataContext as EditProjectVM).GetProject(project);
+            if(project.Id != 0)
+                (DataContext as EditProjectVM).GetProject(project);
+            else
+            {
+                (DataContext as EditProjectVM).GetProject(new ProjectDTO());
+            }
+                (DataContext as EditProjectVM).Loaded += Vm_Loaded;
         }
+        private void Vm_Loaded(object? sender, EventArgs e)
+        {
+            //var vm = DataContext as TransferUserVM;
+            //vm.CreateExpanders();
+
+        }
+
+
     }
 }
