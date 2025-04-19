@@ -26,6 +26,6 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-//app.MapHub<MyHub>("/");
+app.MapHub<MyHub>("/chat");
 
 app.Run();

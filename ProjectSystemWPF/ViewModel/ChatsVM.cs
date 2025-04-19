@@ -1,10 +1,15 @@
 ﻿using ChatServerDTO.DTO;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -41,6 +46,7 @@ namespace ProjectSystemWPF.ViewModel
                     GetMessage();
             }
         }
+        public string Address { get; set; } = "http://localhost:5147";
         public int CountMess { get; set; }
         public ObservableCollection<MessageDTO> Messages
         {
@@ -62,9 +68,10 @@ namespace ProjectSystemWPF.ViewModel
         //{
         //    get => sender;
         //    set { sender = value;
-            
+
         //    }
         //}
+        HubConnection _connection;
         public string Text { get; set; }
         public VmCommand AttachFile { get; set; }
         public VmCommand SendMessage { get; set; }
@@ -97,6 +104,23 @@ namespace ProjectSystemWPF.ViewModel
             {
 
             });
+        }
+
+        private void CreateConnection()
+        {
+            _connection = new HubConnectionBuilder().
+                            AddJsonProtocol(s =>
+                            {
+                                s.PayloadSerializerOptions.ReferenceHandler =
+                                System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                            }
+            ).
+                        WithUrl(Address + "/chat").
+            Build();
+
+            _connection.StartAsync();
+
+            Unloaded += async (s, e) => await _connection.StopAsync();
         }
 
         public async void FindChatAsync()
