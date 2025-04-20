@@ -4,10 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
+        xmlns:vm ="clr-namespace:ProjectSystemWPF.ViewModel"
       mc:Ignorable="d" 
       d:DesignHeight="550" d:DesignWidth="500"
-      Title="EditTaskPage">
-
+      Title="EditTaskPage"
+        DataContext="{DynamicResource editTaslVM}">
+    <Window.Resources>
+        <vm:EditTaskVM x:Key="editTaslVM"/>
+    </Window.Resources>
     <Grid Background="#FFFDC401">
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
             <StackPanel>
@@ -39,7 +43,7 @@ UpdateSourceTrigger=PropertyChanged}"/>
                                     <DataTemplate>
                                         <StackPanel Background="#FFFDC401" Margin="5">
                                             <StackPanel Orientation="Horizontal">
-                                                <Label Content="{Binding SelectedExecutor.FIO}" FontSize="15"/>
+                                                <Label Content="{Binding FIO}" FontSize="15"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
@@ -58,7 +62,7 @@ UpdateSourceTrigger=PropertyChanged}"/>
                                 <DataTemplate>
                                     <StackPanel Background="#FFFDC401" Margin="5">
                                         <StackPanel Orientation="Horizontal">
-                                                <Label Content="{Binding RemoveExecutor.FIO}" FontSize="15"/>
+                                                <Label Content="{Binding FIO}" FontSize="15"/>
                                             </StackPanel>
                                     </StackPanel>
                                 </DataTemplate>

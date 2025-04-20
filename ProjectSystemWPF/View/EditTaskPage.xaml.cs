@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemAPI.DB;
+using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +23,26 @@ namespace ProjectSystemWPF.View
     /// </summary>
     public partial class EditTaskPage : Window
     {
-        public EditTaskPage()
+        public EditTaskPage(TaskDTO task)
         {
             InitializeComponent();
+            if (task.Id != 0)
+                (DataContext as EditTaskPage).GetTask(task);
+            else
+            {
+                (DataContext as EditTaskPage).GetTask(new TaskDTO());
+            }
+                (DataContext as EditTaskPage).Loaded += Vm_Loaded;
         }
+
+        
+
+        private void Vm_Loaded(object? sender, EventArgs e)
+        {
+            //var vm = DataContext as TransferUserVM;
+            //vm.CreateExpanders();
+
+        }
+    }
     }
 }

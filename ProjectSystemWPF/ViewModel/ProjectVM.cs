@@ -108,5 +108,11 @@ namespace ProjectSystemWPF.ViewModel
             EditProjectPage editProjectPage = new EditProjectPage(p);
             editProjectPage.ShowDialog();
         }
+
+        internal void SelectTask(TaskDTO t)
+        {
+            EditTaskPage editTaskPage = new EditTaskPage(t);
+            editTaskPage.ShowDialog();
+        }
     }
 }

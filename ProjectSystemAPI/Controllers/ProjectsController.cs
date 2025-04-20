@@ -91,6 +91,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ProjectDTO>> PostProject(ProjectDTO project)
         {
+            project.StartDate = DateTime.Now;
             _context.Projects.Add((Project)project);
             await _context.SaveChangesAsync();
 

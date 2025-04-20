@@ -1,6 +1,8 @@
 ﻿using ChatServerDTO.DTO;
+using ProjectSystemAPI.DB;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -30,6 +32,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 if(Project.Id == 0)
                 {
+                    project.IdCreator = ActiveUser.GetInstance().User.Id;
                     string arg = JsonSerializer.Serialize(Project, REST.Instance.options);
                     var responce = await REST.Instance.client.PostAsync($"Projects",
                         new StringContent(arg, Encoding.UTF8, "application/json"));

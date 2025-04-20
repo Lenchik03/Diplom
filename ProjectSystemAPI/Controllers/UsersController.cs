@@ -118,7 +118,7 @@ namespace ProjectSystemAPI.Controllers
                 //user.IdRole = 3;
                 bool mailResult = PostPassword.PostPass(user, str, from);
                 if (!mailResult)
-                    return BadRequest("stupid email. fuck up");
+                    return BadRequest("Неверная электронная почта!");
                 user.Password = Md5.HashPassword(str);
                 dbContext.Users.Add((User)user);
                 dbContext.SaveChanges();

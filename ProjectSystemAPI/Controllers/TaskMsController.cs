@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 using Task = ProjectSystemAPI.DB.Task;
 
 namespace ProjectSystemAPI.Controllers
@@ -34,7 +35,32 @@ namespace ProjectSystemAPI.Controllers
             return Ok(list.Select(s => (TaskDTO)s));
         }
 
-        
+        [HttpPost("AddNewExecutors/{id}")]
+        public async Task<ActionResult> AddNewMembers(int id, [FromBody] List<UserDTO> executors)
+        {
+            foreach(var t in _context.ChatUsers)
+            {
+                _context.ChatUsers.Remove(t);
+            }
+
+            TaskForUser taskForUser = new TaskForUser();
+
+            foreach (var ex in executors)
+            {
+                taskForUser = new TaskForUser
+                {
+                    IdTask = id,
+                    IdUser = ex.Id,
+                    IdTaskNavigation = _context.Tasks.Find(id),
+                    IdUserNavigation = _context.Users.Find(ex.Id)
+                };
+                _context.TaskForUsers.Add(taskForUser);
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+
 
         // GET: api/TaskMs
         [HttpGet]

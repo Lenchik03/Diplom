@@ -43,7 +43,8 @@ namespace ChatServerDTO.DTO
                 Title = project.Title,
                 Description = project.Description,
                 StartDate = project.StartDate,
-                CompletionDate = project.CompletionDate
+                CompletionDate = project.CompletionDate,
+                IdCreator = project.IdCreator,
             };
 
             if (project.Tasks != null)
@@ -61,7 +62,8 @@ namespace ChatServerDTO.DTO
                 Title = projectDTO.Title,
                 Description = projectDTO.Description,
                 StartDate = projectDTO.StartDate,
-                CompletionDate = projectDTO.CompletionDate
+                CompletionDate = projectDTO.CompletionDate,
+                IdCreator = projectDTO.IdCreator
             };
 
             return result;

@@ -35,5 +35,13 @@ namespace ProjectSystemWPF.View
             if (p != null)
                 ((ProjectVM)DataContext).Select(p);
         }
+
+        private void EditTaskClick(object sender, MouseButtonEventArgs e)
+        {
+            var list = sender as ListBox;
+            var t = list.SelectedItem as TaskDTO;
+            if (t != null)
+                ((ProjectVM)DataContext).SelectTask(t);
+        }
     }
 }

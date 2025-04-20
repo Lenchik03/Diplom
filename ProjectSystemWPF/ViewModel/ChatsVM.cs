@@ -128,7 +128,7 @@ namespace ProjectSystemWPF.ViewModel
             if (SearchText.Length > 3)
             {
                 string arg = JsonSerializer.Serialize(SearchText, REST.Instance.options);
-                var responce = await REST.Instance.client.PutAsync($"FindChat/{ActiveUser.GetInstance().User.Id}",
+                var responce = await REST.Instance.client.PostAsync($"Chats/FindChat/{ActiveUser.GetInstance().User.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
                 try
                 {
