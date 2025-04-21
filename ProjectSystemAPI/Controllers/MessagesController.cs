@@ -80,9 +80,10 @@ namespace ProjectSystemAPI.Controllers
         // POST: api/Messages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<MessageDTO>> PostMessage(MessageDTO message)
+        public async Task<ActionResult<MessageDTO>> PostMessage(MessageDTO messageDTO)
         {
-            _context.Messages.Add((Message)message);
+            var message = (Message)messageDTO;
+            _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);

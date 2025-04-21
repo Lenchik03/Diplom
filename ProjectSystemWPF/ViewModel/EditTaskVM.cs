@@ -1,5 +1,6 @@
 ﻿using ChatServerDTO.DTO;
 using MaterialDesignColors.Recommended;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
@@ -195,7 +196,9 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
                 }
+                
             });
+            
         }
 
         public void SetTask(TaskDTO taskDTO)

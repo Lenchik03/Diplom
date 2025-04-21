@@ -91,6 +91,12 @@ namespace ProjectSystemAPI.Controllers
             return CreatedAtAction("GetChat", new { id = chat.Id }, chat);
         }
 
+        [HttpGet("ChatMembers/{id}")]
+        public async Task<ActionResult<List<UserDTO>>> ChatMembers(int id)
+        {
+            return Ok(_context.ChatUsers.Include(s => s.IdChatNavigation).AsNoTracking().Where(s => s.IdChat == id).Select(s => s.IdUserNavigation).ToList());
+        }
+
         [HttpPost("AddNewMembers/{id}")]
         public async Task<ActionResult> AddNewMembers(int id, [FromBody] List<UserDTO> chatUsers)
         {

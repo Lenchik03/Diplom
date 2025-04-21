@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjectSystemWPF.ViewModel
 {
@@ -102,23 +103,24 @@ namespace ProjectSystemWPF.ViewModel
 
             SendMessage = new VmCommand(async () =>
             {
-
+                _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, Message, Chat);
             });
         }
 
+
         private void CreateConnection()
         {
-            //_connection = new HubConnectionBuilder().
-            //                AddJsonProtocol(s =>
-            //                {
-            //                    s.PayloadSerializerOptions.ReferenceHandler =
-            //                    System.Text.Json.Serialization.ReferenceHandler.Preserve;
-            //                }
-            //).
-            //            WithUrl(Address + "/chat").
-            //Build();
+            _connection = new HubConnectionBuilder().
+                            AddJsonProtocol(s =>
+                            {
+                                s.PayloadSerializerOptions.ReferenceHandler =
+                                System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                            }
+            ).
+                        WithUrl(Address + "/chat").
+            Build();
 
-            //_connection.StartAsync();
+            _connection.StartAsync();
 
             //Unloaded += async (s, e) => await _connection.StopAsync();
         }
