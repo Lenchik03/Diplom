@@ -26,13 +26,13 @@ namespace ProjectSystemWPF.View
         public EditTaskPage(TaskDTO task)
         {
             InitializeComponent();
+            (DataContext as EditTaskVM).Loaded += Vm_Loaded;
             if (task.Id != 0)
-                (DataContext as EditTaskPage).GetTask(task);
+                (DataContext as EditTaskVM).SetTask(task);
             else
             {
-                (DataContext as EditTaskPage).GetTask(new TaskDTO());
+                (DataContext as EditTaskVM).SetTask(new TaskDTO());
             }
-                (DataContext as EditTaskPage).Loaded += Vm_Loaded;
         }
 
         
@@ -44,5 +44,5 @@ namespace ProjectSystemWPF.View
 
         }
     }
-    }
+    
 }

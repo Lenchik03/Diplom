@@ -1,4 +1,6 @@
-﻿using ProjectSystemAPI.DTO;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 using ProjectSystemWPF.ViewModel;
 using System;
 using System.Collections;
@@ -22,9 +24,15 @@ namespace ProjectSystemWPF
     /// </summary>
     public partial class NewMessageWindow : Window
     {
-        public NewMessageWindow()
+        public NewMessageWindow(ChatDTO chat)
         {
             InitializeComponent();
+            if (chat.Id != 0)
+                (DataContext as MessageVM).GetChat(chat);
+            else
+            {
+                (DataContext as MessageVM).GetChat(new ChatDTO());
+            }
             (DataContext as MessageVM).Loaded += Vm_Loaded;
             (DataContext as MessageVM).SetWindow(this);
         }

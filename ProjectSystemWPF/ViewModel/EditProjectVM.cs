@@ -30,9 +30,10 @@ namespace ProjectSystemWPF.ViewModel
         {
             Save = new VmCommand(async () =>
             {
-                if(Project.Id == 0)
+                project.IdCreator = ActiveUser.GetInstance().User.Id;
+                if (Project.Id == 0)
                 {
-                    project.IdCreator = ActiveUser.GetInstance().User.Id;
+                   
                     string arg = JsonSerializer.Serialize(Project, REST.Instance.options);
                     var responce = await REST.Instance.client.PostAsync($"Projects",
                         new StringContent(arg, Encoding.UTF8, "application/json"));

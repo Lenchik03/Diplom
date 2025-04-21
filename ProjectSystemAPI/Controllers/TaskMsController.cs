@@ -28,19 +28,20 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("My/{idUser}")]
         public async Task<ActionResult<IEnumerable<TaskDTO>>> GetMyTasks(int idUser)
         {
-            var list = _context.Tasks.Include(d=>d.TaskForUsers)
+            return Ok( _context.TaskForUsers.Include(s => s.IdTaskNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdTaskNavigation).ToList());
+            /*var list = _context.Tasks.Include(d=>d.TaskForUsers)
                 .Where(s=>s.TaskForUsers.FirstOrDefault(u=>u.Id == idUser) != null)
                 .ToList();
             //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
-            return Ok(list.Select(s => (TaskDTO)s));
+            return Ok(list.Select(s => (TaskDTO)s));*/
         }
 
         [HttpPost("AddNewExecutors/{id}")]
-        public async Task<ActionResult> AddNewMembers(int id, [FromBody] List<UserDTO> executors)
+        public async Task<ActionResult> AddNewExecutors(int id, [FromBody] List<UserDTO> executors)
         {
-            foreach(var t in _context.ChatUsers)
+            foreach(var t in _context.TaskForUsers.Where(s => s.IdTask == id))
             {
-                _context.ChatUsers.Remove(t);
+                _context.TaskForUsers.Remove(t);
             }
 
             TaskForUser taskForUser = new TaskForUser();
@@ -121,10 +122,11 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Task>> PostTaskM(TaskDTO taskM)
         {
-            _context.Tasks.Add((Task)taskM);
+            var task = (Task)taskM;
+            _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTaskM", new { id = taskM.Id }, taskM);
+            return CreatedAtAction("GetTaskM", new { id = task.Id }, task);
         }
 
         // DELETE: api/TaskMs/5

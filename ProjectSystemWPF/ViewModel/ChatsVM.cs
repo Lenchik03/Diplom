@@ -91,7 +91,7 @@ namespace ProjectSystemWPF.ViewModel
             GetMessage();
             NewChat = new VmCommand(async () =>
             {
-                NewMessageWindow newMessageWindow = new NewMessageWindow();
+                NewMessageWindow newMessageWindow = new NewMessageWindow(Chat);
                 newMessageWindow.Show();
             });
 
@@ -108,19 +108,19 @@ namespace ProjectSystemWPF.ViewModel
 
         private void CreateConnection()
         {
-            _connection = new HubConnectionBuilder().
-                            AddJsonProtocol(s =>
-                            {
-                                s.PayloadSerializerOptions.ReferenceHandler =
-                                System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                            }
-            ).
-                        WithUrl(Address + "/chat").
-            Build();
+            //_connection = new HubConnectionBuilder().
+            //                AddJsonProtocol(s =>
+            //                {
+            //                    s.PayloadSerializerOptions.ReferenceHandler =
+            //                    System.Text.Json.Serialization.ReferenceHandler.Preserve;
+            //                }
+            //).
+            //            WithUrl(Address + "/chat").
+            //Build();
 
-            _connection.StartAsync();
+            //_connection.StartAsync();
 
-            Unloaded += async (s, e) => await _connection.StopAsync();
+            //Unloaded += async (s, e) => await _connection.StopAsync();
         }
 
         public async void FindChatAsync()
@@ -180,6 +180,13 @@ namespace ProjectSystemWPF.ViewModel
             {
                 Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
             }
+        }
+
+        internal void Select(ChatDTO chat)
+        {
+
+            NewMessageWindow newMessageWindow = new NewMessageWindow(chat);
+            newMessageWindow.ShowDialog();
         }
     }
 }

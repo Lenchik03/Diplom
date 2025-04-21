@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
         xmlns:vm ="clr-namespace:ProjectSystemWPF.ViewModel"
       mc:Ignorable="d" 
-      d:DesignHeight="550" d:DesignWidth="500"
+      d:DesignHeight="550" d:DesignWidth="400"
       Title="EditTaskPage"
         DataContext="{DynamicResource editTaslVM}">
     <Window.Resources>
@@ -23,7 +23,7 @@
                     <Label Content="Описание"/>
                     <TextBox Text="{Binding Task.Description}" Height="100"/>
                     <Label Content="Проект"/>
-                    <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}"/>
+                    <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Title"/>
                     <Label Content="Назначить исполнителей:"/>
                     <StackPanel>
                         <Label Content="Поиск по ФИО"/>

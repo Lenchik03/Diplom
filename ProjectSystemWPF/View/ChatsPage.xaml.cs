@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +27,12 @@ namespace ProjectSystemWPF.View
             InitializeComponent();
         }
 
-        
+        private void EditChatClick(object sender, MouseButtonEventArgs e)
+        {
+            var list = sender as ListBox;
+            var p = list.SelectedItem as ChatDTO;
+            if (p != null)
+                ((ChatsVM)DataContext).Select(p);
+        }
     }
 }

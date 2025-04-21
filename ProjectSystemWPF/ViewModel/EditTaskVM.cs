@@ -15,29 +15,43 @@ using System.Windows;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class EditTaskVM: BaseVM
+    public class EditTaskVM : BaseVM
     {
         public event EventHandler Loaded;
         private string search;
         private TaskDTO task;
-        private ObservableCollection<UserDTO> selectedExecutors;
+        private ObservableCollection<UserDTO> selectedExecutors = new();
         private UserDTO addExecutor;
         private UserDTO removeExecutor;
+        private ObservableCollection<ProjectDTO> projects;
+        private ProjectDTO selectedProject;
 
         public TaskDTO Task
         {
             get => task;
-            set { task = value;
+            set
+            {
+                task = value;
                 Signal();
-            }     
+            }
         }
-        public ObservableCollection<ProjectDTO> Projects { get; set; }
+        public ObservableCollection<ProjectDTO> Projects
+        {
+            get => projects;
+            set
+            {
+                projects = value;
+                Signal();
+            }
+        }
 
-        public ObservableCollection<UserDTO> Executors { get; set; }
+        public ObservableCollection<UserDTO> Executors { get; set; } = new();
         public UserDTO AddExecutor
         {
             get => addExecutor;
-            set { addExecutor = value;
+            set
+            {
+                addExecutor = value;
                 Signal();
             }
         }
@@ -45,14 +59,18 @@ namespace ProjectSystemWPF.ViewModel
         public ObservableCollection<UserDTO> SelectedExecutors
         {
             get => selectedExecutors;
-            set { selectedExecutors = value;
+            set
+            {
+                selectedExecutors = value;
                 Signal();
             }
         }
         public UserDTO RemoveExecutor
         {
             get => removeExecutor;
-            set { removeExecutor = value;
+            set
+            {
+                removeExecutor = value;
                 Signal();
             }
         }
@@ -60,19 +78,30 @@ namespace ProjectSystemWPF.ViewModel
         public VmCommand AddEx { get; set; }
         public VmCommand RemoveEx { get; set; }
         public VmCommand Save { get; set; }
-        public ProjectDTO SelectedProject { get; set; }
+        public ProjectDTO SelectedProject
+        {
+            get => selectedProject; set
+            {
+                selectedProject = value;
+                Signal();
+            }
+        }
 
-        public string Search 
-        { 
+        public string Search
+        {
             get => search;
-            set { search = value;
-                
+            set
+            {
+                search = value;
+                Signal();
+                GetExecutors();
             }
         }
 
         public EditTaskVM()
         {
             GetProjects();
+           
             GetExecutors();
             AddEx = new VmCommand(async () =>
             {
@@ -106,9 +135,9 @@ namespace ProjectSystemWPF.ViewModel
                 Task.IdStatus = 1;
                 Task.StatusTitle = "Выдана";
                 if (Task.Id == 0)
-                {        
+                {
                     string arg = JsonSerializer.Serialize(Task, REST.Instance.options);
-                    var responce = await REST.Instance.client.PostAsync($"Tasks",
+                    var responce = await REST.Instance.client.PostAsync($"TaskMs",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
                     try
                     {
@@ -122,12 +151,12 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
                     string arg1 = JsonSerializer.Serialize(SelectedExecutors, REST.Instance.options);
-                    var responce1 = await REST.Instance.client.PostAsync($"Tasks/AddNewExecutors/{Task.Id}",
+                    var responce1 = await REST.Instance.client.PostAsync($"TaskMs/AddNewExecutors/{Task.Id}",
                         new StringContent(arg1, Encoding.UTF8, "application/json"));
                     try
                     {
                         responce.EnsureSuccessStatusCode();
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -139,7 +168,7 @@ namespace ProjectSystemWPF.ViewModel
                 {
 
                     string arg = JsonSerializer.Serialize(Task, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Tasks",
+                    var responce = await REST.Instance.client.PutAsync($"TaskMs",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
                     try
                     {
@@ -169,9 +198,26 @@ namespace ProjectSystemWPF.ViewModel
             });
         }
 
-        private void GetTask(TaskDTO taskDTO)
+        public void SetTask(TaskDTO taskDTO)
         {
             Task = taskDTO;
+            if (Task != null)
+                GetExecutorsByTask();
+        }
+
+        public async System.Threading.Tasks.Task GetExecutorsByTask()
+        {
+            var result = await REST.Instance.client.GetAsync($"Users/GetExecutorsByTask/{Task.Id}");
+            //todo not ok
+
+            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                SelectedExecutors = await result.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
+            }
         }
 
         public async void GetProjects()
@@ -185,6 +231,10 @@ namespace ProjectSystemWPF.ViewModel
             else
             {
                 Projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
+                if (Task != null)
+                {
+                    SelectedProject = Projects.FirstOrDefault(s => s.Id == Task.IdProject);
+                }
             }
             Loaded?.Invoke(this, null);
         }
@@ -193,7 +243,7 @@ namespace ProjectSystemWPF.ViewModel
         {
             var users = new ObservableCollection<UserDTO>();
             var deps = new ObservableCollection<DepartmentDTO>();
-            var result = await REST.Instance.client.GetAsync($"Users");
+            var result = await REST.Instance.client.GetAsync($"Users/GetAllUsers");
 
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
             {
@@ -203,7 +253,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 users = await result.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
             }
-            var result1 = await REST.Instance.client.GetAsync($"Users");
+            var result1 = await REST.Instance.client.GetAsync($"Departments");
 
             if (result1.StatusCode != System.Net.HttpStatusCode.OK)
             {
@@ -213,25 +263,29 @@ namespace ProjectSystemWPF.ViewModel
             {
                 deps = await result1.Content.ReadFromJsonAsync<ObservableCollection<DepartmentDTO>>(REST.Instance.options);
             }
+
+            var exs = new ObservableCollection<UserDTO>();
             var dep = deps.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
-            if(dep.IdMainDep == null)
+            if (dep.IdMainDep == null)
             {
-                foreach(var d in dep.ChildDepartments)
+                foreach (var d in dep.ChildDepartments)
                 {
-                    foreach(var user in d.Users)
+                    foreach (var user in d.Users)
                     {
                         Executors.Add(user);
                     }
-                    
+
                 }
             }
             else
             {
-               foreach(var user in dep.Users)
+                foreach (var user in dep.Users)
                 {
                     Executors.Add(user);
                 }
             }
+
+            
         }
     }
 }

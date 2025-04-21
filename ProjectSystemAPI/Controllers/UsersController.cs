@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -102,6 +103,16 @@ namespace ProjectSystemAPI.Controllers
                     //return Ok(result);
                 }
             }
+        }
+
+        [HttpGet("GetExecutorsByTask/{taskId}")]
+        public ActionResult<List<User>> GetExecutorsByTask(int taskId)
+        {
+            return Ok(dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).
+                Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Distinct().ToList());
+
+            //var result = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).Where(s => s.IdTask == taskId);
+            //return Ok(result);
         }
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]

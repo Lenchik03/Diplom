@@ -57,35 +57,69 @@ namespace ProjectSystemWPF.ViewModel
 
             NewChat = new VmCommand(async () =>
             {
+                if (Chat.Id == 0)
+                {
+                    string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
+                    var responce = await REST.Instance.client.PostAsync($"Chats",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
+                        //MessageBox.Show("Отдел был добавлен!");
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show("Произошла ошибка. Заполните все данные!");
+                        return;
+                    }
 
-                string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
-                var responce = await REST.Instance.client.PostAsync($"Chats",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
-                try
-                {
-                    responce.EnsureSuccessStatusCode();
-                    Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
-                    //MessageBox.Show("Отдел был добавлен!");
+                    selectedUser.Add(ActiveUser.GetInstance().User);
+                    string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
+                    var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
+                        new StringContent(arg1, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        //MessageBox.Show("Отдел был добавлен!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Произошла ошибка при добавлении участников!");
+                        return;
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    //MessageBox.Show("Произошла ошибка. Заполните все данные!");
-                    return;
-                }
+                    string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Chats",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
+                        //MessageBox.Show("Отдел был добавлен!");
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show("Произошла ошибка. Заполните все данные!");
+                        return;
+                    }
 
-                selectedUser.Add(ActiveUser.GetInstance().User);
-                string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
-                var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
-                    new StringContent(arg1, Encoding.UTF8, "application/json"));
-                try
-                {
-                    responce.EnsureSuccessStatusCode();
-                    //MessageBox.Show("Отдел был добавлен!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Произошла ошибка при добавлении участников!");
-                    return;
+                    selectedUser.Add(ActiveUser.GetInstance().User);
+                    string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
+                    var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
+                        new StringContent(arg1, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        //MessageBox.Show("Отдел был добавлен!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Произошла ошибка при добавлении участников!");
+                        return;
+                    }
                 }
                 newMessageWindow.Close();
                 GetLists();
@@ -217,6 +251,11 @@ namespace ProjectSystemWPF.ViewModel
         internal void SetWindow(NewMessageWindow newMessageWindow)
         {
             this.newMessageWindow = newMessageWindow;
+        }
+
+        internal void GetChat(ChatDTO chat)
+        {
+            Chat = chat;
         }
     }
 }

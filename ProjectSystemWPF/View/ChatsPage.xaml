@@ -46,7 +46,7 @@
 
                    
                         <StackPanel Margin="10,20,10,0" Grid.Row="2">
-                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding Chats}" SelectedItem="{Binding Chat}" Background="LightYellow">
+                        <ListBox MouseDoubleClick="EditChatClick" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding Chats}" SelectedItem="{Binding Chat}" Background="LightYellow">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">

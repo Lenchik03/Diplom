@@ -27,7 +27,7 @@ namespace ProjectSystemAPI.Controllers
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages()
         {
 
-            var list = await _context.Messages.ToListAsync();
+            var list = await _context.Messages.AsNoTracking().ToListAsync();
             return Ok(list.Select(s => (MessageDTO)s));
         }
 

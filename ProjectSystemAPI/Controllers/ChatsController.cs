@@ -27,11 +27,12 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("My/{idUser}")]
         public async Task<ActionResult<IEnumerable<ChatDTO>>> GetMyChats(int idUser)
         {
-            var list = _context.Chats.Include(d => d.ChatUsers)
-                .Where(s => s.ChatUsers.FirstOrDefault(u => u.Id == idUser) != null)
-                .ToList();
-            //list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
-            return Ok(list.Select(s => (ChatDTO)s));
+            return Ok(_context.ChatUsers.Include(s => s.IdChatNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdChatNavigation).ToList());
+            //var list = _context.Chats.Include(d => d.ChatUsers)
+            //    .Where(s => s.ChatUsers.FirstOrDefault(u => u.Id == idUser) != null)
+            //    .ToList();
+            ////list.RemoveAll(s => _context.TaskForUsers.FirstOrDefault(u => u.IdTask == s.Id && u.IdUser == idUser) == null);
+            //return Ok(list.Select(s => (ChatDTO)s));
         }
 
         // GET: api/Chats/5
@@ -93,6 +94,11 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewMembers/{id}")]
         public async Task<ActionResult> AddNewMembers(int id, [FromBody] List<UserDTO> chatUsers)
         {
+            foreach(var user in _context.ChatUsers)
+            {
+                _context.ChatUsers.Remove(user);
+            }
+
             ChatUser chatUser = new ChatUser();
 
             foreach (var member in chatUsers)
