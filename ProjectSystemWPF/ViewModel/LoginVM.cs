@@ -73,14 +73,15 @@ namespace ProjectSystemWPF.ViewModel
                         {
                             if (user.IdRole == 3) // открытие страницы сотрудника
                             {
-
+                                ProjectPage projectPage = new ProjectPage();
+                                MainVM.Instance.CurrentPage = projectPage;
                                 //страница полученных проектов 
                             }
                             else if (user.IdRole == 2)
                             {
                                 //страница полученных проектов (от директора)
-                                SuperUserPage superUserPage = new SuperUserPage();
-                                MainVM.Instance.CurrentPage = superUserPage;
+                                ProjectPage projectPage = new ProjectPage();
+                                MainVM.Instance.CurrentPage = projectPage;
                             }
                             else if (user.IdRole == 4)
                             {
@@ -92,8 +93,8 @@ namespace ProjectSystemWPF.ViewModel
                             {
                                 //страница отправленных проектов (ты директор)
                                 //SuperUserPage superUserPage = new SuperUserPage();
-                                ProjectPage projectPage = new ProjectPage();
-                                MainVM.Instance.CurrentPage = projectPage;
+                                MyProjectPage myprojectPage = new MyProjectPage();
+                                MainVM.Instance.CurrentPage = myprojectPage;
                             }
 
                         }

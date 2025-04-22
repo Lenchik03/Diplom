@@ -40,8 +40,13 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
-        public ChatDTO Chat { get; set; } = new();
-
+        public ChatDTO Chat { get => chat1;
+            set
+            {
+                chat1 = value;
+                Signal();
+            }
+        }
         public VmCommand NewChat { get; set; }
         ObservableCollection<DepartmentDTO> allDepartments = new();
         ObservableCollection<UserDTO> allEmployees = new();
@@ -194,6 +199,8 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     foreach (var emp in maindep.Users.Where(s => s.IdRole != 4))
                     {
+                        if (Chat != null && Chat.ChatUsers.FirstOrDefault(s=>s.IdUser == emp.Id) != null)
+                            emp.Selected = true;
                         if (emp.Id != maindep.IdDirector)
                             mtreeviewitem.Items.Add(new TreeViewItem { DataContext = emp, Style = controlStyle, Tag = emp, Header = emp.FIO });
                     }
@@ -209,6 +216,8 @@ namespace ProjectSystemWPF.ViewModel
                             treeViewItem.Header = dep.Title;
                             foreach (var emps in dep.Users.Where(s => s.IdRole != 4))
                             {
+                                if (Chat != null && Chat.ChatUsers.FirstOrDefault(s => s.IdUser == emps.Id) != null)
+                                    emps.Selected = true;
                                 treeViewItem.Items.Add(new TreeViewItem { DataContext = emps, Style = controlStyle, Tag = emps, Header = emps.FIO });
                             }
                             mtreeviewitem.Items.Add(treeViewItem);
@@ -227,6 +236,8 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         foreach (var emp in maindep.Users.Where(s => s.IdRole != 4))
                         {
+                            if (Chat != null && Chat.ChatUsers.FirstOrDefault(s => s.IdUser == emp.Id) != null)
+                                emp.Selected = true;
                             if (emp.Id != maindep.IdDirector)
                                 mtreeviewitem.Items.Add(new TreeViewItem { DataContext = emp, Style = controlStyle, Tag = emp, Header = emp.FIO });
                         }
@@ -248,6 +259,8 @@ namespace ProjectSystemWPF.ViewModel
             CountPart = this.selectedUser.Count;
         }
         NewMessageWindow newMessageWindow;
+        private ChatDTO chat1 = new();
+
         internal void SetWindow(NewMessageWindow newMessageWindow)
         {
             this.newMessageWindow = newMessageWindow;
@@ -255,7 +268,8 @@ namespace ProjectSystemWPF.ViewModel
 
         internal void GetChat(ChatDTO chat)
         {
-            Chat = chat;
+            Chat = chat; 
+            Loaded?.Invoke(this, null);
         }
     }
 }

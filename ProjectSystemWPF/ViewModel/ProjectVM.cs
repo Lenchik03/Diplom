@@ -17,8 +17,7 @@ namespace ProjectSystemWPF.ViewModel
 {
     public class ProjectVM: BaseVM
     {
-        public VmCommand DeleteProject {  get; set; }
-        public VmCommand NewProject { get; set; }
+
         public ObservableCollection<ProjectDTO> Projects 
         { 
             get => projects1;
@@ -36,8 +35,7 @@ namespace ProjectSystemWPF.ViewModel
                 }
             }
         }
-        public VmCommand DeleteTask { get; set; }
-        public VmCommand NewTask { get; set; }
+       
         public ObservableCollection<TaskDTO> Tasks 
         { get => tasks1;
             set { tasks1 = value;
@@ -50,7 +48,7 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
-        public string Executor { get; set; }
+
         ObservableCollection<ProjectDTO> projects = new ObservableCollection<ProjectDTO>(); 
         ObservableCollection<TaskDTO> tasks = new ObservableCollection<TaskDTO>();
         private ObservableCollection<ProjectDTO> projects1;
@@ -63,75 +61,9 @@ namespace ProjectSystemWPF.ViewModel
         {
             GetProjects();
             //GetTasks();
-            NewProject = new VmCommand(async () =>
-            {
-                EditProjectPage editProjectPage = new EditProjectPage(new ProjectDTO());
-                editProjectPage.ShowDialog();
-                GetProjects();
-            });
+           
 
-            NewTask = new VmCommand(async () =>
-            {
-                EditTaskPage editTaskPage = new EditTaskPage(new TaskDTO());
-                editTaskPage.ShowDialog();
-               
-            });
-
-            DeleteProject = new VmCommand(async () =>
-            {
-                foreach(var task in Project.Tasks)
-                {
-                    task.IdStatus = 4;
-                    task.StatusTitle = "Удалена";
-
-                    string arg = JsonSerializer.Serialize(task, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
-                    try
-                    {
-                        responce.EnsureSuccessStatusCode();
-                       // MessageBox.Show("Проект успешно обновлен!");
-
-                    }
-                    catch (Exception ex)
-                    {
-                       // MessageBox.Show("Ошибка! Обновление проекта приостановлено!");
-                        return;
-                    }
-                }
-
-                string arg1 = JsonSerializer.Serialize(Project, REST.Instance.options);
-                var responce1 = await REST.Instance.client.DeleteAsync($"Projects/{Project.Id}");
-                try
-                {
-                    responce1.EnsureSuccessStatusCode();
-                    MessageBox.Show("Проект успешно удалён!");
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ошибка! Удаление проекта приостановлено!");
-                    return;
-                }
-            });
-
-            DeleteTask = new VmCommand(async () =>
-            {
-                string arg = JsonSerializer.Serialize(SelectedTask, REST.Instance.options);
-                var responce = await REST.Instance.client.PutAsync($"TaskMs/{SelectedTask.Id}",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
-                try
-                {
-                    responce.EnsureSuccessStatusCode();
-                    //MessageBox.Show("Задача успешно обновлена!");
-
-                }
-                catch (Exception ex)
-                {
-                    //MessageBox.Show("Ошибка! Обновление З приостановлено!");
-                    return;
-                }
-            });
+            
             
         }
 
@@ -172,18 +104,6 @@ namespace ProjectSystemWPF.ViewModel
             }
 
             Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id && s.IdStatus != 4 && s.IdStatus != 3));
-        }
-
-        internal void Select(ProjectDTO p)
-        {
-            EditProjectPage editProjectPage = new EditProjectPage(p);
-            editProjectPage.ShowDialog();
-        }
-
-        internal void SelectTask(TaskDTO t)
-        {
-            EditTaskPage editTaskPage = new EditTaskPage(t);
-            editTaskPage.ShowDialog();
         }
     }
 }

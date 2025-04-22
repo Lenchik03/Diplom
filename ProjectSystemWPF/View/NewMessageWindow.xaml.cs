@@ -27,14 +27,14 @@ namespace ProjectSystemWPF
         public NewMessageWindow(ChatDTO chat)
         {
             InitializeComponent();
+            (DataContext as MessageVM).Loaded += Vm_Loaded;
+            (DataContext as MessageVM).SetWindow(this);
             if (chat.Id != 0)
                 (DataContext as MessageVM).GetChat(chat);
             else
             {
                 (DataContext as MessageVM).GetChat(new ChatDTO());
             }
-            (DataContext as MessageVM).Loaded += Vm_Loaded;
-            (DataContext as MessageVM).SetWindow(this);
         }
 
         private void Vm_Loaded(object? sender, EventArgs e)

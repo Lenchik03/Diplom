@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace ChatServer
 {
-    public class MyHub: Hub
+    public class MyHub : Hub
     {
         public override System.Threading.Tasks.Task OnConnectedAsync()
         {
+
             return base.OnConnectedAsync();
         }
         private MyHub myHub;
@@ -32,12 +33,12 @@ namespace ChatServer
         }
         public async System.Threading.Tasks.Task NewMessageAsync(UserDTO sender, MessageDTO message, ChatDTO chat)
         {
-            var chatUsers = GetChatUsers(chat.Id);
+            var chatUsers = await GetChatUsers(chat.Id);
             message.IdChat = chat.Id;
             message.Chat = chat;
             message.IdSender = sender.Id;
             message.Sender = sender;
-            
+
             string arg = JsonSerializer.Serialize(message, REST.Instance.options);
             var responce = await REST.Instance.client.PostAsync($"Messages",
                 new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -53,7 +54,22 @@ namespace ChatServer
                 return;
             }
 
-            myHub.Clients.All.SendAsync("newMessage", message);
+            chatUsers.Select(s => s.Id).ToList().ForEach(async s =>
+            {
+                if (clients.ContainsKey(s))
+                    await clients[s].SendAsync("newMessage", chat.Id);
+            });
+
+            //myHub.Clients.All.SendAsync("newMessage", message);
+        }
+
+        static Dictionary<int, IClientProxy> clients = new();
+        public void Register(int idUser)
+        {
+            if (clients.ContainsKey(idUser))
+                clients[idUser] = myHub.Clients.Caller;
+            else
+                clients.Add(idUser, myHub.Clients.Caller);
         }
     }
 }

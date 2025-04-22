@@ -27,7 +27,8 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("My/{idUser}")]
         public async Task<ActionResult<IEnumerable<ChatDTO>>> GetMyChats(int idUser)
         {
-            return Ok(_context.ChatUsers.Include(s => s.IdChatNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdChatNavigation).ToList());
+            var chats = _context.ChatUsers.Include(s => s.IdChatNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdChatNavigation.Id).ToList();
+            return Ok(_context.Chats.Include(s=>s.ChatUsers).AsNoTracking().Where(s=>chats.Contains(s.Id)).Select(s=>(ChatDTO)s).ToList());
             //var list = _context.Chats.Include(d => d.ChatUsers)
             //    .Where(s => s.ChatUsers.FirstOrDefault(u => u.Id == idUser) != null)
             //    .ToList();

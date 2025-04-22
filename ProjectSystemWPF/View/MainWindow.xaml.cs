@@ -20,6 +20,12 @@ namespace ProjectSystemWPF.View
         public MainWindow()
         {
             InitializeComponent();
+            //Unloaded += 
+        }
+
+        private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         bool menuOpened = false;

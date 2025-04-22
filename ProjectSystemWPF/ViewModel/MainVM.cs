@@ -13,7 +13,22 @@ namespace ProjectSystemWPF.ViewModel
     public class MainVM: BaseVM
     {
         private Page currentPage;
+        public Visibility ViewMenu
+        {
+            get => viewMenu;
+            set { viewMenu = value;
+                Signal();
+            }
+        }
         private Visibility viewSignOut = Visibility.Collapsed;
+        public Visibility MyProjectVisibility 
+        { get => myProjectVisibility;
+            set { myProjectVisibility = value;
+                Signal();
+            }
+        }
+        private Visibility viewMenu;
+        private Visibility myProjectVisibility;
 
         public static MainVM Instance { get; set; }
 
@@ -42,12 +57,14 @@ namespace ProjectSystemWPF.ViewModel
         public VmCommand OpenProfileClick { get; set; }
         public VmCommand OpenChatsClick { get; set; }
         public VmCommand OpenProjectClick { get; set; }
+        public VmCommand OpenMyProjectClick { get; set; }
         //public VmCommand MainPage { get; set; }
 
         public MainVM()
         {
             Instance = this;
             ActiveUser.GetInstance().UserChanged += MainVM_UserChanged;
+           
             CurrentPage = new LoginPage();
             //Search = new VmCommand(() =>
             //{
@@ -60,6 +77,12 @@ namespace ProjectSystemWPF.ViewModel
                 ActiveUser.GetInstance().User = null;
                 CurrentPage = new LoginPage();
             });
+
+            OpenProjectClick = new VmCommand(async () =>
+            {
+                CurrentPage = new ProjectPage();
+            });
+
             OpenEmployeesClick = new VmCommand(() =>
             {
                 CurrentPage = new SuperUserPage();
@@ -74,9 +97,11 @@ namespace ProjectSystemWPF.ViewModel
                 CurrentPage = new ChatsPage();
             });
 
-            OpenProjectClick = new VmCommand(async () =>
+            
+
+            OpenMyProjectClick = new VmCommand(async () =>
             {
-                CurrentPage = new ProjectPage();
+                CurrentPage = new MyProjectPage();
             });
             //MainPage = new VmCommand(() =>
             //{
@@ -91,6 +116,22 @@ namespace ProjectSystemWPF.ViewModel
         private void MainVM_UserChanged(object? sender, EventArgs e)
         {
             ViewSignOut = ActiveUser.GetInstance().User == null ? Visibility.Collapsed : Visibility.Visible;
+            ViewMenu = ActiveUser.GetInstance().User == null ? Visibility.Collapsed : Visibility.Visible;
+            if (ActiveUser.GetInstance().User != null)
+            {
+                if (ActiveUser.GetInstance().User.IdRole == 4)
+                {
+                    ViewMenu = Visibility.Collapsed;
+                }
+                if (ActiveUser.GetInstance().User.IdRole == 2 || ActiveUser.GetInstance().User.IdRole == 3)
+                {
+                    MyProjectVisibility = Visibility.Visible;
+                }
+                else
+                {
+                    MyProjectVisibility = Visibility.Collapsed;
+                }
+            }
         }
 
         //private void OpenSearch()
