@@ -105,5 +105,11 @@ namespace ProjectSystemWPF.ViewModel
 
             Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id && s.IdStatus != 4 && s.IdStatus != 3));
         }
+
+        internal void Select(TaskDTO p)
+        {
+            TaskDescriptionWindow taskDescWin = new TaskDescriptionWindow(p);
+           taskDescWin.ShowDialog();
+        }
     }
 }

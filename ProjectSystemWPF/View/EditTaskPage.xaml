@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
         xmlns:vm ="clr-namespace:ProjectSystemWPF.ViewModel"
       mc:Ignorable="d" 
-      d:DesignHeight="550" d:DesignWidth="400"
+      Height="550" Width="400"
       Title="EditTaskPage"
         DataContext="{DynamicResource editTaslVM}">
     <Window.Resources>
@@ -37,7 +37,7 @@ UpdateSourceTrigger=PropertyChanged}"/>
                             <ColumnDefinition Width="190*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            
+                            <Label Content="Сотрудники"/>
                             <ListBox BorderThickness ="1" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding AddExecutor}" HorizontalContentAlignment="Stretch" >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -57,6 +57,7 @@ UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
+                            <Label Content="Исполнители"/>
                         <ListBox  BorderBrush="Black" BorderThickness ="1" Background="#FFFDC401" Margin="5,5,5,5" ItemsSource="{Binding SelectedExecutors}" SelectedItem="{Binding RemoveExecutor}" HorizontalContentAlignment="Stretch" >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>

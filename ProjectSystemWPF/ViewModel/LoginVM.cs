@@ -71,6 +71,7 @@ namespace ProjectSystemWPF.ViewModel
 
                         else
                         {
+                            
                             if (user.IdRole == 3) // открытие страницы сотрудника
                             {
                                 ProjectPage projectPage = new ProjectPage();

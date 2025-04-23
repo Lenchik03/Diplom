@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using ProjectSystemWPF.ViewModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,7 +21,7 @@ namespace ProjectSystemWPF.View
         public MainWindow()
         {
             InitializeComponent();
-            //Unloaded += 
+            Unloaded += async (s, e) => SignalR.Instance.StopConnection();
         }
 
         private void MainWindow_Unloaded(object sender, RoutedEventArgs e)

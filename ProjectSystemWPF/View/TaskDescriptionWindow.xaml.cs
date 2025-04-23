@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChatServerDTO.DTO;
+using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +21,17 @@ namespace ProjectSystemWPF.View
     /// </summary>
     public partial class TaskDescriptionWindow : Window
     {
-        public TaskDescriptionWindow()
+        public TaskDescriptionWindow(TaskDTO task)
         {
             InitializeComponent();
+            if (task.Id != 0)
+            {
+                (DataContext as TaskDescriptionVM).SetTask(task);
+            }
+            else
+            {
+                (DataContext as TaskDescriptionVM).SetTask(new TaskDTO());
+            }
         }
     }
 }

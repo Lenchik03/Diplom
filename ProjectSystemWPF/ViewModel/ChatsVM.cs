@@ -47,7 +47,7 @@ namespace ProjectSystemWPF.ViewModel
                     GetMessage();
             }
         }
-        public string Address { get; set; } = "http://localhost:5147";
+        
         public int CountMess { get; set; }
         public ObservableCollection<MessageDTO> Messages
         {
@@ -108,22 +108,7 @@ namespace ProjectSystemWPF.ViewModel
         }
 
 
-        private void CreateConnection()
-        {
-            _connection = new HubConnectionBuilder().
-                            AddJsonProtocol(s =>
-                            {
-                                s.PayloadSerializerOptions.ReferenceHandler =
-                                System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                            }
-            ).
-                        WithUrl(Address + "/chat").
-            Build();
-
-            _connection.StartAsync();
-
-            //Unloaded += async (s, e) => await _connection.StopAsync();
-        }
+        
 
         public async void FindChatAsync()
         {

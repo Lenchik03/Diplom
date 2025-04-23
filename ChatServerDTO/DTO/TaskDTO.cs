@@ -47,6 +47,9 @@ namespace ChatServerDTO.DTO
             if (task.IdCreatorNavigation != null)
                 result.Creator = (UserDTO)task.IdCreatorNavigation;
 
+            if (task.IdProjectNavigation != null)
+                result.Project = (ProjectDTO)task.IdProjectNavigation;
+
             if (task.IdStatusNavigation != null)
                 result.StatusTitle = task.IdStatusNavigation.Title;
 

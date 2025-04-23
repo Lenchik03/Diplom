@@ -4,9 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectSystemWPF.View"
+        xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
-        Title="TaskDescriptionWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="TaskDescriptionWindow" Height="650" Width="500"
+        DataContext="{DynamicResource taskDescVM}"
+        >
+    <Window.Resources>
+        <vm:TaskDescriptionVM x:Key="taskDescVM"/>
+    </Window.Resources>
+    <Grid Background="#FFFDC401">
+        <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
+            <StackPanel>
+                <Label Content="ЗАДАЧА" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
+
+                <StackPanel Margin="5">
+                    <Label Content="Название"/>
+                    <TextBlock Text="{Binding Task.Title}"/>
+                    <Label Content="Описание"/>
+                    <TextBlock Text="{Binding Task.Description}" Height="100"/>
+                    <Label Content="Проект"/>
+                    <TextBlock Text="{Binding Task.Project}"/>
+                </StackPanel>
+                <StackPanel>
+                    <Label Content="Исполнители" HorizontalAlignment="Center"/>
+                    <ScrollViewer>
+                       
+                        <ListBox BorderThickness="1" HorizontalAlignment="Center" Width="340" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding Executor}" HorizontalContentAlignment="Stretch" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Background="#FFFDC401" Margin="5">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="{Binding FIO}" FontSize="15"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    </ScrollViewer>
+                </StackPanel>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

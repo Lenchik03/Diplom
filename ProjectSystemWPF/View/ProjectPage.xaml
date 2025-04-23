@@ -59,7 +59,7 @@
 
                 </Grid>
                 <ScrollViewer>
-                    <ListBox BorderBrush="Black" BorderThickness ="1" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
+                    <ListBox BorderBrush="Black" MouseDoubleClick="DescriptionTaskClick" BorderThickness ="1" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Background="#FFFDC401" Margin="5">

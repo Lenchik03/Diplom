@@ -28,6 +28,12 @@ namespace ProjectSystemWPF.View
             InitializeComponent();
         }
 
-        
+        private void DescriptionTaskClick(object sender, MouseButtonEventArgs e)
+        {
+            var list = sender as ListBox;
+            var p = list.SelectedItem as TaskDTO;
+            if (p != null)
+                ((ProjectVM)DataContext).Select(p);
+        }
     }
 }

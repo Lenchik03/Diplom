@@ -28,7 +28,8 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("My/{idUser}")]
         public async Task<ActionResult<IEnumerable<TaskDTO>>> GetMyTasks(int idUser)
         {
-            return Ok( _context.TaskForUsers.Include(s => s.IdTaskNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdTaskNavigation).ToList());
+            var list = _context.TaskForUsers.Include(s => s.IdTaskNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdTaskNavigation).ToList();
+            return Ok(list.Select(s => (TaskDTO)s));
             /*var list = _context.Tasks.Include(d=>d.TaskForUsers)
                 .Where(s=>s.TaskForUsers.FirstOrDefault(u=>u.Id == idUser) != null)
                 .ToList();

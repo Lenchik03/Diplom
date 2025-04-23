@@ -13,7 +13,7 @@ namespace ChatServer
     {
         public override System.Threading.Tasks.Task OnConnectedAsync()
         {
-
+            
             return base.OnConnectedAsync();
         }
         private MyHub myHub;
