@@ -16,16 +16,20 @@ namespace ProjectSystemWPF.ViewModel
         public string Address { get; set; } = "http://localhost:5147";
         public HubConnection CreateConnection()
         {
+            if (_connection?.State == HubConnectionState.Connected)
+                return _connection;
             _connection = new HubConnectionBuilder().
                             AddJsonProtocol(s =>
                             {
                                 s.PayloadSerializerOptions.ReferenceHandler =
                                 System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                                s.PayloadSerializerOptions.DefaultIgnoreCondition =
+                                System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
                             }
             ).
                         WithUrl(Address + "/chat").
             Build();
-
+            
             _connection.StartAsync();
             return _connection;
 

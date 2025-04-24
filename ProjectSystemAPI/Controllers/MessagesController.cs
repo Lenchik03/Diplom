@@ -24,10 +24,10 @@ namespace ProjectSystemAPI.Controllers
 
         // GET: api/Messages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages()
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages(int chat)
         {
 
-            var list = await _context.Messages.Include(s=>s.IdSenderNavigation).AsNoTracking().ToListAsync();
+            var list = await _context.Messages.Include(s=>s.IdSenderNavigation).Where(s=>s.IdChat == chat).AsNoTracking().ToListAsync();
             return Ok(list.Select(s => (MessageDTO)s));
         }
 
@@ -86,7 +86,7 @@ namespace ProjectSystemAPI.Controllers
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMessage", new { id = message.Id }, message);
+            return CreatedAtAction("GetMessage", new { id = messageDTO.Id }, messageDTO);
         }
 
         // DELETE: api/Messages/5

@@ -19,7 +19,7 @@ namespace ChatServer
         private MyHub myHub;
         public async Task<ObservableCollection<UserDTO>> GetChatUsers(int chatId)
         {
-            var result = await REST.Instance.client.GetAsync($"ChatMembers/{chatId}");
+            var result = await REST.Instance.client.GetAsync($"Chats/ChatMembers/{chatId}");
             //todo not ok
 
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
@@ -34,10 +34,10 @@ namespace ChatServer
         public async System.Threading.Tasks.Task NewMessage(UserDTO sender, MessageDTO message, ChatDTO chat)
         {
             var chatUsers = await GetChatUsers(chat.Id);
-            message.IdChat = chat.Id;
-            message.Chat = chat;
-            message.IdSender = sender.Id;
-            message.Sender = sender;
+            //message.IdChat = chat.Id;
+            //message.Chat = chat;
+            //message.IdSender = sender.Id;
+            //message.Sender = sender;
 
             string arg = JsonSerializer.Serialize(message, REST.Instance.options);
             var responce = await REST.Instance.client.PostAsync($"Messages",
@@ -57,7 +57,15 @@ namespace ChatServer
             chatUsers.Select(s => s.Id).ToList().ForEach(async s =>
             {
                 if (clients.ContainsKey(s))
-                    await clients[s].SendAsync("newMessage", message, chat.Id);
+                    try
+                    {
+                        await clients[s].SendAsync("newMessage", message, chat.Id);
+                    }
+                    catch(Exception e)
+                    {
+
+
+                    }
             });
 
             //myHub.Clients.All.SendAsync("newMessage", message);

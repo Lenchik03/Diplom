@@ -25,6 +25,7 @@ namespace ProjectSystemWPF.View
         public ChatsPage()
         {
             InitializeComponent();
+            (DataContext as ChatsVM).SetDispatcher(Dispatcher);
         }
 
         private void EditChatClick(object sender, MouseButtonEventArgs e)

@@ -17,7 +17,7 @@ namespace ProjectSystemWPF.View
             var vm = new LoginVM();  
             DataContext = vm;
             vm.SetPasswordBox(passwrdBox);
-            Unloaded += async (s, e) => SignalR.Instance.CreateConnection();
+            Loaded += async (s, e) => SignalR.Instance.CreateConnection();
 
         }
 

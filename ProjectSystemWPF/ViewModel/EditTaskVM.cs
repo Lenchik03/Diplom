@@ -131,7 +131,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 Task.Creator = ActiveUser.GetInstance().User;
                 Task.IdCreator = ActiveUser.GetInstance().User.Id;
-                Task.Project = SelectedProject;
+                //Task.Project = SelectedProject;
                 Task.IdProject = SelectedProject.Id;
                 Task.IdStatus = 1;
                 Task.StatusTitle = "Выдана";

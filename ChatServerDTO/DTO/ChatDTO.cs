@@ -16,7 +16,7 @@ namespace ChatServerDTO.DTO
 
         public byte[]? ImagePath { get; set; }
 
-        public List<ChatUser> ChatUsers { get; set; } = new List<ChatUser>();
+        public List<ChatUserDTO> ChatUsers { get; set; } = new List<ChatUserDTO>();
 
         public List<MessageDTO> Messages { get; set; } = new List<MessageDTO>();
 
@@ -29,7 +29,7 @@ namespace ChatServerDTO.DTO
             };
 
             if (from.ChatUsers != null)
-                result.ChatUsers = from.ChatUsers.Select(s => (ChatUser)s).ToList();
+                result.ChatUsers = from.ChatUsers.Select(s => (ChatUserDTO)s).ToList();
 
             if (from.Messages != null)
                 result.Messages = from.Messages.Select(s => (MessageDTO)s).ToList();
@@ -45,8 +45,9 @@ namespace ChatServerDTO.DTO
                 Title = chat.Title,
                 ImagePath = chat.ImagePath
 
-
             };
+            if (chat.ChatUsers != null)
+                result.ChatUsers = chat.ChatUsers.Select(s => (ChatUser)s).ToList();
             return result;
         }
     }

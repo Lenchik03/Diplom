@@ -73,6 +73,14 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
+
+        public MessageDTO NewMessage 
+        { 
+            get => newMessage;
+            set { newMessage = value;
+                Signal();
+            }
+        }
         //public UserDTO Sender
         //{
         //    get => sender;
@@ -92,13 +100,15 @@ namespace ProjectSystemWPF.ViewModel
         private ObservableCollection<ChatDTO> chats = new ObservableCollection<ChatDTO>();
         private ObservableCollection<MessageDTO> messages = new ObservableCollection<MessageDTO>();
         private MessageDTO message = new MessageDTO();
+        private MessageDTO newMessage = new MessageDTO();
+
         //private UserDTO sender;
 
         public ChatsVM()
         {
             GetChats();
             GetMessage();
-            HubMethods();
+           
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow(Chat);
@@ -113,43 +123,45 @@ namespace ProjectSystemWPF.ViewModel
                     var filePath = openFileDialog.FileName;
                     var fileName = Path.GetFileName(filePath);
                     var fileContent = await File.ReadAllBytesAsync(filePath);
-                    Message.DocumentTitle = fileName;
-                    Message.Document = fileContent;
+                    NewMessage.DocumentTitle = fileName;
+                    NewMessage.Document = fileContent;
                 }
                 
             });
 
             SendMessage = new VmCommand(async () =>
             {
-                Message.Sender = ActiveUser.GetInstance().User;
-                Message.IdSender = ActiveUser.GetInstance().User.Id;
-                Message.IdChat = Chat.Id;
-                Message.Chat = Chat;
-                
-                await _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, Message, Chat);
+                //Message.Sender = ActiveUser.GetInstance().User;
+                NewMessage.IdSender = ActiveUser.GetInstance().User.Id;
+                NewMessage.IdChat = Chat.Id;
+                //Message.Chat = Chat;
+                HubMethods();
+                await _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, NewMessage, Chat);
             });
         }
 
         private void HubMethods()
         {
-            _connection.On<string, int>("newMessage", (mess, chatId) =>
+            _connection.On<MessageDTO, int>("newMessage", (mess, chatId) =>
             {
                 var chat = Chats.FirstOrDefault(c => c.Id == chatId);
-                Notifier notifier = new Notifier(cfg =>
+                dispatcher.Invoke(() =>
                 {
-                    cfg.PositionProvider = new WindowPositionProvider(
-                        parentWindow: System.Windows.Application.Current.MainWindow,
-                        corner: Corner.TopRight,
-                        offsetX: 10,
-                        offsetY: 10);
+                    Notifier notifier = new Notifier(cfg =>
+                    {
+                        cfg.PositionProvider = new WindowPositionProvider(
+                            parentWindow: System.Windows.Application.Current.MainWindow,
+                            corner: Corner.TopRight,
+                            offsetX: 10,
+                            offsetY: 10);
 
-                    cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                        notificationLifetime: TimeSpan.FromSeconds(3),
-                        maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+                        cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                            notificationLifetime: TimeSpan.FromSeconds(3),
+                            maximumNotificationCount: MaximumNotificationCount.FromCount(5));
 
-                    cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
-                });
-                
+                        cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
+                    });
+              
                 //var notify = new ToastContentBuilder();
                 //notify.AddText("Новое сообщение!");
                 //notify.AddArgument($"Вам пришло новое сообщение в чате {chat.Title}");
@@ -158,7 +170,7 @@ namespace ProjectSystemWPF.ViewModel
                 //var toast = notify.GetToastContent();
                 notifier.ShowInformation($"Вам пришло новое сообщение в чате {chat.Title}");
 
-
+                });
             });
         }
 
@@ -191,7 +203,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void GetMessage()
         {
-            var result = await REST.Instance.client.GetAsync("Messages");
+            var result = await REST.Instance.client.GetAsync("Messages?chat=" + Chat.Id);
             //todo not ok
 
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
@@ -202,10 +214,14 @@ namespace ProjectSystemWPF.ViewModel
             {
                 allMessages = await result.Content.ReadFromJsonAsync<ObservableCollection<MessageDTO>>(REST.Instance.options);
             }
-            Messages = new ObservableCollection<MessageDTO>(allMessages.Where(s => s.IdChat == Chat.Id));
+            Messages = new ObservableCollection<MessageDTO>(allMessages);
+            foreach (var item in Messages)
+            {
+                item.Sender = Chat.ChatUsers.FirstOrDefault( s=> s.IdUser == item.IdSender)?.User;
+            }
 
 
-            
+
 
         }
 
@@ -229,6 +245,11 @@ namespace ProjectSystemWPF.ViewModel
 
             NewMessageWindow newMessageWindow = new NewMessageWindow(chat);
             newMessageWindow.ShowDialog();
+        }
+        Dispatcher dispatcher;
+        internal void SetDispatcher(Dispatcher dispatcher)
+        {
+            this.dispatcher = dispatcher;
         }
     }
 }

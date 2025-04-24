@@ -9,6 +9,7 @@ builder.Services.AddSignalR().
     {
         s.PayloadSerializerOptions.ReferenceHandler =
         System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        s.PayloadSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     }
 );
 var app = builder.Build();

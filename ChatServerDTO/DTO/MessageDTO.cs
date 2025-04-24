@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ChatServerDTO.DTO
@@ -24,9 +25,9 @@ namespace ChatServerDTO.DTO
 
         public string? DocumentTitle { get; set; }
 
-        public ChatDTO Chat { get; set; } = null!;
+        //public ChatDTO Chat { get; set; } = null!;
 
-        public UserDTO Sender { get; set; } = null!;
+        public UserDTO? Sender { get; set; }
 
         public static explicit operator MessageDTO(Message message)
         {
@@ -40,13 +41,13 @@ namespace ChatServerDTO.DTO
                 IdSender = message.IdSender,
                 IsReadIt = message.IsReadIt
             };
-
+            /*
             if (message.IdChatNavigation != null)
                 result.Chat = (ChatDTO)message.IdChatNavigation;
 
             if (message.IdSenderNavigation != null)
                 result.Sender = (UserDTO)message.IdSenderNavigation;
-
+            */
             return result;
         }
 

@@ -25,7 +25,7 @@ namespace ChatServerDTO.DTO
 
         public UserDTO? Creator { get; set; }
 
-        public ProjectDTO? Project { get; set; }
+        //public ProjectDTO? Project { get; set; }
 
         public string? StatusTitle { get; set; }
 
@@ -47,8 +47,8 @@ namespace ChatServerDTO.DTO
             if (task.IdCreatorNavigation != null)
                 result.Creator = (UserDTO)task.IdCreatorNavigation;
 
-            if (task.IdProjectNavigation != null)
-                result.Project = (ProjectDTO)task.IdProjectNavigation;
+            //if (task.IdProjectNavigation != null)
+            //    result.Project = (ProjectDTO)task.IdProjectNavigation;
 
             if (task.IdStatusNavigation != null)
                 result.StatusTitle = task.IdStatusNavigation.Title;
