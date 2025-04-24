@@ -171,7 +171,7 @@ namespace ProjectSystemWPF.ViewModel
                     string arg = JsonSerializer.Serialize(Task, REST.Instance.options);
                     var responce = await REST.Instance.client.PutAsync($"TaskMs",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
-                    try
+                    try 
                     {
                         responce.EnsureSuccessStatusCode();
                         MessageBox.Show("Задача успешно обновлена!");
