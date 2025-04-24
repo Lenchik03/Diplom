@@ -1,6 +1,8 @@
 ﻿using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.Win32;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
@@ -8,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -16,6 +19,11 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
+using ToastNotifications;
+using ToastNotifications.Lifetime;
+using ToastNotifications.Messages;
+using ToastNotifications.Position;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjectSystemWPF.ViewModel
@@ -72,7 +80,7 @@ namespace ProjectSystemWPF.ViewModel
 
         //    }
         //}
-        HubConnection _connection;
+        HubConnection _connection = SignalR.Instance.CreateConnection();
         public string Text { get; set; }
         public VmCommand AttachFile { get; set; }
         public VmCommand SendMessage { get; set; }
@@ -90,6 +98,7 @@ namespace ProjectSystemWPF.ViewModel
         {
             GetChats();
             GetMessage();
+            HubMethods();
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow(Chat);
@@ -98,17 +107,63 @@ namespace ProjectSystemWPF.ViewModel
 
             AttachFile = new VmCommand(async () =>
             {
-
+                var openFileDialog = new Microsoft.Win32.OpenFileDialog();
+                if(openFileDialog.ShowDialog() == true)
+                {
+                    var filePath = openFileDialog.FileName;
+                    var fileName = Path.GetFileName(filePath);
+                    var fileContent = await File.ReadAllBytesAsync(filePath);
+                    Message.DocumentTitle = fileName;
+                    Message.Document = fileContent;
+                }
+                
             });
 
             SendMessage = new VmCommand(async () =>
             {
-                _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, Message, Chat);
+                Message.Sender = ActiveUser.GetInstance().User;
+                Message.IdSender = ActiveUser.GetInstance().User.Id;
+                Message.IdChat = Chat.Id;
+                Message.Chat = Chat;
+                
+                await _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, Message, Chat);
+            });
+        }
+
+        private void HubMethods()
+        {
+            _connection.On<string, int>("newMessage", (mess, chatId) =>
+            {
+                var chat = Chats.FirstOrDefault(c => c.Id == chatId);
+                Notifier notifier = new Notifier(cfg =>
+                {
+                    cfg.PositionProvider = new WindowPositionProvider(
+                        parentWindow: System.Windows.Application.Current.MainWindow,
+                        corner: Corner.TopRight,
+                        offsetX: 10,
+                        offsetY: 10);
+
+                    cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                        notificationLifetime: TimeSpan.FromSeconds(3),
+                        maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+
+                    cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
+                });
+                
+                //var notify = new ToastContentBuilder();
+                //notify.AddText("Новое сообщение!");
+                //notify.AddArgument($"Вам пришло новое сообщение в чате {chat.Title}");
+                //notify.AddArgument(mess);
+                //notify.GetToastContent();
+                //var toast = notify.GetToastContent();
+                notifier.ShowInformation($"Вам пришло новое сообщение в чате {chat.Title}");
+
+
             });
         }
 
 
-        
+
 
         public async void FindChatAsync()
         {

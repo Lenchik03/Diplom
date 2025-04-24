@@ -15,6 +15,7 @@ using ProjectSystemWPF.View;
 using MaterialDesignThemes.Wpf;
 using ProjectSystemAPI.DTO;
 using ProjectSystemAPI.DB;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace ProjectSystemWPF.ViewModel
 {
@@ -58,6 +59,8 @@ namespace ProjectSystemWPF.ViewModel
                         var user = await result.Content.ReadFromJsonAsync<ResponseTokenAndRole>(REST.Instance.options);
                         ActiveUser.GetInstance().User = user.User;
                         REST.Instance.SetToken(user.Token);
+                        var con = SignalR.Instance.CreateConnection();
+                        await con.SendAsync("Register", ActiveUser.GetInstance().User.Id);
                     }
 
                     if (Validator.TryValidateObject(this, new ValidationContext(this), null))

@@ -31,7 +31,7 @@ namespace ChatServer
                 return await result.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
             }
         }
-        public async System.Threading.Tasks.Task NewMessageAsync(UserDTO sender, MessageDTO message, ChatDTO chat)
+        public async System.Threading.Tasks.Task NewMessage(UserDTO sender, MessageDTO message, ChatDTO chat)
         {
             var chatUsers = await GetChatUsers(chat.Id);
             message.IdChat = chat.Id;
@@ -57,7 +57,7 @@ namespace ChatServer
             chatUsers.Select(s => s.Id).ToList().ForEach(async s =>
             {
                 if (clients.ContainsKey(s))
-                    await clients[s].SendAsync("newMessage", chat.Id);
+                    await clients[s].SendAsync("newMessage", message, chat.Id);
             });
 
             //myHub.Clients.All.SendAsync("newMessage", message);
@@ -67,9 +67,9 @@ namespace ChatServer
         public void Register(int idUser)
         {
             if (clients.ContainsKey(idUser))
-                clients[idUser] = myHub.Clients.Caller;
+                clients[idUser] = Clients.Caller;
             else
-                clients.Add(idUser, myHub.Clients.Caller);
+                clients.Add(idUser, Clients.Caller);
         }
     }
 }

@@ -92,7 +92,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding Text}" Background="LightYellow" Margin="3"/>
+                        <TextBox Text="{Binding Message.Text}" Background="LightYellow" Margin="3"/>
                         <Button Content="📎" Height="40" Width="50" Command="{Binding AttachFile}" Grid.Column="1"/>
                         <Button Content="➤" Height="40" Width="50" Command="{Binding SendMessage}" Grid.Column="2"/>
                     </Grid>

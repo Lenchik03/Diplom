@@ -14,7 +14,7 @@ namespace ProjectSystemWPF.ViewModel
     {
         HubConnection _connection;
         public string Address { get; set; } = "http://localhost:5147";
-        public void CreateConnection()
+        public HubConnection CreateConnection()
         {
             _connection = new HubConnectionBuilder().
                             AddJsonProtocol(s =>
@@ -27,6 +27,7 @@ namespace ProjectSystemWPF.ViewModel
             Build();
 
             _connection.StartAsync();
+            return _connection;
 
             //Unloaded += async (s, e) => await _connection.StopAsync();
         }
