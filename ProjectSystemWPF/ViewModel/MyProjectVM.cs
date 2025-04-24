@@ -149,7 +149,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public async System.Threading.Tasks.Task GetProjects()
         {
-            var result = await REST.Instance.client.GetAsync($"Projects/");
+            var result = await REST.Instance.client.GetAsync($"Projects/GetMyProjects/{ActiveUser.GetInstance().User.Id}");
             //todo not ok
 
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
@@ -161,7 +161,7 @@ namespace ProjectSystemWPF.ViewModel
                 projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
             }
 
-            Projects = new ObservableCollection<ProjectDTO>(projects.Where(s => s.IdCreator == ActiveUser.GetInstance().User.Id));
+            Projects = new ObservableCollection<ProjectDTO>(projects);
 
 
 

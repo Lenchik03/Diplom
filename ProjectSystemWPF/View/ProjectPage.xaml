@@ -38,6 +38,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="{Binding Title}" FontSize="15"/>
                                         <Label Content="{Binding CompletionDate, StringFormat=dd.MM.yyyy}" FontSize="15"/>
+                                        <Label Content="{Binding Creator.FIO}" FontSize="15"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>

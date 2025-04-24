@@ -20,10 +20,13 @@
                 <StackPanel Margin="5">
                     <Label Content="Название"/>
                     <TextBlock Text="{Binding Task.Title}"/>
+                    <Border BorderBrush="Black" BorderThickness="0.5"/>
                     <Label Content="Описание"/>
-                    <TextBlock Text="{Binding Task.Description}" Height="100"/>
+                    <TextBlock Text="{Binding Task.Description}" TextWrapping="Wrap"/>
+                    <Border BorderBrush="Black" BorderThickness="0.5"/>
                     <Label Content="Проект"/>
                     <TextBlock Text="{Binding Task.Project}"/>
+                    <Border BorderBrush="Black" BorderThickness="0.5"/>
                 </StackPanel>
                 <StackPanel>
                     <Label Content="Исполнители" HorizontalAlignment="Center"/>

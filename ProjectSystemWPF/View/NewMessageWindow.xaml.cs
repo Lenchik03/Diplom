@@ -35,6 +35,7 @@ namespace ProjectSystemWPF
             {
                 (DataContext as MessageVM).GetChat(new ChatDTO());
             }
+            
         }
 
         private void Vm_Loaded(object? sender, EventArgs e)

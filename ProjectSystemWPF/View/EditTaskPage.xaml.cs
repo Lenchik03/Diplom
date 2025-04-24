@@ -33,6 +33,7 @@ namespace ProjectSystemWPF.View
             {
                 (DataContext as EditTaskVM).SetTask(new TaskDTO());
             }
+            (DataContext as EditTaskVM).SetWindow(this);
         }
 
         

@@ -21,7 +21,7 @@
                     <Label Content="Название"/>
                     <TextBox Text="{Binding Task.Title}"/>
                     <Label Content="Описание"/>
-                    <TextBox Text="{Binding Task.Description}" Height="100"/>
+                    <TextBox Text="{Binding Task.Description}" TextWrapping="Wrap"/>
                     <Label Content="Проект"/>
                     <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Title"/>
                     <Label Content="Назначить исполнителей:"/>

@@ -26,7 +26,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
         {
-            var projects = await _context.Projects.Include(s => s.Tasks).AsNoTracking().ToListAsync();
+            var projects = await _context.Projects.Include(s => s.Tasks).AsNoTracking().OrderByDescending(s => s.StartDate).ToListAsync();
             return Ok(projects.Select(s => (ProjectDTO)s));
         }
 
@@ -34,7 +34,7 @@ namespace ProjectSystemAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjects(int idUser)
         {
             return Ok(_context.TaskForUsers.Include(s => s.IdTaskNavigation).ThenInclude(s => s.IdProjectNavigation).
-                Where(s => s.IdUser == idUser).AsNoTracking().Select(s => s.IdTaskNavigation).Select(s => s.IdProjectNavigation).Distinct().ToList());
+                Where(s => s.IdUser == idUser).AsNoTracking().Select(s => s.IdTaskNavigation).Select(s => s.IdProjectNavigation).Distinct().OrderByDescending(s => s.StartDate).ToList());
             /*var list = _context.Tasks.Include(d => d.TaskForUsers)
                 .Where(s => s.TaskForUsers.FirstOrDefault(u => u.Id == idUser) != null)
                 .Select(s => s.IdProject).Distinct().ToList();
@@ -46,7 +46,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("GetMyProjects/{idUser}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjects1(int idUser)
         {
-            return Ok(_context.Projects.Where(s => s.IdCreator == idUser).Select(s => (ProjectDTO)s));
+            return Ok(_context.Projects.Where(s => s.IdCreator == idUser).OrderByDescending(s => s.StartDate).Select(s => (ProjectDTO)s));
         }
 
         // GET: api/Projects/5

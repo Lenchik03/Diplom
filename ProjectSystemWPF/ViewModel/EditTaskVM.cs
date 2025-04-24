@@ -3,6 +3,7 @@ using MaterialDesignColors.Recommended;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
+using ProjectSystemWPF.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -196,7 +197,7 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
                 }
-                
+                editTaskPage.Close();
             });
             
         }
@@ -290,6 +291,11 @@ namespace ProjectSystemWPF.ViewModel
             }
 
             
+        }
+        EditTaskPage editTaskPage;
+        internal void SetWindow(EditTaskPage editTaskPage)
+        {
+            this.editTaskPage = editTaskPage;
         }
     }
 }

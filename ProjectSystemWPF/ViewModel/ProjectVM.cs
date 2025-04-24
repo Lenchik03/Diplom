@@ -60,11 +60,12 @@ namespace ProjectSystemWPF.ViewModel
         public ProjectVM()
         {
             GetProjects();
+            GetUsers();
             //GetTasks();
-           
 
-            
-            
+
+
+
         }
 
         
@@ -84,9 +85,29 @@ namespace ProjectSystemWPF.ViewModel
             }
             
             Projects = new ObservableCollection<ProjectDTO>(projects);
-
-           
             
+
+
+
+        }
+
+        public async void GetUsers()
+        {
+            var result1 = await REST.Instance.client.GetAsync($"Users/GetAllUsers");
+            //todo not ok
+
+            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                var users = await result1.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
+                foreach (var item in Projects)
+                {
+                    item.Creator = users.FirstOrDefault(s => s.Id == item.IdCreator);
+                }
+            }
         }
 
         public async void GetTasks()

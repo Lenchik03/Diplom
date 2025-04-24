@@ -21,9 +21,10 @@ namespace ChatServerDTO.DTO
 
         public DateTime StartDate { get; set; }
 
-        public DateTime CompletionDate { get; set; }
+        public DateTime CompletionDate { get; set; } = DateTime.Now;
 
         public int IdCreator { get; set; }
+        public UserDTO? Creator { get; set; }
 
         public List<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();
 

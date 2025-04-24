@@ -31,6 +31,7 @@ namespace ProjectSystemWPF.View
                 (DataContext as EditProjectVM).GetProject(new ProjectDTO());
             }
                 (DataContext as EditProjectVM).Loaded += Vm_Loaded;
+                (DataContext as EditProjectVM).SetWindow(this);
         }
         private void Vm_Loaded(object? sender, EventArgs e)
         {

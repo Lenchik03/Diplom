@@ -1,6 +1,7 @@
 ﻿using ChatServerDTO.DTO;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
+using ProjectSystemWPF.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -57,5 +58,6 @@ namespace ProjectSystemWPF.ViewModel
             if (Task != null)
                 GetExecutorsByTask();
         }
+        
     }
 }

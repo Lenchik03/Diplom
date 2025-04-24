@@ -238,6 +238,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
             }
+            
         }
 
         internal void Select(ChatDTO chat)

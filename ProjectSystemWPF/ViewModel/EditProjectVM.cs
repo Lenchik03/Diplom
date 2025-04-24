@@ -1,5 +1,6 @@
 ﻿using ChatServerDTO.DTO;
 using ProjectSystemAPI.DB;
+using ProjectSystemWPF.View;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -67,11 +68,17 @@ namespace ProjectSystemWPF.ViewModel
                     }
                 }
                 Loaded?.Invoke(this, null);
+                editProjectPage.Close();
             });
         }
         internal void GetProject(ProjectDTO project)
         {
             Project = project;
+        }
+        EditProjectPage editProjectPage;
+        internal void SetWindow(EditProjectPage editProjectPage)
+        {
+            this.editProjectPage = editProjectPage;
         }
     }
 }

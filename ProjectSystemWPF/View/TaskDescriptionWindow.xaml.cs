@@ -32,6 +32,7 @@ namespace ProjectSystemWPF.View
             {
                 (DataContext as TaskDescriptionVM).SetTask(new TaskDTO());
             }
+            
         }
     }
 }
