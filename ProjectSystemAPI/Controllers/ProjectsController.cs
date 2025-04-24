@@ -43,6 +43,12 @@ namespace ProjectSystemAPI.Controllers
             return Ok(result);*/
         }
 
+        [HttpGet("GetMyProjects/{idUser}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjects1(int idUser)
+        {
+            return Ok(_context.Projects.Where(s => s.IdCreator == idUser).Select(s => (ProjectDTO)s));
+        }
+
         // GET: api/Projects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDTO>> GetProject(int id)

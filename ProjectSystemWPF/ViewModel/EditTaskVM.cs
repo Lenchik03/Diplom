@@ -225,7 +225,8 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void GetProjects()
         {
-            var result = await REST.Instance.client.GetAsync($"Projects/MyProject/{ActiveUser.GetInstance().User.Id}");
+            var user = ActiveUser.GetInstance().User;
+            var result = await REST.Instance.client.GetAsync($"Projects/GetMyProjects/{user.Id}");
 
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
             {

@@ -97,7 +97,7 @@ namespace ProjectSystemAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry((TaskDTO)taskM).State = EntityState.Modified;
+            _context.Entry((Task)taskM).State = EntityState.Modified;
 
             try
             {
@@ -127,7 +127,7 @@ namespace ProjectSystemAPI.Controllers
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTaskM", new { id = task.Id }, task);
+            return CreatedAtAction("GetTaskM", new { id = taskM.Id }, taskM);
         }
 
         // DELETE: api/TaskMs/5
