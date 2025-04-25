@@ -76,6 +76,7 @@
                                         <StackPanel Orientation="Vertical">
                                             <TextBlock Text="{Binding Sender.FIO}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                             <TextBlock Text="{Binding Text}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                            <TextBlock Text="{Binding Document}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>

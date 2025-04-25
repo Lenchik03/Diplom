@@ -60,7 +60,7 @@ namespace ProjectSystemWPF.ViewModel
                         ActiveUser.GetInstance().User = user.User;
                         REST.Instance.SetToken(user.Token);
                         var con = SignalR.Instance.CreateConnection();
-                        await con.SendAsync("Register", ActiveUser.GetInstance().User.Id);
+                        //await con.SendAsync("Register", ActiveUser.GetInstance().User.Id);
                     }
 
                     if (Validator.TryValidateObject(this, new ValidationContext(this), null))

@@ -103,10 +103,10 @@ namespace ProjectSystemWPF.ViewModel
             else
             {
                 var users = await result1.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
-                foreach (var item in Projects)
-                {
-                    item.Creator = users.FirstOrDefault(s => s.Id == item.IdCreator);
-                }
+                //foreach (var item in Projects)
+                //{
+                //    item.Creator = users.FirstOrDefault(s => s.Id == item.IdCreator);
+                //}
             }
         }
 
