@@ -56,10 +56,10 @@ namespace ChatServer
 
             chatUsers.Select(s => s.Id).ToList().ForEach(async s =>
             {
-                if (clients.ContainsKey(s))
+                if (clients.ContainsKey(s) && s != message.IdSender)
                     try
                     {
-                        await clients[s].SendAsync("newMessage", message, chat.Id);
+                        await clients[s].SendAsync("newMessage", message, chat.Id, chat.Title);
                     }
                     catch(Exception e)
                     {

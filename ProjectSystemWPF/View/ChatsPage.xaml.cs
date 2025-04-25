@@ -2,6 +2,7 @@
 using ProjectSystemWPF.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,19 @@ namespace ProjectSystemWPF.View
         public ChatsPage()
         {
             InitializeComponent();
+            
             (DataContext as ChatsVM).SetDispatcher(Dispatcher);
+                 ((INotifyCollectionChanged)listBox.Items).CollectionChanged += Items_CollectionChanged;
+        }
+
+        private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (listBox.Items.Count > 0)
+            {
+                Border border = (Border)VisualTreeHelper.GetChild(listBox, 0);
+                ScrollViewer scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
+                scrollViewer.ScrollToBottom();
+            }
         }
 
         private void EditChatClick(object sender, MouseButtonEventArgs e)

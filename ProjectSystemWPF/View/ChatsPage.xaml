@@ -14,14 +14,14 @@
     <Page.Resources>
         <vm:ChatsVM x:Key="chatsVM"/>
     </Page.Resources>
-    <StackPanel Background="#FFFDC401">
-        <Border Margin="10" BorderBrush="Black" BorderThickness="1" Height="550">
+    <Grid Background="#FFFDC401">
+        <Border Margin="10" BorderBrush="Black" BorderThickness="1">
             <Grid>
 
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto" MinWidth="494"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
 
                 <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right"/>
@@ -47,7 +47,7 @@
 
 
                     <StackPanel Margin="10,20,10,0" Grid.Row="2">
-                        <ListBox MouseDoubleClick="EditChatClick" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding Chats}" SelectedItem="{Binding Chat}" Background="LightYellow">
+                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="EditChatClick" ItemsSource="{Binding Chats}" SelectedItem="{Binding Chat}" Background="LightYellow">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -62,31 +62,29 @@
 
                 </StackPanel>
 
-                <Grid Grid.Column="1">
+                <Grid Margin="10" Grid.Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Column="1" Grid.RowSpan="3">
-                        <Label Content="{Binding Chat.Title}" FontSize="25" FontWeight="Bold"/>
-                        <StackPanel Margin="10,20,10,0" >
-                            <ListBox ItemsSource="{Binding Messages}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding Message}" Background="LightYellow" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="{Binding Sender.FIO}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                            <TextBlock Text="{Binding Text}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                            <TextBlock Text="{Binding Document}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-
-
-                            </ListBox>
-                        </StackPanel>
-
-
-                    </StackPanel>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Content="{Binding Chat.Title}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <ListBox x:Name="listBox" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Messages}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding Message}" Background="LightYellow">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical" Background="AliceBlue">
+                                        <TextBlock Text="{Binding Sender.FIO}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding Text}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding DocumentTitle}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -102,5 +100,5 @@
             </Grid>
         </Border>
 
-    </StackPanel>
+    </Grid>
 </Page>

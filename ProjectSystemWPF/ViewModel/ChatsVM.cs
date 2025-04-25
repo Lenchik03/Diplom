@@ -43,24 +43,31 @@ namespace ProjectSystemWPF.ViewModel
         public ObservableCollection<ChatDTO> Chats
         {
             get => chats;
-            set { chats = value;
+            set
+            {
+                chats = value;
                 Signal();
             }
         }
-        public ChatDTO Chat 
-        { get => chat;
-            set { chat = value;
+        public ChatDTO Chat
+        {
+            get => chat;
+            set
+            {
+                chat = value;
                 Signal();
                 if (chat != null)
                     GetMessage();
             }
         }
-        
+
         public int CountMess { get; set; }
         public ObservableCollection<MessageDTO> Messages
         {
             get => messages;
-            set { messages = value;
+            set
+            {
+                messages = value;
                 Signal();
             }
 
@@ -69,15 +76,19 @@ namespace ProjectSystemWPF.ViewModel
         public MessageDTO Message
         {
             get => message;
-            set { message = value;
+            set
+            {
+                message = value;
                 Signal();
             }
         }
 
-        public MessageDTO NewMessage 
-        { 
+        public MessageDTO NewMessage
+        {
             get => newMessage;
-            set { newMessage = value;
+            set
+            {
+                newMessage = value;
                 Signal();
             }
         }
@@ -108,7 +119,7 @@ namespace ProjectSystemWPF.ViewModel
         {
             GetChats();
             GetMessage();
-           
+
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow(Chat);
@@ -118,7 +129,7 @@ namespace ProjectSystemWPF.ViewModel
             AttachFile = new VmCommand(async () =>
             {
                 var openFileDialog = new Microsoft.Win32.OpenFileDialog();
-                if(openFileDialog.ShowDialog() == true)
+                if (openFileDialog.ShowDialog() == true)
                 {
                     var filePath = openFileDialog.FileName;
                     var fileName = Path.GetFileName(filePath);
@@ -126,7 +137,7 @@ namespace ProjectSystemWPF.ViewModel
                     NewMessage.DocumentTitle = fileName;
                     NewMessage.Document = fileContent;
                 }
-                
+
             });
 
             SendMessage = new VmCommand(async () =>
@@ -135,45 +146,14 @@ namespace ProjectSystemWPF.ViewModel
                 NewMessage.IdSender = ActiveUser.GetInstance().User.Id;
                 NewMessage.IdChat = Chat.Id;
                 //Message.Chat = Chat;
-                HubMethods();
                 await _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, NewMessage, Chat);
+                NewMessage = new MessageDTO();
+                GetMessage();
+
             });
         }
 
-        private void HubMethods()
-        {
-            _connection.On<MessageDTO, int>("newMessage", (mess, chatId) =>
-            {
-                var chat = Chats.FirstOrDefault(c => c.Id == chatId);
-                dispatcher.Invoke(() =>
-                {
-                    Notifier notifier = new Notifier(cfg =>
-                    {
-                        cfg.PositionProvider = new WindowPositionProvider(
-                            parentWindow: System.Windows.Application.Current.MainWindow,
-                            corner: Corner.TopRight,
-                            offsetX: 10,
-                            offsetY: 10);
-
-                        cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                            notificationLifetime: TimeSpan.FromSeconds(3),
-                            maximumNotificationCount: MaximumNotificationCount.FromCount(5));
-
-                        cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
-                    });
-              
-                //var notify = new ToastContentBuilder();
-                //notify.AddText("Новое сообщение!");
-                //notify.AddArgument($"Вам пришло новое сообщение в чате {chat.Title}");
-                //notify.AddArgument(mess);
-                //notify.GetToastContent();
-                //var toast = notify.GetToastContent();
-                notifier.ShowInformation($"Вам пришло новое сообщение в чате {chat.Title}");
-
-                });
-            });
-        }
-
+        
 
 
 
@@ -214,10 +194,10 @@ namespace ProjectSystemWPF.ViewModel
             {
                 allMessages = await result.Content.ReadFromJsonAsync<ObservableCollection<MessageDTO>>(REST.Instance.options);
             }
-            Messages = new ObservableCollection<MessageDTO>(allMessages);
+            Messages = new ObservableCollection<MessageDTO>(allMessages.OrderBy(s=>s.Id));
             foreach (var item in Messages)
             {
-                item.Sender = Chat.ChatUsers.FirstOrDefault( s=> s.IdUser == item.IdSender)?.User;
+                item.Sender = Chat.ChatUsers.FirstOrDefault(s => s.IdUser == item.IdSender)?.User;
             }
 
 
@@ -238,7 +218,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
             }
-            
+
         }
 
         internal void Select(ChatDTO chat)
