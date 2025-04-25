@@ -49,7 +49,7 @@
                                         <TextBlock Text="{Binding CompletionDate, StringFormat=dd.MM.yyyy}"  FontSize="15"/>
 
 
-                                        <Label Content="{Binding Creator.FIO}" FontSize="15"/>
+                                        <Label Content="{Binding Creator.Initials}" FontSize="15"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
