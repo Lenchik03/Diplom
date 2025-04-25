@@ -19,6 +19,7 @@ namespace ProjectSystemWPF.Converters
         {
             if (values.Length == 2 && values[0] is DateTime startDate && values[1] is DateTime deadline)
             {
+                
                 // Получаем текущую дату
                 DateTime currentDate = DateTime.Now;
 
@@ -39,7 +40,7 @@ namespace ProjectSystemWPF.Converters
                 // Определяем цвет на основе процентного соотношения
                 if (completionPercentage < 50)
                 {
-                    return Brushes.LightGreen; // Менее 50%
+                    return Brushes.SpringGreen; // Менее 50%
                 }
                 else if (completionPercentage >= 50 && completionPercentage < 70)
                 {
@@ -51,10 +52,10 @@ namespace ProjectSystemWPF.Converters
                 }
                 else if (completionPercentage >= 90 && completionPercentage <= 100)
                 {
-                    return Brushes.Red; // От 90% до 100%
+                    return Brushes.OrangeRed; // От 90% до 100%
                 }
                 else
-                    return Brushes.LightGray;
+                    return Brushes.Black;
             }
 
             return Brushes.Transparent; // Возвращаем прозрачный цвет по умолчанию

@@ -78,6 +78,14 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
+
+        public Visibility TransferVisible
+        {
+            get => transferVisible;
+            set { transferVisible = value;
+                Signal();
+            }
+        }
         public Visibility HiddenEditDep
         {
             get => hiddenEditDep;
@@ -166,6 +174,7 @@ namespace ProjectSystemWPF.ViewModel
 
         void SetHiddenButtons()
         {
+            TransferVisible = Visibility.Collapsed;
             Hidden = Visibility.Collapsed;
             HiddenEditUser = Visibility.Collapsed;
             HiddenEditDep = Visibility.Collapsed;
@@ -188,6 +197,7 @@ namespace ProjectSystemWPF.ViewModel
                 HiddenEditDep = Visibility.Visible;
                 HiddenEditUser = Visibility.Visible;
                 Hidden = Visibility.Visible;
+                TransferVisible = Visibility.Visible;
             }
 
         }
@@ -648,6 +658,8 @@ namespace ProjectSystemWPF.ViewModel
             DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
         }
         StackPanel stack1;
+        private Visibility transferVisible;
+
         internal void SetStackDepartment(StackPanel stack1)
         {
             this.stack1 = stack1;

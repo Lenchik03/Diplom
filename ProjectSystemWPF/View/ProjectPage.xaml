@@ -30,21 +30,23 @@
                     <Label Content="ПРОЕКТЫ" Grid.ColumnSpan="3" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
                    
                 </Grid>
-                
-                <ScrollViewer>
-                    <ListBox  BorderBrush="Black" BorderThickness ="1"  Background="#FFFDC401" Margin="5" ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" HorizontalContentAlignment="Stretch" >
+
+                <Grid>
+                    <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"  BorderBrush="Black" BorderThickness ="1"  Background="#FFFDC401" Margin="5" ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" HorizontalContentAlignment="Stretch" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Background="#FFFDC401" Margin="5">
+                                    
                                     <StackPanel Orientation="Horizontal">
-                                        <StackPanel.Background>
-                                            <MultiBinding Converter="{c:ConvertDateToBrush}">
-                                                <Binding  Path="StartDate" />
-                                                <Binding  Path="CompletionDate" />
-                                            </MultiBinding>
-                                        </StackPanel.Background>
+                                        <Ellipse Width="20" Height="20">
+                                            <Ellipse.Fill>
+                                                <MultiBinding Converter="{c:ConvertDateToBrush}">
+                                                    <Binding  Path="StartDate" />
+                                                    <Binding  Path="CompletionDate" />
+                                                </MultiBinding>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
                                         <Label Content="{Binding Title}" FontSize="15"/>
-                                        <!--<Label Content="{Binding CompletionDate, StringFormat=dd.MM.yyyy}"  FontSize="15"/>-->
 
                                         <TextBlock Text="{Binding CompletionDate, StringFormat=dd.MM.yyyy}"  FontSize="15"/>
 
@@ -55,8 +57,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                </ScrollViewer>
-
+                </Grid>
             </StackPanel>
         </Border>
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1" Grid.Column="1">
@@ -70,8 +71,8 @@
                     <Label Content="ЗАДАЧИ" Grid.ColumnSpan="3" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
 
                 </Grid>
-                <ScrollViewer>
-                    <ListBox BorderBrush="Black" MouseDoubleClick="DescriptionTaskClick" BorderThickness ="1" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
+                <Grid>
+                    <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"  BorderBrush="Black" MouseDoubleClick="DescriptionTaskClick" BorderThickness ="1" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Background="#FFFDC401" Margin="5">
@@ -84,7 +85,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                </ScrollViewer>
+                </Grid>
 
             </StackPanel>
         </Border>

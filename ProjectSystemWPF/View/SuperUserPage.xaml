@@ -35,7 +35,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer Background="#FFFDC401" BorderThickness="1" BorderBrush="Black">
+        <ScrollViewer VerticalScrollBarVisibility="Visible" Background="#FFFDC401" BorderThickness="1" BorderBrush="Black">
             <Border BorderBrush="Black" BorderThickness="1" Margin="10" >
                 <StackPanel>
                 <!--<StackPanel Grid.Column="1" Grid.Row="1">
@@ -68,7 +68,7 @@ FontFamily="{DynamicResource MaterialDesignFont}">
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Button Content="🗘" HorizontalAlignment="Left" Height="25" Width="49" Command="{Binding TransferClick}"/>
+                                <Button Content="🗘" HorizontalAlignment="Left" Height="25" Width="49" Visibility="{Binding TransferVisible}" Command="{Binding TransferClick}"/>
                                 <Label Content="Сотрудник" HorizontalAlignment="Center" FontSize="15" Grid.ColumnSpan="3"/>
                                 <Button Content="🗑" Height="25" Width="49" Margin="5" HorizontalAlignment="Center" Grid.Column="1" Command="{Binding DeleteEmployee}" />
                                 <Button Content="✚" Height="25" Width="49" Margin="5" HorizontalAlignment="Left" Grid.Column="2" Command="{Binding NewEmployee}"/>

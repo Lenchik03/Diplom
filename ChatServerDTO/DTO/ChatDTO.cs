@@ -16,6 +16,8 @@ namespace ChatServerDTO.DTO
 
         public byte[]? ImagePath { get; set; }
 
+        public string? ImageSourse { get; set; }
+
         public List<ChatUserDTO> ChatUsers { get; set; } = new List<ChatUserDTO>();
 
         public List<MessageDTO> Messages { get; set; } = new List<MessageDTO>();

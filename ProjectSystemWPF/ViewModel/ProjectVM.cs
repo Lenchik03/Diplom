@@ -48,7 +48,7 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
-
+        
         ObservableCollection<ProjectDTO> projects = new ObservableCollection<ProjectDTO>(); 
         ObservableCollection<TaskDTO> tasks = new ObservableCollection<TaskDTO>();
         private ObservableCollection<ProjectDTO> projects1;
@@ -68,8 +68,8 @@ namespace ProjectSystemWPF.ViewModel
 
         }
 
-        
 
+        
         public async System.Threading.Tasks.Task GetProjects()
         {
             var result = await REST.Instance.client.GetAsync($"Projects/MyProject/{ActiveUser.GetInstance().User.Id}");
@@ -85,9 +85,6 @@ namespace ProjectSystemWPF.ViewModel
             }
             
             Projects = new ObservableCollection<ProjectDTO>(projects);
-            
-
-
 
         }
 
@@ -124,7 +121,8 @@ namespace ProjectSystemWPF.ViewModel
                 tasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
             }
 
-            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id && s.IdStatus != 4 && s.IdStatus != 3));
+            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id));
+            
         }
 
         internal void Select(TaskDTO p)

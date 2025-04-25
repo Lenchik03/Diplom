@@ -122,7 +122,7 @@ namespace ProjectSystemWPF.ViewModel
 
             NewChat = new VmCommand(async () =>
             {
-                NewMessageWindow newMessageWindow = new NewMessageWindow(Chat);
+                NewMessageWindow newMessageWindow = new NewMessageWindow(new ChatDTO());
                 newMessageWindow.Show();
             });
 
@@ -146,11 +146,17 @@ namespace ProjectSystemWPF.ViewModel
                 NewMessage.IdSender = ActiveUser.GetInstance().User.Id;
                 NewMessage.IdChat = Chat.Id;
                 //Message.Chat = Chat;
-                await _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, NewMessage, Chat);
-                NewMessage = new MessageDTO();
-                GetMessage();
+                if (NewMessage.Document != null || NewMessage.Text != "")
+                {
+                    await _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, NewMessage, Chat);
+                    NewMessage = new MessageDTO();
+                    GetMessage();
+                }
 
-            });
+            })
+            {
+             
+            };
         }
 
         

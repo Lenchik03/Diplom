@@ -127,19 +127,28 @@ namespace ProjectSystemWPF.ViewModel
 
             DeleteTask = new VmCommand(async () =>
             {
-                string arg = JsonSerializer.Serialize(SelectedTask, REST.Instance.options);
-                var responce = await REST.Instance.client.PutAsync($"TaskMs/{SelectedTask.Id}",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
-                try
+                if (SelectedTask != null)
                 {
-                    responce.EnsureSuccessStatusCode();
-                    //MessageBox.Show("Задача успешно обновлена!");
+                    SelectedTask.IdStatus = 4;
+                    SelectedTask.StatusTitle = "Удалена";
+                    string arg = JsonSerializer.Serialize(SelectedTask, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"TaskMs/{SelectedTask.Id}",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        //MessageBox.Show("Задача успешно обновлена!");
 
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show("Ошибка! Обновление З приостановлено!");
+                        return;
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    //MessageBox.Show("Ошибка! Обновление З приостановлено!");
-                    return;
+                    MessageBox.Show("Выберите задачу для удаления!");
                 }
             });
 
@@ -181,7 +190,7 @@ namespace ProjectSystemWPF.ViewModel
                 tasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
             }
 
-            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id && s.IdStatus != 4 && s.IdStatus != 3));
+            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id));
         }
 
         internal void Select(ProjectDTO p)

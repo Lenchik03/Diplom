@@ -5,6 +5,7 @@ using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -44,10 +45,13 @@ namespace ProjectSystemWPF.ViewModel
             set
             {
                 chat1 = value;
+                
                 Signal();
             }
         }
         public VmCommand NewChat { get; set; }
+        
+        public VmCommand SelectImage { get; set; }
         ObservableCollection<DepartmentDTO> allDepartments = new();
         ObservableCollection<UserDTO> allEmployees = new();
 
@@ -59,7 +63,18 @@ namespace ProjectSystemWPF.ViewModel
         public MessageVM()
         {
             GetLists();
-
+            SelectImage = new VmCommand(async () =>
+            {
+                var openFileDialog = new Microsoft.Win32.OpenFileDialog();
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    var filePath = openFileDialog.FileName;
+                    var fileName = Path.GetFileName(filePath);
+                    var fileContent = await File.ReadAllBytesAsync(filePath);
+                    Chat.ImagePath = fileContent;
+                    Chat.ImageSourse = filePath;
+                }
+            });
             NewChat = new VmCommand(async () =>
             {
                 if (Chat.Id == 0)
