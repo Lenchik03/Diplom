@@ -315,139 +315,147 @@ namespace ProjectSystemWPF.ViewModel
 
             SaveUser = new VmCommand(async () =>
             {
-                Regex r = new Regex("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$");
-                Regex r2 = new Regex("^((\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*)\\s*[;]{0,1}\\s*)+$");
-                if (!r.Match(Employee.Phone).Success)
+                try
                 {
-                    MessageBox.Show("Телефон должен состоять из цифр и символов “+”, “(”, “)”, “-”, “ ”, “#” ");
-                    return;
-                }
-                if (!r2.Match(Employee.Email).Success)
-                {
-                    MessageBox.Show("Почта имеет неправильный формат!");
-                    return;
-                }
-                if (Employee != null && Employee.Id != 0)
-                {
-                    //Employee.Departments = new ObservableCollection<DepartmentDTO>();
-                    //Employee.IdDepartmentNavigation = new DepartmentDTO { Title = "", Id = Employee.IdDepartment};
-                    //Employee.IdRoleNavigation = new Role { Title = "", Id = Employee.IdRole};
-                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
-                    try
+                    Regex r = new Regex("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$");
+                    Regex r2 = new Regex("^((\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*)\\s*[;]{0,1}\\s*)+$");
+                    if (!r.Match(Employee.Phone).Success)
                     {
-                        responce.EnsureSuccessStatusCode();
-                        MessageBox.Show("Пользователь успешно обновлен!");
-
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                        MessageBox.Show("Телефон должен состоять из цифр и символов “+”, “(”, “)”, “-”, “ ”, “#” ");
                         return;
                     }
-                }
-                else
-                {
-                    if (ActiveUser.GetInstance().User.IdRole == 4)
+                    if (!r2.Match(Employee.Email).Success)
                     {
-                        if (Department == null)
+                        MessageBox.Show("Почта имеет неправильный формат!");
+                        return;
+                    }
+                    if (Employee != null && Employee.Id != 0)
+                    {
+                        //Employee.Departments = new ObservableCollection<DepartmentDTO>();
+                        //Employee.IdDepartmentNavigation = new DepartmentDTO { Title = "", Id = Employee.IdDepartment};
+                        //Employee.IdRoleNavigation = new Role { Title = "", Id = Employee.IdRole};
+                        string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
+                        var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
+                            new StringContent(arg, Encoding.UTF8, "application/json"));
+                        try
                         {
-                            MessageBox.Show("Выберите отдел, куда добавить сотрудника!");
+                            responce.EnsureSuccessStatusCode();
+                            MessageBox.Show("Пользователь успешно обновлен!");
+
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
                             return;
                         }
-                        else
-                        {
-                            if (Department.IdMainDep != null)
-                                Department = MainDepartments.FirstOrDefault(s => s.Id == Department.IdMainDep);
-                            Employee.IdDepartment = Department.Id;
-                            //Employee.IdDepartmentNavigation = Department;
-                            Employee.IdRole = 1;
-                            //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 1);
-
-                            // Department.IdDirectorNavigation = Employee;
-                        }
-
                     }
-                    if (ActiveUser.GetInstance().User.IdRole == 1)
+                    else
                     {
-                        var shit = ActiveUser.GetInstance().User;
-                        var department = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
-                        //if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
-                        if (department.ChildDepartments.Count == 0)
+                        if (ActiveUser.GetInstance().User.IdRole == 4)
+                        {
+                            if (Department == null)
+                            {
+                                MessageBox.Show("Выберите отдел, куда добавить сотрудника!");
+                                return;
+                            }
+                            else
+                            {
+                                if (Department.IdMainDep != null)
+                                    Department = MainDepartments.FirstOrDefault(s => s.Id == Department.IdMainDep);
+                                Employee.IdDepartment = Department.Id;
+                                //Employee.IdDepartmentNavigation = Department;
+                                Employee.IdRole = 1;
+                                //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 1);
+
+                                // Department.IdDirectorNavigation = Employee;
+                            }
+
+                        }
+                        if (ActiveUser.GetInstance().User.IdRole == 1)
+                        {
+                            var shit = ActiveUser.GetInstance().User;
+                            var department = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
+                            //if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
+                            if (department.ChildDepartments.Count == 0)
+                            {
+                                Employee.IdRole = 3;
+                                // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                                Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
+                                //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                            }
+                            else
+                            {
+                                Employee.IdRole = 2;
+                                //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 2);
+                                Employee.IdDepartment = Department.Id;
+                                //Employee.IdDepartmentNavigation = Department;
+                            }
+                        }
+                        if (ActiveUser.GetInstance().User.IdRole == 2)
                         {
                             Employee.IdRole = 3;
-                            // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                            //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
                             Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
                             //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
                         }
-                        else
+
+                        //Employee.IdDepartmentNavigation = new DepartmentDTO
+                        //{
+                        //    IdMainDep =Employee.IdDepartmentNavigation?.IdMainDep,  
+                        //    Id = Employee.IdDepartmentNavigation.Id, 
+                        //    Title = Employee.IdDepartmentNavigation .Title};
+                        //Employee.Password = "";
+
+                        string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
+                        var responce = await REST.Instance.client.PostAsync($"Users/AddNewUser",
+                            new StringContent(arg, Encoding.UTF8, "application/json"));
+                        //MessageBox.Show(responce.StatusCode.ToString());
+                        try
                         {
-                            Employee.IdRole = 2;
-                            //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 2);
-                            Employee.IdDepartment = Department.Id;
-                            //Employee.IdDepartmentNavigation = Department;
-                        }
-                    }
-                    if (ActiveUser.GetInstance().User.IdRole == 2)
-                    {
-                        Employee.IdRole = 3;
-                        //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
-                        Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
-                        //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
-                    }
-
-                    //Employee.IdDepartmentNavigation = new DepartmentDTO
-                    //{
-                    //    IdMainDep =Employee.IdDepartmentNavigation?.IdMainDep,  
-                    //    Id = Employee.IdDepartmentNavigation.Id, 
-                    //    Title = Employee.IdDepartmentNavigation .Title};
-                    //Employee.Password = "";
-
-                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
-                    var responce = await REST.Instance.client.PostAsync($"Users/AddNewUser",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
-                    //MessageBox.Show(responce.StatusCode.ToString());
-                    try
-                    {
-                        responce.EnsureSuccessStatusCode();
-                        MessageBox.Show("Сотрудник был добавлен");
+                            responce.EnsureSuccessStatusCode();
+                            MessageBox.Show("Сотрудник был добавлен");
 
 
-                        if (Employee.IdRole == 1 || Employee.IdRole == 2)
-                        {
-                            //var str = await responce.Content.ReadAsStringAsync();
-                            var answerUser = await responce.Content.ReadFromJsonAsync<UserDTO>(REST.Instance.options);
-                            Department.IdDirector = answerUser.Id;
-                            // Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
-
-                            string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
-                            var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
-                                new StringContent(arg1, Encoding.UTF8, "application/json"));
-                            try
+                            if (Employee.IdRole == 1 || Employee.IdRole == 2)
                             {
-                                responce1.EnsureSuccessStatusCode();
-                                //MessageBox.Show("Пользователь успешно обновлен!");
+                                //var str = await responce.Content.ReadAsStringAsync();
+                                var answerUser = await responce.Content.ReadFromJsonAsync<UserDTO>(REST.Instance.options);
+                                Department.IdDirector = answerUser.Id;
+                                // Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
 
-                            }
-                            catch (Exception ex)
-                            {
-                                //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
-                                return;
+                                string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
+                                var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
+                                    new StringContent(arg1, Encoding.UTF8, "application/json"));
+                                try
+                                {
+                                    responce1.EnsureSuccessStatusCode();
+                                    //MessageBox.Show("Пользователь успешно обновлен!");
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                                    return;
+                                }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Произошла ошибка!");
-                        return;
-                    }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Произошла ошибка!");
+                            return;
+                        }
 
 
+                    }
+
+                    GetLists();
                 }
-
-                GetLists();
+                catch(Exception e)
+                {
+                    MessageBox.Show("Ошибка!");
+                }
             });
+
             SaveDep = new VmCommand(async () =>
             {
                 if (Department.Id != 0 && Department != null)

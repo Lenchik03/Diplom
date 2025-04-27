@@ -30,9 +30,11 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Label Content="ЧАТЫ" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" Grid.ColumnSpan="2"/>
-                        <Button Content="+" Width="40" HorizontalAlignment="Right" Command="{Binding NewChat}" Margin="4"/>
+                        <Button Content="🗑" Visibility="{Binding DeleteChatVisible}" Grid.Column="1" Width="40" HorizontalAlignment="Right" Command="{Binding DeleteChat}" Margin="4"/>
+                        <Button Content="+" Grid.Column="2" Width="40" HorizontalAlignment="Right" Command="{Binding NewChat}" Margin="4"/>
                     </Grid>
 
 
@@ -46,19 +48,21 @@
 
 
 
-                    <StackPanel Margin="10,20,10,0" Grid.Row="2">
+                    <Grid Margin="10,20,10,0" Grid.Row="2">
                         <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="EditChatClick" ItemsSource="{Binding Chats}" SelectedItem="{Binding Chat}" Background="LightYellow">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Margin="5">
                                         <Image Source="/logo.jpg" Width="50" Height="50"/>
                                         <Label Content="{Binding Title}"/>
                                         <!--<Label Content="{Binding CountMess}"/>-->
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
+                            
                         </ListBox>
-                    </StackPanel>
+                        
+                    </Grid>
 
                 </StackPanel>
 
@@ -76,14 +80,21 @@
                         <ListBox x:Name="listBox" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Messages}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding Message}" Background="LightYellow">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Vertical" Background="AliceBlue">
-                                        <TextBlock Text="{Binding Sender.FIO}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        <TextBlock Text="{Binding Text}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        <TextBlock Text="{Binding DocumentTitle}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                    <StackPanel Orientation="Vertical" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}">
+                                        <TextBlock Text="{Binding Sender.FIO}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding Text}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Изменить" Click="EditMessageClick"/>
+                                    <MenuItem Header="Удалить" Click="DeleteMessageClick"/>
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
                         </ListBox>
+                        
                     </Grid>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>

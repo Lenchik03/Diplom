@@ -31,7 +31,7 @@ namespace ChatServer
                 return await result.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
             }
         }
-        public async System.Threading.Tasks.Task NewMessage(UserDTO sender, MessageDTO message, ChatDTO chat)
+        public async System.Threading.Tasks.Task NewMessage(MessageDTO message, ChatDTO chat)
         {
             var chatUsers = await GetChatUsers(chat.Id);
             //message.IdChat = chat.Id;
@@ -62,6 +62,46 @@ namespace ChatServer
                         await clients[s].SendAsync("newMessage", message, chat.Id, chat.Title);
                     }
                     catch(Exception e)
+                    {
+
+
+                    }
+            });
+
+            //myHub.Clients.All.SendAsync("newMessage", message);
+        }
+
+        public async System.Threading.Tasks.Task UpdateMessage(MessageDTO message, ChatDTO chat)
+        {
+            var chatUsers = await GetChatUsers(chat.Id);
+            //message.IdChat = chat.Id;
+            //message.Chat = chat;
+            //message.IdSender = sender.Id;
+            //message.Sender = sender;
+            message.Text += "  (ред.)";
+            string arg = JsonSerializer.Serialize(message, REST.Instance.options);
+            var responce = await REST.Instance.client.PutAsync($"Messages",
+                new StringContent(arg, Encoding.UTF8, "application/json"));
+            try
+            {
+                responce.EnsureSuccessStatusCode();
+                //MessageBox.Show("Задача успешно обновлена!");
+
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Ошибка! Обновление задачи приостановлено!");
+                return;
+            }
+
+            chatUsers.Select(s => s.Id).ToList().ForEach(async s =>
+            {
+                if (clients.ContainsKey(s) && s != message.IdSender)
+                    try
+                    {
+                        await clients[s].SendAsync("updateMessage", message);
+                    }
+                    catch (Exception e)
                     {
 
 

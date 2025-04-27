@@ -1,4 +1,5 @@
 ﻿using ChatServerDTO.DTO;
+using ProjectSystemAPI.DB;
 using ProjectSystemWPF.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,32 @@ namespace ProjectSystemWPF.View
             var p = list.SelectedItem as ChatDTO;
             if (p != null)
                 ((ChatsVM)DataContext).Select(p);
+        }
+
+       
+
+        private void EditMessageClick(object sender, RoutedEventArgs e)
+        {
+            if(listBox.SelectedItem != null)
+            {
+                var message = listBox.SelectedItem as MessageDTO;
+                if(message.IdSender == ActiveUser.GetInstance().User.Id)
+                {
+                    ((ChatsVM)DataContext).EditMessage(message);
+                }
+            }
+        }
+
+        private void DeleteMessageClick(object sender, RoutedEventArgs e)
+        {
+            if (listBox.SelectedItem != null)
+            {
+                var message = listBox.SelectedItem as MessageDTO;
+                if (message.IdSender == ActiveUser.GetInstance().User.Id)
+                {
+                    ((ChatsVM)DataContext).DeleteMessageAsync(message);
+                }
+            }
         }
     }
 }

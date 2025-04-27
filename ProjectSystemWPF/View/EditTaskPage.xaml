@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
         xmlns:vm ="clr-namespace:ProjectSystemWPF.ViewModel"
       mc:Ignorable="d" 
-      Height="550" Width="400"
+      Height="600" Width="400"
       Title="EditTaskPage"
         DataContext="{DynamicResource editTaslVM}">
     <Window.Resources>
@@ -14,7 +14,7 @@
     </Window.Resources>
     <Grid Background="#FFFDC401">
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
-            <StackPanel>
+            <Grid>
                 <Label Content="ЗАДАЧА" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
 
                 <StackPanel Margin="5">
@@ -23,7 +23,7 @@
                     <Label Content="Описание"/>
                     <TextBox Text="{Binding Task.Description}" TextWrapping="Wrap"/>
                     <Label Content="Проект"/>
-                    <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Title"/>
+                    <ComboBox ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Title"/>
                     <Label Content="Назначить исполнителей:"/>
                     <StackPanel>
                         <Label Content="Поиск по ФИО"/>
@@ -38,12 +38,12 @@ UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <Label Content="Сотрудники"/>
-                            <ListBox BorderThickness ="1" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding AddExecutor}" HorizontalContentAlignment="Stretch" >
+                            <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness ="1" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding AddExecutor}" HorizontalContentAlignment="Stretch" >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Background="#FFFDC401" Margin="5">
                                             <StackPanel Orientation="Horizontal">
-                                                <Label Content="{Binding FIO}" FontSize="15"/>
+                                                <Label Content="{Binding Initials}" FontSize="15"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
@@ -58,12 +58,12 @@ UpdateSourceTrigger=PropertyChanged}"/>
 
                         <StackPanel Grid.Column="2">
                             <Label Content="Исполнители"/>
-                        <ListBox  BorderBrush="Black" BorderThickness ="1" Background="#FFFDC401" Margin="5,5,5,5" ItemsSource="{Binding SelectedExecutors}" SelectedItem="{Binding RemoveExecutor}" HorizontalContentAlignment="Stretch" >
+                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" BorderBrush="Black" BorderThickness ="1" Background="#FFFDC401" Margin="5,5,5,5" ItemsSource="{Binding SelectedExecutors}" SelectedItem="{Binding RemoveExecutor}" HorizontalContentAlignment="Stretch" >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Background="#FFFDC401" Margin="5">
                                         <StackPanel Orientation="Horizontal">
-                                                <Label Content="{Binding FIO}" FontSize="15"/>
+                                                <Label Content="{Binding Initials}" FontSize="15"/>
                                             </StackPanel>
                                     </StackPanel>
                                 </DataTemplate>
@@ -73,7 +73,7 @@ UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                     <Button Content="Сохранить" Height="30" Width="110" Margin="20" Command="{Binding Save}"/>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </Window>

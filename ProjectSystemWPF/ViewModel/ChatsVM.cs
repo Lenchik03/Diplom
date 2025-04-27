@@ -100,9 +100,11 @@ namespace ProjectSystemWPF.ViewModel
         //    }
         //}
         HubConnection _connection = SignalR.Instance.CreateConnection();
-        public string Text { get; set; }
+        
         public VmCommand AttachFile { get; set; }
         public VmCommand SendMessage { get; set; }
+
+        public VmCommand DeleteChat { get; set; }
 
         public ObservableCollection<ChatDTO> allChats = new ObservableCollection<ChatDTO>();
         public ObservableCollection<MessageDTO> allMessages = new ObservableCollection<MessageDTO>();
@@ -112,7 +114,13 @@ namespace ProjectSystemWPF.ViewModel
         private ObservableCollection<MessageDTO> messages = new ObservableCollection<MessageDTO>();
         private MessageDTO message = new MessageDTO();
         private MessageDTO newMessage = new MessageDTO();
-
+        public Visibility DeleteChatVisible
+        {
+            get => deleteChatVisible;
+            set { deleteChatVisible = value;
+                Signal();
+            }
+        }
         //private UserDTO sender;
 
         public ChatsVM()
@@ -120,10 +128,17 @@ namespace ProjectSystemWPF.ViewModel
             GetChats();
             GetMessage();
 
+            if()
+
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow(new ChatDTO());
                 newMessageWindow.Show();
+            });
+
+            DeleteChat = new VmCommand(async () =>
+            {
+                
             });
 
             AttachFile = new VmCommand(async () =>
@@ -148,9 +163,18 @@ namespace ProjectSystemWPF.ViewModel
                 //Message.Chat = Chat;
                 if (NewMessage.Document != null || NewMessage.Text != "")
                 {
-                    await _connection.SendAsync("NewMessage", ActiveUser.GetInstance().User, NewMessage, Chat);
-                    NewMessage = new MessageDTO();
-                    GetMessage();
+                    if (NewMessage.Id == 0)
+                    {
+                        await _connection.SendAsync("NewMessage", NewMessage, Chat);
+                        NewMessage = new MessageDTO();
+                        GetMessage();
+                    }
+                    else
+                    {
+                        await _connection.SendAsync("UpdateMessage", NewMessage, Chat);
+                        NewMessage = new MessageDTO();
+                        GetMessage();
+                    }
                 }
 
             })
@@ -234,9 +258,36 @@ namespace ProjectSystemWPF.ViewModel
             newMessageWindow.ShowDialog();
         }
         Dispatcher dispatcher;
+        private Visibility deleteChatVisible;
+
         internal void SetDispatcher(Dispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
+        }
+
+        internal void EditMessage(MessageDTO message)
+        {
+            NewMessage = message;
+        }
+
+        internal async System.Threading.Tasks.Task DeleteMessageAsync(MessageDTO message)
+        {
+            message.Text = "Сообщение удалено!";
+            message.IsReadIt = true;
+            string arg = JsonSerializer.Serialize(message, REST.Instance.options);
+            var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
+                new StringContent(arg, Encoding.UTF8, "application/json"));
+            try
+            {
+                responce.EnsureSuccessStatusCode();
+                // MessageBox.Show("Проект успешно обновлен!");
+
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show("Ошибка! Обновление проекта приостановлено!");
+                return;
+            }
         }
     }
 }
