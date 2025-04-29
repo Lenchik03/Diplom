@@ -1,4 +1,5 @@
-﻿using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DB;
+using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,11 @@ namespace ChatServerDTO.DTO
 
         public int IdSender { get; set; }
 
-        public bool? IsReadIt { get; set; }
 
         public byte[]? Document { get; set; }
 
         public string? DocumentTitle { get; set; }
+        public DateTime? DateOfSending { get; set; }
 
         //public ChatDTO Chat { get; set; } = null!;
 
@@ -39,7 +40,7 @@ namespace ChatServerDTO.DTO
                 Document = message.Document,
                 DocumentTitle = message.DocumentTitle,
                 IdSender = message.IdSender,
-                IsReadIt = message.IsReadIt
+                DateOfSending = message.DateOfSending,
             };
             /*
             if (message.IdChatNavigation != null)
@@ -61,7 +62,7 @@ namespace ChatServerDTO.DTO
                 Document = from.Document,
                 DocumentTitle = from.DocumentTitle,
                 IdSender = from.IdSender,
-                IsReadIt = from.IsReadIt
+                DateOfSending = from.DateOfSending,
 
             };
             return result;

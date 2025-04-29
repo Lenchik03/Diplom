@@ -171,6 +171,7 @@ namespace ProjectSystemWPF.ViewModel
             }
 
             Projects = new ObservableCollection<ProjectDTO>(projects);
+            Project = Projects.FirstOrDefault();
 
 
 

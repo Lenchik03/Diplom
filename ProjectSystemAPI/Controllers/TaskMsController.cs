@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatServerDTO.DB;
 using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
-using Task = ProjectSystemAPI.DB.Task;
+using Task = ChatServerDTO.DB.Task;
 
 namespace ProjectSystemAPI.Controllers
 {

@@ -1,4 +1,5 @@
-﻿using ChatServerDTO.DTO;
+﻿using ChatServerDTO.DB;
+using ChatServerDTO.DTO;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using ProjectSystemWPF.View;

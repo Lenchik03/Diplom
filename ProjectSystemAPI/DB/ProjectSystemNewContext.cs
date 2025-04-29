@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ChatServerDTO.DB;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
@@ -30,7 +31,7 @@ public partial class ProjectSystemNewContext : DbContext
 
     public virtual DbSet<Status> Statuses { get; set; }
 
-    public virtual DbSet<Task> Tasks { get; set; }
+    public virtual DbSet<ChatServerDTO.DB.Task> Tasks { get; set; }
 
     public virtual DbSet<TaskForUser> TaskForUsers { get; set; }
 
@@ -39,7 +40,7 @@ public partial class ProjectSystemNewContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySql("server=192.168.200.13;user=student;password=student;database=ProjectSystemNew", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.39-mariadb"));
-    //95.154.107.102
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -50,11 +51,21 @@ public partial class ProjectSystemNewContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
+            entity.HasIndex(e => e.IdCreator, "FK_Chats_Id_creator");
+
             entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.IdCreator)
+                .HasColumnType("int(11)")
+                .HasColumnName("Id_creator");
             entity.Property(e => e.ImagePath).HasColumnType("blob");
+            entity.Property(e => e.IsDeleted).HasColumnName("Is_deleted");
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''");
+
+            entity.HasOne(d => d.IdCreatorNavigation).WithMany(p => p.Chats)
+                .HasForeignKey(d => d.IdCreator)
+                .HasConstraintName("FK_Chats_Id_creator");
         });
 
         modelBuilder.Entity<ChatUser>(entity =>
@@ -123,6 +134,9 @@ public partial class ProjectSystemNewContext : DbContext
             entity.HasIndex(e => e.IdSender, "FK_Messages_Users_Id");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.DateOfSending)
+                .HasColumnType("datetime")
+                .HasColumnName("dateOfSending");
             entity.Property(e => e.Document).HasColumnName("document");
             entity.Property(e => e.DocumentTitle)
                 .HasMaxLength(255)
@@ -133,7 +147,6 @@ public partial class ProjectSystemNewContext : DbContext
             entity.Property(e => e.IdSender)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_sender");
-            entity.Property(e => e.IsReadIt).HasColumnName("is_read_it");
             entity.Property(e => e.Text)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''")
@@ -154,6 +167,8 @@ public partial class ProjectSystemNewContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
+            entity.HasIndex(e => e.IdCreator, "FK_Projects_Users_Id");
+
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.CompletionDate)
                 .HasColumnType("datetime")
@@ -162,12 +177,18 @@ public partial class ProjectSystemNewContext : DbContext
             entity.Property(e => e.IdCreator)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_creator");
+            entity.Property(e => e.IsDeleted).HasColumnName("Is_deleted");
             entity.Property(e => e.StartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Start_date");
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''");
+
+            entity.HasOne(d => d.IdCreatorNavigation).WithMany(p => p.Projects)
+                .HasForeignKey(d => d.IdCreator)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Projects_Users_Id");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -190,7 +211,7 @@ public partial class ProjectSystemNewContext : DbContext
                 .HasDefaultValueSql("''");
         });
 
-        modelBuilder.Entity<Task>(entity =>
+        modelBuilder.Entity<ChatServerDTO.DB.Task>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
@@ -284,6 +305,7 @@ public partial class ProjectSystemNewContext : DbContext
             entity.Property(e => e.IdRole)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_role");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.LastName)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''");

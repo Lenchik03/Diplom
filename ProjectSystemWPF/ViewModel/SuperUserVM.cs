@@ -1,4 +1,5 @@
-﻿using MaterialDesignColors;
+﻿using ChatServerDTO.DB;
+using MaterialDesignColors;
 using MaterialDesignColors.Recommended;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;

@@ -1,4 +1,5 @@
-﻿using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DB;
+using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Task = ProjectSystemAPI.DB.Task;
+using Task = ChatServerDTO.DB.Task;
 
 namespace ChatServerDTO.DTO
 {
@@ -25,6 +26,7 @@ namespace ChatServerDTO.DTO
 
         public int IdCreator { get; set; }
         public UserDTO? Creator { get; set; }
+        public bool? IsDeleted { get; set; }
 
         public List<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();
 

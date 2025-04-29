@@ -1,4 +1,5 @@
-﻿using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DB;
+using ProjectSystemAPI.DB;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
@@ -31,6 +32,7 @@ namespace ProjectSystemAPI.DTO
         public DateTime? Birthday { get; set; }
 
         public string? Post { get; set; }
+        public bool? IsDeleted { get; set; }
 
         [JsonIgnore]
         public bool Selected
@@ -65,6 +67,7 @@ namespace ProjectSystemAPI.DTO
                 Id = from.Id,
                 Patronymic = from.Patronymic,
                 Post = from.Post,
+                IsDeleted = from.IsDeleted,
             };
 
             if (from.IdRoleNavigation != null ) 

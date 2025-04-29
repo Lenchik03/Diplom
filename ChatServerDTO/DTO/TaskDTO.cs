@@ -1,11 +1,12 @@
-﻿using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DB;
+using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Task = ProjectSystemAPI.DB.Task;
+using Task = ChatServerDTO.DB.Task;
 
 namespace ChatServerDTO.DTO
 {
@@ -31,7 +32,7 @@ namespace ChatServerDTO.DTO
 
         public List<TaskForUser> TaskForUsers { get; set; } = new List<TaskForUser>();
 
-        public static explicit operator TaskDTO (ProjectSystemAPI.DB.Task task)
+        public static explicit operator TaskDTO (ChatServerDTO.DB.Task task)
         {
             var result = new TaskDTO
             {

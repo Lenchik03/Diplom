@@ -1,4 +1,5 @@
-﻿using ChatServerDTO.DTO;
+﻿using ChatServerDTO.DB;
+using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -254,6 +255,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
             }
+            Chat = Chats.FirstOrDefault();
 
         }
 
@@ -279,7 +281,7 @@ namespace ProjectSystemWPF.ViewModel
         internal async System.Threading.Tasks.Task DeleteMessageAsync(MessageDTO message)
         {
             message.Text = "Сообщение удалено!";
-            message.IsReadIt = true;
+            
             string arg = JsonSerializer.Serialize(message, REST.Instance.options);
             var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
                 new StringContent(arg, Encoding.UTF8, "application/json"));

@@ -1,4 +1,5 @@
-﻿using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DB;
+using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ namespace ChatServerDTO.DTO
         public byte[]? ImagePath { get; set; }
 
         public string? ImageSourse { get; set; }
+        public int? IdCreator { get; set; }
+
+        public bool? IsDeleted { get; set; }
 
         public List<ChatUserDTO> ChatUsers { get; set; } = new List<ChatUserDTO>();
 
@@ -28,6 +32,7 @@ namespace ChatServerDTO.DTO
                 Id = from.Id,
                 Title = from.Title,
                 ImagePath = from.ImagePath,
+                IsDeleted = from.IsDeleted,
             };
 
             if (from.ChatUsers != null)
