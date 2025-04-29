@@ -49,6 +49,8 @@ namespace ProjectSystemWPF.ViewModel
             _connection.StopAsync();
         }
 
+        public event EventHandler<int> OnMessage;
+
         private void HubMethods()
         {
             _connection.On<MessageDTO, int, string>("newMessage", (mess, chatId, chatTitle) =>
@@ -69,6 +71,8 @@ namespace ProjectSystemWPF.ViewModel
 
                         cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
                     });
+
+                    OnMessage?.Invoke(this, chatId);
 
                     //var notify = new ToastContentBuilder();
                     //notify.AddText("Новое сообщение!");

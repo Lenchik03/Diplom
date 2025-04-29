@@ -80,7 +80,7 @@
                         <ListBox x:Name="listBox" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Messages}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding Message}" Background="LightYellow">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Vertical" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}">
+                                    <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{Binding Sender.FIO}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         <TextBlock Text="{Binding Text}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         <TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>

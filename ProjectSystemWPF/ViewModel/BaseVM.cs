@@ -8,12 +8,18 @@ using System.Threading.Tasks;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class BaseVM : INotifyPropertyChanged
+    public class BaseVM : INotifyPropertyChanged, IDisposable
     {
         protected void Signal([CallerMemberName] string prop = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+
+        public virtual void Dispose()
+        {
+            
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

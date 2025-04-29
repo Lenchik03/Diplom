@@ -46,6 +46,11 @@ namespace ProjectSystemWPF.ViewModel
             get => currentPage;
             set
             {
+                if (currentPage != null)
+                {
+                    if ((currentPage as Page).DataContext is IDisposable disposable)
+                        disposable.Dispose();
+                }
                 currentPage = value;
                 Signal();
             }

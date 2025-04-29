@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectSystemAPI.DB;
+namespace ChatServerDTO.DB;
 
 public partial class Project
 {
@@ -16,6 +16,10 @@ public partial class Project
     public DateTime CompletionDate { get; set; }
 
     public int IdCreator { get; set; }
+
+    public bool? IsDeleted { get; set; }
+
+    public virtual User IdCreatorNavigation { get; set; } = null!;
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 }

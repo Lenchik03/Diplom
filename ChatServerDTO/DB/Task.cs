@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
-namespace ProjectSystemAPI.DB;
+namespace ChatServerDTO.DB;
 
 public partial class Task
 {
@@ -19,7 +18,7 @@ public partial class Task
     public int IdCreator { get; set; }
 
     public virtual User IdCreatorNavigation { get; set; } = null!;
- 
+
     public virtual Project IdProjectNavigation { get; set; } = null!;
 
     public virtual Status IdStatusNavigation { get; set; } = null!;

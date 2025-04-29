@@ -57,7 +57,7 @@ namespace ProjectSystemWPF.ViewModel
                 chat = value;
                 Signal();
                 if (chat != null)
-                    GetMessage();
+                    GetMessageAsync();
             }
         }
 
@@ -100,7 +100,7 @@ namespace ProjectSystemWPF.ViewModel
         //    }
         //}
         HubConnection _connection = SignalR.Instance.CreateConnection();
-        
+
         public VmCommand AttachFile { get; set; }
         public VmCommand SendMessage { get; set; }
 
@@ -117,18 +117,25 @@ namespace ProjectSystemWPF.ViewModel
         public Visibility DeleteChatVisible
         {
             get => deleteChatVisible;
-            set { deleteChatVisible = value;
+            set
+            {
+                deleteChatVisible = value;
                 Signal();
             }
         }
         //private UserDTO sender;
 
+        public override void Dispose()
+        {
+            SignalR.Instance.OnMessage -= Instance_OnMessage;
+        }
+
         public ChatsVM()
         {
             GetChats();
-            GetMessage();
+            GetMessageAsync();
 
-            
+            SignalR.Instance.OnMessage += Instance_OnMessage;
 
             NewChat = new VmCommand(async () =>
             {
@@ -138,7 +145,7 @@ namespace ProjectSystemWPF.ViewModel
 
             DeleteChat = new VmCommand(async () =>
             {
-                
+
             });
 
             AttachFile = new VmCommand(async () =>
@@ -163,29 +170,32 @@ namespace ProjectSystemWPF.ViewModel
                 //Message.Chat = Chat;
                 if (NewMessage.Document != null || NewMessage.Text != "")
                 {
+                    System.Threading.Tasks.Task task = null;
                     if (NewMessage.Id == 0)
                     {
-                        await _connection.SendAsync("NewMessage", NewMessage, Chat);
-                        NewMessage = new MessageDTO();
-                        GetMessage();
+                        task = _connection.SendAsync("NewMessage", NewMessage, Chat);
                     }
                     else
                     {
-                        await _connection.SendAsync("UpdateMessage", NewMessage, Chat);
-                        NewMessage = new MessageDTO();
-                        GetMessage();
+                        task = _connection.SendAsync("UpdateMessage", NewMessage, Chat);
                     }
+                    await task;
+                    await System.Threading.Tasks.Task.Delay(100).
+                      ContinueWith(async s => await GetMessageAsync());
+                    NewMessage = new MessageDTO();
                 }
 
             })
             {
-             
+
             };
         }
 
-        
-
-
+        private async void Instance_OnMessage(object? sender, int chatId)
+        {
+            if (Chat?.Id == chatId)
+                await GetMessageAsync();
+        }
 
         public async void FindChatAsync()
         {
@@ -211,28 +221,24 @@ namespace ProjectSystemWPF.ViewModel
 
         }
 
-        public async void GetMessage()
+        public async System.Threading.Tasks.Task GetMessageAsync()
         {
             var result = await REST.Instance.client.GetAsync("Messages?chat=" + Chat.Id);
             //todo not ok
 
             if (result.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                return;
+                await System.Threading.Tasks.Task.CompletedTask;
             }
             else
             {
                 allMessages = await result.Content.ReadFromJsonAsync<ObservableCollection<MessageDTO>>(REST.Instance.options);
             }
-            Messages = new ObservableCollection<MessageDTO>(allMessages.OrderBy(s=>s.Id));
+            Messages = new ObservableCollection<MessageDTO>(allMessages.OrderBy(s => s.Id));
             foreach (var item in Messages)
             {
                 item.Sender = Chat.ChatUsers.FirstOrDefault(s => s.IdUser == item.IdSender)?.User;
             }
-
-
-
-
         }
 
         public async void GetChats()

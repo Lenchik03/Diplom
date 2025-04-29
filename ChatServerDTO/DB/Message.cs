@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
-namespace ProjectSystemAPI.DB;
+namespace ChatServerDTO.DB;
 
 public partial class Message
 {
@@ -14,11 +13,11 @@ public partial class Message
 
     public int IdSender { get; set; }
 
-    public bool? IsReadIt { get; set; }
-
     public byte[]? Document { get; set; }
 
     public string? DocumentTitle { get; set; }
+
+    public DateTime? DateOfSending { get; set; }
 
     public virtual Chat IdChatNavigation { get; set; } = null!;
 

@@ -71,13 +71,14 @@
                     <Label Content="ЗАДАЧИ" Grid.ColumnSpan="3" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
 
                 </Grid>
+                <StackPanel Margin="3">
+                    <TextBlock Text="Фильтрация по статусу"/>
+                    <ComboBox DisplayMemberPath="Title"
+SelectedItem="{Binding SelectedStatus}" 
+ItemsSource="{Binding AllStatuses}"/>
+                </StackPanel>
                 <Grid>
-                    <StackPanel Margin="3">
-                        <TextBlock Text="Фильтрация по статусу"/>
-                        <ComboBox DisplayMemberPath="Title"
-          SelectedItem="{Binding SelectedStatus}" 
-          ItemsSource="{Binding AllStatuses}"/>
-                    </StackPanel>
+                    
                     <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"  BorderBrush="Black" MouseDoubleClick="DescriptionTaskClick" BorderThickness ="1" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectSystemAPI.DB;
+namespace ChatServerDTO.DB;
 
 public partial class Role
 {
