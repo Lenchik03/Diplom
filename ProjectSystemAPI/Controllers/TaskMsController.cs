@@ -62,6 +62,12 @@ namespace ProjectSystemAPI.Controllers
             return Ok();
         }
 
+        [HttpGet("Filter/{id}")]
+        public async Task<ActionResult<IEnumerable<Status>>> Search(int id)
+        {
+            var list = _context.Tasks.AsNoTracking().Select(s => s.IdStatus == id).ToList();
+            return Ok(list);
+        }
 
 
         // GET: api/TaskMs

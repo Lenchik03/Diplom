@@ -128,7 +128,7 @@ namespace ProjectSystemWPF.ViewModel
             GetChats();
             GetMessage();
 
-            if()
+            
 
             NewChat = new VmCommand(async () =>
             {

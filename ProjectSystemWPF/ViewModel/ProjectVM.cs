@@ -46,23 +46,35 @@ namespace ProjectSystemWPF.ViewModel
         { get => selectedTask;
             set { selectedTask = value;
                 Signal();
+                Filter();
             }
         }
-        
+
+        public ObservableCollection<Status> AllStatuses { get; set; }
+        public Status SelectedStatus 
+        { get => selectedStatus;
+            set { selectedStatus = value;
+                Signal();
+            }
+
+        }
+
         ObservableCollection<ProjectDTO> projects = new ObservableCollection<ProjectDTO>(); 
         ObservableCollection<TaskDTO> tasks = new ObservableCollection<TaskDTO>();
         private ObservableCollection<ProjectDTO> projects1;
         private ObservableCollection<TaskDTO> tasks1;
         private ProjectDTO project;
         private TaskDTO selectedTask;
-       
+        private Status selectedStatus;
 
         public ProjectVM()
         {
             GetProjects();
             GetUsers();
             //GetTasks();
-
+            GetStatuses();
+            AllStatuses.Insert(0, new Status { Id = 0, Title = "Все статусы" });
+            SelectedStatus = AllStatuses[0];
 
 
 
@@ -85,6 +97,21 @@ namespace ProjectSystemWPF.ViewModel
             }
             
             Projects = new ObservableCollection<ProjectDTO>(projects);
+
+        }
+        public async System.Threading.Tasks.Task GetStatuses()
+        {
+            var result = await REST.Instance.client.GetAsync($"Statuses");
+            //todo not ok
+
+            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                AllStatuses = await result.Content.ReadFromJsonAsync<ObservableCollection<Status>>(REST.Instance.options);
+            }
 
         }
 
@@ -122,6 +149,23 @@ namespace ProjectSystemWPF.ViewModel
             }
 
             Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id));
+            
+        }
+
+        public async void Filter()
+        {
+            var result1 = await REST.Instance.client.GetAsync($"TaskMs/Filter/{SelectedStatus.Id}");
+            //todo not ok
+
+            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                var alltasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
+                Tasks = new ObservableCollection<TaskDTO>(alltasks.Where(s => s.IdProject == Project.Id));
+            }
             
         }
 
