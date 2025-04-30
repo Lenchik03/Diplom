@@ -27,7 +27,6 @@ namespace ProjectSystemWPF.View
         public ChatsPage()
         {
             InitializeComponent();
-            
             (DataContext as ChatsVM).SetDispatcher(Dispatcher);
                  ((INotifyCollectionChanged)listBox.Items).CollectionChanged += Items_CollectionChanged;
         }

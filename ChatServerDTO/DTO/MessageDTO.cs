@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ChatServerDTO.DTO
 {
@@ -19,7 +20,6 @@ namespace ChatServerDTO.DTO
         public string Text { get; set; } = null!;
 
         public int IdSender { get; set; }
-
 
         public byte[]? Document { get; set; }
 

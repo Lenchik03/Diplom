@@ -245,11 +245,19 @@ namespace ProjectSystemWPF.ViewModel
                         }
 
                     }
-                    var result = await REST.Instance.client.DeleteAsync($"Users/DeleteEmployee/{Employee.Id}");
-                    //todo not ok
-
-                    if (result.StatusCode != System.Net.HttpStatusCode.NoContent)
+                    Employee.IsDeleted = true;
+                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Employees/{Employee.Id}",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
                     {
+                        responce.EnsureSuccessStatusCode();
+                        //MessageBox.Show("Пользователь успешно обновлен!");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
                         return;
                     }
 

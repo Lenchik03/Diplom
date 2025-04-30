@@ -106,6 +106,7 @@ namespace ProjectSystemWPF.ViewModel
         public VmCommand SendMessage { get; set; }
 
         public VmCommand DeleteChat { get; set; }
+        public CommandParameter<MessageDTO> SaveFile { get; set; }
 
         public ObservableCollection<ChatDTO> allChats = new ObservableCollection<ChatDTO>();
         public ObservableCollection<MessageDTO> allMessages = new ObservableCollection<MessageDTO>();
@@ -121,6 +122,13 @@ namespace ProjectSystemWPF.ViewModel
             set
             {
                 deleteChatVisible = value;
+                Signal();
+            }
+        }
+        public Visibility FileButtonVisible 
+        { 
+            get => fileButtonVisible;
+            set { fileButtonVisible = value;
                 Signal();
             }
         }
@@ -155,6 +163,7 @@ namespace ProjectSystemWPF.ViewModel
                 if (openFileDialog.ShowDialog() == true)
                 {
                     var filePath = openFileDialog.FileName;
+                   
                     var fileName = Path.GetFileName(filePath);
                     var fileContent = await File.ReadAllBytesAsync(filePath);
                     NewMessage.DocumentTitle = fileName;
@@ -190,6 +199,16 @@ namespace ProjectSystemWPF.ViewModel
             {
 
             };
+            SaveFile = new CommandParameter<MessageDTO>(async (MessageDTO message) =>
+            {
+                var folderDialog =  new OpenFolderDialog();
+                if (folderDialog.ShowDialog() == true)
+                {
+                    var filepath =  Path.Combine(folderDialog.FolderName, message.DocumentTitle);
+                    File.WriteAllBytes(filepath, message.Document);
+                }
+                
+            });
         }
 
         private async void Instance_OnMessage(object? sender, int chatId)
@@ -244,18 +263,25 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void GetChats()
         {
-            var result1 = await REST.Instance.client.GetAsync($"Chats/My/{ActiveUser.GetInstance().User.Id}");
-            //todo not ok
+            try
+            {
+                var result1 = await REST.Instance.client.GetAsync($"Chats/My/{ActiveUser.GetInstance().User.Id}");
+                //todo not ok
 
-            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return;
+                if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    return;
+                }
+                else
+                {
+                    Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
+                }
+                Chat = Chats.FirstOrDefault();
             }
-            else
+            catch (Exception ex)
             {
-                Chats = await result1.Content.ReadFromJsonAsync<ObservableCollection<ChatDTO>>(REST.Instance.options);
+                ;
             }
-            Chat = Chats.FirstOrDefault();
 
         }
 
@@ -267,6 +293,7 @@ namespace ProjectSystemWPF.ViewModel
         }
         Dispatcher dispatcher;
         private Visibility deleteChatVisible;
+        private Visibility fileButtonVisible;
 
         internal void SetDispatcher(Dispatcher dispatcher)
         {

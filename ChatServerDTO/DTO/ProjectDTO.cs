@@ -26,7 +26,7 @@ namespace ChatServerDTO.DTO
 
         public int IdCreator { get; set; }
         public UserDTO? Creator { get; set; }
-        public bool? IsDeleted { get; set; }
+        public bool? IsDeleted { get; set; } = false;
 
         public List<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();
 

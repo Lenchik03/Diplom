@@ -83,7 +83,8 @@
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{Binding Sender.FIO}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         <TextBlock Text="{Binding Text}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        <TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <!--<TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>-->
+                                        <Button Content="{Binding DocumentTitle}" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SaveFile}" CommandParameter="{Binding .}" Visibility="{Binding FileButtonVisible}" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

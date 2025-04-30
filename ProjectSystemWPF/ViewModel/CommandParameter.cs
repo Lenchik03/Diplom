@@ -7,11 +7,11 @@ using System.Windows.Input;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class VmCommand : ICommand
+    public class CommandParameter<T> : ICommand
     {
-        Action action;
+        Action<T> action;
 
-        public VmCommand(Action action)
+        public CommandParameter(Action<T> action)
         {
             this.action = action;
         }
@@ -29,9 +29,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public void Execute(object? parameter)
         {
-            action();
+            action((T)parameter);
         }
     }
-
-
 }

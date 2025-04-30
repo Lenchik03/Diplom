@@ -33,8 +33,4 @@
     <Resource Include="View\logo.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
-
 </Project>

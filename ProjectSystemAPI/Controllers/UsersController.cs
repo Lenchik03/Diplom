@@ -109,7 +109,7 @@ namespace ProjectSystemAPI.Controllers
         public ActionResult<List<User>> GetExecutorsByTask(int taskId)
         {
             return Ok(dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).
-                Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Distinct().ToList());
+                Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Where(s => s.IsDeleted == false).Distinct().ToList());
 
             //var result = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).Where(s => s.IdTask == taskId);
             //return Ok(result);
@@ -178,7 +178,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("GetAllUsers")]
         public async Task<IEnumerable<UserDTO>> GetAllUsers()
         {
-            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).OrderByDescending(s => s.Id).ToList();
+            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).Where(s => s.IsDeleted == false).OrderByDescending(s => s.Id).ToList();
             return users.Select(s => (UserDTO)s);
         }
 

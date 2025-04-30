@@ -1,4 +1,5 @@
-﻿using ChatServerDTO.DTO;
+﻿using ChatServerDTO.DB;
+using ChatServerDTO.DTO;
 using ProjectSystemAPI.DB;
 using ProjectSystemWPF.View;
 using System;
@@ -94,12 +95,12 @@ namespace ProjectSystemWPF.ViewModel
                     task.IdStatus = 4;
                     task.StatusTitle = "Удалена";
 
-                    string arg = JsonSerializer.Serialize(task, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    string arg1 = JsonSerializer.Serialize(task, REST.Instance.options);
+                    var responce1 = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
+                        new StringContent(arg1, Encoding.UTF8, "application/json"));
                     try
                     {
-                        responce.EnsureSuccessStatusCode();
+                        responce1.EnsureSuccessStatusCode();
                         // MessageBox.Show("Проект успешно обновлен!");
 
                     }
@@ -109,18 +110,19 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
                 }
-
-                string arg1 = JsonSerializer.Serialize(Project, REST.Instance.options);
-                var responce1 = await REST.Instance.client.DeleteAsync($"Projects/{Project.Id}");
+                Project.IsDeleted = true;
+                string arg = JsonSerializer.Serialize(Project, REST.Instance.options);
+                var responce = await REST.Instance.client.PutAsync($"Projects/{Project.Id}",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
                 try
                 {
-                    responce1.EnsureSuccessStatusCode();
-                    MessageBox.Show("Проект успешно удалён!");
+                    responce.EnsureSuccessStatusCode();
+                    // MessageBox.Show("Проект успешно обновлен!");
 
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Ошибка! Удаление проекта приостановлено!");
+                    // MessageBox.Show("Ошибка! Обновление проекта приостановлено!");
                     return;
                 }
             });
