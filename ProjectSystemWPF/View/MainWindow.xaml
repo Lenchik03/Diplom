@@ -74,15 +74,16 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
+        <!--<Button Content="Проекты" Command="{Binding OpenSUPClick}" Visibility="{Binding SUPVisibility}"/>-->
         <StackPanel Visibility="{Binding ViewMenu}" Grid.Row="1" Width="0" x:Name="menu">
             
             <Image Source="/View/header.png"/>
-            <Button Content="Главная" Command="{Binding OpenProjectClick}"/>
-            <Button Content="Мои проекты"  Command="{Binding OpenMyProjectClick}" Visibility="{Binding MyProjectVisibility}"/>
-            <Button Content="Сотрудники" Command="{Binding OpenEmployeesClick}"/>
-            <Button Content="Чаты" Command="{Binding OpenChatsClick}"/>
-            <Button Content="Профиль" Command="{Binding OpenProfileClick}"/>
-            <Button Content="test" Command="{Binding SUProjectPageClick}"/>
+            <Button Content="Главная" Command="{Binding OpenProjectClick}" Visibility="{Binding SuperUserColapsed}"/>
+            <Button Content="Мои проекты"  Command="{Binding OpenMyProjectClick}" Visibility="{Binding SuperUserColapsed}"/>
+            <Button Content="Сотрудники" Command="{Binding OpenEmployeesClick}" Visibility="{Binding SuperUserVisible}"/>
+            <Button Content="Чаты" Command="{Binding OpenChatsClick}" Visibility="{Binding SuperUserColapsed}"/>
+            <Button Content="Профиль" Command="{Binding OpenProfileClick}" Visibility="{Binding SuperUserColapsed}"/>
+            <Button Content="Проекты" Command="{Binding SUProjectPageClick}" Visibility="{Binding SuperUserVisible}"/>
         </StackPanel>
         
         <Image Grid.Column="1" Source="/View/logo.png" Width="Auto" Height="60" HorizontalAlignment="Stretch"/>

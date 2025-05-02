@@ -12,10 +12,10 @@
       DataContext="{DynamicResource sup}">
 
     <Page.Resources>
-        <vm:SUProjectPage x:Key="sup"/>
+        <vm:SUProjectPageVM x:Key="sup"/>
     </Page.Resources>
     <Grid Background="LightYellow">
-        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"  BorderBrush="Black" BorderThickness ="1"  Background="#FFFDC401" Margin="5" ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" HorizontalContentAlignment="Stretch" >
+        <ListBox MouseDoubleClick="ProjectClick" ScrollViewer.VerticalScrollBarVisibility="Visible"  BorderBrush="Black" BorderThickness ="1"  Background="#FFFDC401" Margin="5" ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Background="#FFFDC401" Margin="5">

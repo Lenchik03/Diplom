@@ -27,7 +27,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
         {
-            var projects = await _context.Projects.Include(s => s.Tasks).AsNoTracking().OrderByDescending(s => s.StartDate).ToListAsync();
+            var projects = await _context.Projects.Include(s => s.Tasks).Include(s => s.IdCreatorNavigation).AsNoTracking().OrderByDescending(s => s.StartDate).ToListAsync();
             return Ok(projects.Select(s => (ProjectDTO)s));
         }
 

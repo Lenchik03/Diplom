@@ -1,5 +1,6 @@
 ﻿using ChatServerDTO.DTO;
 using ProjectSystemAPI.DB;
+using ProjectSystemWPF.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class SUProjectPage: BaseVM
+    public class SUProjectPageVM: BaseVM
     {
         private ObservableCollection<ProjectDTO> projects;
 
@@ -20,6 +21,10 @@ namespace ProjectSystemWPF.ViewModel
             set { projects = value;
                 Signal();
             }
+        }
+        public SUProjectPageVM()
+        {
+            GetProjects();
         }
 
         public ProjectDTO Project { get; set; }
@@ -38,6 +43,14 @@ namespace ProjectSystemWPF.ViewModel
                 Projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
             }           
             
+        }
+
+        
+
+        internal void Select(ProjectDTO p)
+        {
+            EditSUPP editSUPP = new EditSUPP(p);
+            editSUPP.ShowDialog();
         }
     }
 }

@@ -178,7 +178,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("GetAllUsers")]
         public async Task<IEnumerable<UserDTO>> GetAllUsers()
         {
-            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).Where(s => s.IsDeleted == false).OrderByDescending(s => s.Id).ToList();
+            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).OrderByDescending(s => s.Id).ToList();
             return users.Select(s => (UserDTO)s);
         }
 

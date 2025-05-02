@@ -21,14 +21,12 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
         private Visibility viewSignOut = Visibility.Collapsed;
-        public Visibility MyProjectVisibility 
-        { get => myProjectVisibility;
-            set { myProjectVisibility = value;
-                Signal();
-            }
-        }
+        
         private Visibility viewMenu;
         private Visibility myProjectVisibility;
+        private Visibility sUPVisibility;
+        private Visibility superUserColapsed;
+        private Visibility superUserVisible;
 
         public static MainVM Instance { get; set; }
 
@@ -37,6 +35,25 @@ namespace ProjectSystemWPF.ViewModel
             set
             {
                 viewSignOut = value;
+                Signal();
+            }
+        }
+
+        
+        
+
+        public Visibility SuperUserColapsed
+        {
+            get => superUserColapsed;
+            set { superUserColapsed = value;
+                Signal();
+            }
+        }
+
+        public Visibility SuperUserVisible
+        {
+            get => superUserVisible;
+            set { superUserVisible = value;
                 Signal();
             }
         }
@@ -64,6 +81,8 @@ namespace ProjectSystemWPF.ViewModel
         public VmCommand OpenProjectClick { get; set; }
         public VmCommand OpenMyProjectClick { get; set; }
         public VmCommand SUProjectPageClick { get; set; }
+
+        public VmCommand OpenSUPClick { get; set; }
         //public VmCommand MainPage { get; set; }
 
         public MainVM()
@@ -87,6 +106,11 @@ namespace ProjectSystemWPF.ViewModel
             OpenProjectClick = new VmCommand(async () =>
             {
                 CurrentPage = new ProjectPage();
+            });
+
+            OpenSUPClick = new VmCommand(async () =>
+            {
+                CurrentPage = new SUProjectPage();
             });
 
             SUProjectPageClick = new VmCommand(async () =>
@@ -128,19 +152,28 @@ namespace ProjectSystemWPF.ViewModel
         {
             ViewSignOut = ActiveUser.GetInstance().User == null ? Visibility.Collapsed : Visibility.Visible;
             ViewMenu = ActiveUser.GetInstance().User == null ? Visibility.Collapsed : Visibility.Visible;
+            //SUPVisibility = ActiveUser.GetInstance().User == null ? Visibility.Collapsed : Visibility.Visible;
             if (ActiveUser.GetInstance().User != null)
             {
                 if (ActiveUser.GetInstance().User.IdRole == 4)
                 {
-                    ViewMenu = Visibility.Collapsed;
+                    ViewMenu = Visibility.Visible;
+                    
+                    SuperUserColapsed = Visibility.Collapsed;
+                    SuperUserVisible = Visibility.Visible;
                 }
-                if (ActiveUser.GetInstance().User.IdRole == 2 || ActiveUser.GetInstance().User.IdRole == 3)
+                else if (ActiveUser.GetInstance().User.IdRole == 2 || ActiveUser.GetInstance().User.IdRole == 3)
                 {
-                    MyProjectVisibility = Visibility.Visible;
+                    
+                    SuperUserColapsed = Visibility.Visible;
+                    SuperUserVisible = Visibility.Collapsed;
                 }
                 else
                 {
-                    MyProjectVisibility = Visibility.Collapsed;
+                    
+                    SuperUserColapsed = Visibility.Visible;
+                    SuperUserVisible = Visibility.Collapsed;
+                    //SUPVisibility = Visibility.Collapsed;
                 }
             }
         }

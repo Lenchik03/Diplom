@@ -12,27 +12,28 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace ProjectSystemWPF.View
 {
     /// <summary>
-    /// Логика взаимодействия для SUProjectPage.xaml
+    /// Логика взаимодействия для EditSUPP.xaml
     /// </summary>
-    public partial class SUProjectPage : Page
+    public partial class EditSUPP : Window
     {
-        public SUProjectPage()
+        public EditSUPP(ProjectDTO project)
         {
             InitializeComponent();
+            if (project.Id != 0)
+                (DataContext as EditSUPVM).GetProject(project);
+
+            (DataContext as EditSUPVM).Loaded += Vm_Loaded;
+            (DataContext as EditSUPVM).SetWindow(this);
         }
 
-        private void ProjectClick(object sender, MouseButtonEventArgs e)
+        private void Vm_Loaded(object? sender, EventArgs e)
         {
-            var list = sender as ListBox;
-            var p = list.SelectedItem as ProjectDTO;
-            if (p != null)
-                ((SUProjectPageVM)DataContext).Select(p);
+            
         }
     }
 }
