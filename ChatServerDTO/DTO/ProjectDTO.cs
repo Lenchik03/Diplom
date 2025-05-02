@@ -50,6 +50,9 @@ namespace ChatServerDTO.DTO
                 IdCreator = project.IdCreator,
             };
 
+            if (project.IdCreatorNavigation != null)
+                result.Creator = (UserDTO)project.IdCreatorNavigation;
+
             if (project.Tasks != null)
                 result.Tasks = project.Tasks.Select(s => (TaskDTO)s).ToList();
 

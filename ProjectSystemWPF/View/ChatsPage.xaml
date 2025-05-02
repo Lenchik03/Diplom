@@ -33,7 +33,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Label Content="ЧАТЫ" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" Grid.ColumnSpan="2"/>
-                        <Button Content="🗑" Visibility="{Binding DeleteChatVisible}" Grid.Column="1" Width="40" HorizontalAlignment="Right" Command="{Binding DeleteChat}" Margin="4"/>
+                        <Button Content="🗑" Padding="5" Visibility="{Binding DeleteChatVisible}" Grid.Column="1" Width="40" HorizontalAlignment="Right" Command="{Binding DeleteChat}" Margin="4"/>
                         <Button Content="+" Grid.Column="2" Width="40" HorizontalAlignment="Right" Command="{Binding NewChat}" Margin="4"/>
                     </Grid>
 
@@ -53,7 +53,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="5">
-                                        <Image Source="/logo.jpg" Width="50" Height="50"/>
+                                        <Image Source="{Binding ImageSourse}" Width="50" Height="50"/>
                                         <Label Content="{Binding Title}"/>
                                         <!--<Label Content="{Binding CountMess}"/>-->
                                     </StackPanel>
@@ -103,7 +103,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding NewMessage.Text}" Background="LightYellow" Margin="3"/>
+                        <TextBox Text="{Binding NewMessage.Text}" Background="LightYellow" Margin="3" TextWrapping="Wrap"/>
                         <Button Content="📎" Height="40" Width="50" Command="{Binding AttachFile}" Grid.Column="1"/>
                         <Button Content="➤" Height="40" Width="50" Command="{Binding SendMessage}" Grid.Column="2"/>
                     </Grid>

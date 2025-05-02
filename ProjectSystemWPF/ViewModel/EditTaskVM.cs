@@ -27,6 +27,7 @@ namespace ProjectSystemWPF.ViewModel
         private UserDTO removeExecutor;
         private ObservableCollection<ProjectDTO> projects;
         private ProjectDTO selectedProject;
+        private Visibility visibility = Visibility.Visible;
 
         public TaskDTO Task
         {
@@ -77,6 +78,14 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
 
+        public Visibility ExecutorsVisible
+        {
+            get => visibility;
+            set { visibility = value;
+                Signal();
+            }
+        }
+
         public VmCommand AddEx { get; set; }
         public VmCommand RemoveEx { get; set; }
         public VmCommand Save { get; set; }
@@ -102,9 +111,12 @@ namespace ProjectSystemWPF.ViewModel
 
         public EditTaskVM()
         {
+            
             GetProjects();
            
             GetExecutors();
+            if(ActiveUser.GetInstance().User.IdRole == 3)
+                ExecutorsVisible = Visibility.Collapsed;
             AddEx = new VmCommand(async () =>
             {
                 if (AddExecutor != null)
@@ -130,6 +142,8 @@ namespace ProjectSystemWPF.ViewModel
 
             Save = new VmCommand(async () =>
             {
+                if (ActiveUser.GetInstance().User.IdRole == 3)
+                    SelectedExecutors.Add(ActiveUser.GetInstance().User);
                 Task.Creator = ActiveUser.GetInstance().User;
                 Task.IdCreator = ActiveUser.GetInstance().User.Id;
                 //Task.Project = SelectedProject;
@@ -198,7 +212,7 @@ namespace ProjectSystemWPF.ViewModel
                     }
                 }
                 editTaskPage.Close();
-            });
+             });
             
         }
 
@@ -293,6 +307,8 @@ namespace ProjectSystemWPF.ViewModel
             
         }
         EditTaskPage editTaskPage;
+        
+
         internal void SetWindow(EditTaskPage editTaskPage)
         {
             this.editTaskPage = editTaskPage;

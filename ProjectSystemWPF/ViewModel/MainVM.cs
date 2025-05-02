@@ -63,6 +63,7 @@ namespace ProjectSystemWPF.ViewModel
         public VmCommand OpenChatsClick { get; set; }
         public VmCommand OpenProjectClick { get; set; }
         public VmCommand OpenMyProjectClick { get; set; }
+        public VmCommand SUProjectPageClick { get; set; }
         //public VmCommand MainPage { get; set; }
 
         public MainVM()
@@ -86,6 +87,11 @@ namespace ProjectSystemWPF.ViewModel
             OpenProjectClick = new VmCommand(async () =>
             {
                 CurrentPage = new ProjectPage();
+            });
+
+            SUProjectPageClick = new VmCommand(async () =>
+            {
+                CurrentPage = new SUProjectPage();
             });
 
             OpenEmployeesClick = new VmCommand(() =>

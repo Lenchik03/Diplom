@@ -1,0 +1,44 @@
+﻿<Page x:Class="ProjectSystemWPF.View.SUProjectPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ProjectSystemWPF.View"
+      xmlns:c ="clr-namespace:ProjectSystemWPF.Converters"
+      xmlns:vm ="clr-namespace:ProjectSystemWPF.ViewModel"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title=""
+      DataContext="{DynamicResource sup}">
+
+    <Page.Resources>
+        <vm:SUProjectPage x:Key="sup"/>
+    </Page.Resources>
+    <Grid Background="LightYellow">
+        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"  BorderBrush="Black" BorderThickness ="1"  Background="#FFFDC401" Margin="5" ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" HorizontalContentAlignment="Stretch" >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Background="#FFFDC401" Margin="5">
+
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="20" Height="20">
+                                <Ellipse.Fill>
+                                    <MultiBinding Converter="{c:ConvertDateToBrush}">
+                                        <Binding  Path="StartDate" />
+                                        <Binding  Path="CompletionDate" />
+                                    </MultiBinding>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <Label Content="{Binding Title}" FontSize="15"/>
+
+                            <TextBlock Text="{Binding CompletionDate, StringFormat=dd.MM.yyyy}"  FontSize="15"/>
+
+
+                            <Label Content="{Binding Creator.Initials}" FontSize="15"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Page>

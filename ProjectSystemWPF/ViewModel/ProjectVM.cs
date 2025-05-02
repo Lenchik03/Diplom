@@ -62,7 +62,7 @@ namespace ProjectSystemWPF.ViewModel
 
         ObservableCollection<ProjectDTO> projects = new ObservableCollection<ProjectDTO>(); 
         ObservableCollection<TaskDTO> tasks = new ObservableCollection<TaskDTO>();
-        private ObservableCollection<ProjectDTO> projects1;
+        private ObservableCollection<ProjectDTO> projects1 = new();
         private ObservableCollection<TaskDTO> tasks1;
         private ProjectDTO project;
         private TaskDTO selectedTask;
@@ -71,7 +71,8 @@ namespace ProjectSystemWPF.ViewModel
         public ProjectVM()
         {
             GetProjects();
-            GetUsers();
+            System.Threading.Tasks.Task.Delay(500);
+            //GetUsers();
             //GetTasks();
             GetStatuses();
 
@@ -117,24 +118,24 @@ namespace ProjectSystemWPF.ViewModel
 
         }
 
-        public async void GetUsers()
-        {
-            var result1 = await REST.Instance.client.GetAsync($"Users/GetAllUsers");
-            //todo not ok
+        //public async void GetUsers()
+        //{
+        //    var result1 = await REST.Instance.client.GetAsync($"Users/GetAllUsers");
+        //    //todo not ok
 
-            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return;
-            }
-            else
-            {
-                var users = await result1.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
-                foreach (var item in Projects)
-                {
-                    item.Creator = users.FirstOrDefault(s => s.Id == item.IdCreator);
-                }
-            }
-        }
+        //    if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+        //    {
+        //        return;
+        //    }
+        //    else
+        //    {
+        //        var users = await result1.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
+        //        foreach (var item in Projects)
+        //        {
+        //            item.Creator = users.FirstOrDefault(s => s.Id == item.IdCreator);
+        //        }
+        //    }
+        //}
 
         public async void GetTasks()
         {

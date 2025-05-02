@@ -59,6 +59,8 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
                 if (chat != null)
                     GetMessageAsync();
+                if (chat.IdCreator == ActiveUser.GetInstance().User.Id)
+                    DeleteChatVisible = Visibility.Visible;
             }
         }
 

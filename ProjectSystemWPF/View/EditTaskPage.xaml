@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ProjectSystemWPF.View"
         xmlns:vm ="clr-namespace:ProjectSystemWPF.ViewModel"
       mc:Ignorable="d" 
-      Height="600" Width="400"
+      Height="650" Width="400"
       Title="EditTaskPage"
         DataContext="{DynamicResource editTaslVM}">
     <Window.Resources>
@@ -24,13 +24,13 @@
                     <TextBox Text="{Binding Task.Description}" TextWrapping="Wrap"/>
                     <Label Content="Проект"/>
                     <ComboBox ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Title"/>
-                    <Label Content="Назначить исполнителей:"/>
-                    <StackPanel>
+                    <Label Content="Назначить исполнителей:" Visibility="{Binding ExecutorsVisible}"/>
+                    <StackPanel Visibility="{Binding ExecutorsVisible}">
                         <Label Content="Поиск по ФИО"/>
                         <TextBox Text="{Binding Search, 
 UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
-                    <Grid>
+                    <Grid Visibility="{Binding ExecutorsVisible}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="190*"/>
                             <ColumnDefinition Width="85*"/>
