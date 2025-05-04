@@ -18,13 +18,13 @@
 
                 <StackPanel Margin="5">
                     <Label Content="Название"/>
-                    <TextBox Text="{Binding Project.Title}"/>
+                    <TextBox KeyDown="KeyDown" Text="{Binding Project.Title}"/>
                     <Label Content="Описание"/>
-                    <TextBox Text="{Binding Project.Description}" TextWrapping="Wrap"/>
+                    <TextBox KeyDown="KeyDown" Text="{Binding Project.Description}" TextWrapping="Wrap"/>
                     <Label Content="Дедлайн"/>
-                    <DatePicker SelectedDate="{Binding Project.CompletionDate}" Language="ru"/>
+                    <DatePicker KeyDown="KeyDown" SelectedDate="{Binding Project.CompletionDate}" Language="ru"/>
                     <Label Content="Ответственный за проект"/>
-                    <ComboBox ItemsSource="{Binding Executors}" SelectedItem="{Binding Executor}" ScrollViewer.VerticalScrollBarVisibility="Visible" DisplayMemberPath="Initials"/>
+                    <ComboBox KeyDown="KeyDown" ItemsSource="{Binding Executors}" SelectedItem="{Binding Executor}" ScrollViewer.VerticalScrollBarVisibility="Visible" DisplayMemberPath="Initials"/>
                     <Button Content="Сохранить" Height="30" Width="110" Margin="20" Command="{Binding Save}"/>
                 </StackPanel>
             </StackPanel>

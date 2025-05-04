@@ -22,6 +22,8 @@ namespace ChatServerDTO.DTO
 
         public bool? IsDeleted { get; set; }
 
+        public UserDTO? Creator { get; set; }
+
         public List<ChatUserDTO> ChatUsers { get; set; } = new List<ChatUserDTO>();
 
         public List<MessageDTO> Messages { get; set; } = new List<MessageDTO>();
@@ -34,6 +36,9 @@ namespace ChatServerDTO.DTO
                 ImagePath = from.ImagePath,
                 IsDeleted = from.IsDeleted,
             };
+
+            if (from.IdCreatorNavigation != null)
+                result.Creator = (UserDTO)from.IdCreatorNavigation;
 
             if (from.ChatUsers != null)
                 result.ChatUsers = from.ChatUsers.Select(s => (ChatUserDTO)s).ToList();

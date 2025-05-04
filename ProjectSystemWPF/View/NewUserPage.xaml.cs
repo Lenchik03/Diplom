@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectSystemWPF.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,14 @@ namespace ProjectSystemWPF.View
         public NewUserPage()
         {
             InitializeComponent();
+        }
+
+        private void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((ProfileVM)DataContext).Save?.Execute(null);
+            }
         }
     }
 }

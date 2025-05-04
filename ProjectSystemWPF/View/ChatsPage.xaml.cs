@@ -58,7 +58,7 @@ namespace ProjectSystemWPF.View
                 var message = listBox.SelectedItem as MessageDTO;
                 if(message.IdSender == ActiveUser.GetInstance().User.Id)
                 {
-                    ((ChatsVM)DataContext).EditMessage(message);
+                    ((ChatsVM)DataContext).EditMessageAsync(message);
                 }
             }
         }
@@ -72,6 +72,14 @@ namespace ProjectSystemWPF.View
                 {
                     ((ChatsVM)DataContext).DeleteMessageAsync(message);
                 }
+            }
+        }
+
+        private void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((ChatsVM)DataContext).SendMessage?.Execute(null);
             }
         }
     }

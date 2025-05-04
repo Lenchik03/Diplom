@@ -32,11 +32,11 @@ FontFamily="{DynamicResource MaterialDesignFont}"
             <Label Content="Дата рождения" />
         <DatePicker SelectedDate="{Binding User.Birthday}" IsEnabled="False"/>
         <Label Content="Эл.почта"/>
-        <TextBox Text="{Binding User.Email}"/>
+        <TextBox KeyDown="KeyDown" Text="{Binding User.Email}"/>
         <Label Content="Должность"/>
         <TextBox Text="{Binding User.Post}" IsEnabled="False"/>
         <Label Content="Номер телефона"/>
-        <TextBox Text="{Binding User.Phone}"/>
+            <TextBox KeyDown="KeyDown" Text="{Binding User.Phone}"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -58,9 +59,18 @@ namespace ProjectSystemWPF.ViewModel
                 chat = value;
                 Signal();
                 if (chat != null)
+                {
                     GetMessageAsync();
-                if (chat.IdCreator == ActiveUser.GetInstance().User.Id)
-                    DeleteChatVisible = Visibility.Visible;
+                    if (chat.IdCreator == ActiveUser.GetInstance().User.Id)
+                        DeleteChatVisible = Visibility.Visible;
+                    if (chat.Creator != null)
+                    {
+                        if (chat.Creator.IsDeleted == true)
+                            chat.Creator = Chat.ChatUsers.FirstOrDefault().User;
+                    }
+
+                }
+
             }
         }
 
@@ -127,10 +137,12 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
             }
         }
-        public Visibility FileButtonVisible 
-        { 
+        public Visibility FileButtonVisible
+        {
             get => fileButtonVisible;
-            set { fileButtonVisible = value;
+            set
+            {
+                fileButtonVisible = value;
                 Signal();
             }
         }
@@ -148,6 +160,8 @@ namespace ProjectSystemWPF.ViewModel
 
             SignalR.Instance.OnMessage += Instance_OnMessage;
 
+
+
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow(new ChatDTO());
@@ -156,7 +170,21 @@ namespace ProjectSystemWPF.ViewModel
 
             DeleteChat = new VmCommand(async () =>
             {
-
+                Chat.IsDeleted = true;
+                string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
+                var responce = await REST.Instance.client.PutAsync($"Chats",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+                try
+                {
+                    responce.EnsureSuccessStatusCode();
+                    Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
+                    MessageBox.Show("Чат успешно удален!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Произошла ошибка");
+                    return;
+                }
             });
 
             AttachFile = new VmCommand(async () =>
@@ -165,7 +193,7 @@ namespace ProjectSystemWPF.ViewModel
                 if (openFileDialog.ShowDialog() == true)
                 {
                     var filePath = openFileDialog.FileName;
-                   
+
                     var fileName = Path.GetFileName(filePath);
                     var fileContent = await File.ReadAllBytesAsync(filePath);
                     NewMessage.DocumentTitle = fileName;
@@ -176,26 +204,59 @@ namespace ProjectSystemWPF.ViewModel
 
             SendMessage = new VmCommand(async () =>
             {
-                //Message.Sender = ActiveUser.GetInstance().User;
-                NewMessage.IdSender = ActiveUser.GetInstance().User.Id;
-                NewMessage.IdChat = Chat.Id;
-                //Message.Chat = Chat;
-                if (NewMessage.Document != null || NewMessage.Text != "")
+                if (NewMessage.Id == 0)
                 {
-                    System.Threading.Tasks.Task task = null;
-                    if (NewMessage.Id == 0)
+                    try
                     {
-                        task = _connection.SendAsync("NewMessage", NewMessage, Chat);
+                        //Message.Sender = ActiveUser.GetInstance().User;
+                        NewMessage.IdSender = ActiveUser.GetInstance().User.Id;
+                        NewMessage.IdChat = Chat.Id;
+                        NewMessage.DateOfSending = DateTime.Now;
+                        //Message.Chat = Chat;
+                        if (NewMessage.Document != null || NewMessage.Text != "")
+                        {
+                            System.Threading.Tasks.Task task = null;
+                            if (NewMessage.Id == 0)
+                            {
+                                task = _connection.SendAsync("NewMessage", NewMessage, Chat);
+                            }
+
+                            await task;
+                            await System.Threading.Tasks.Task.Delay(100).
+                              ContinueWith(async s => await GetMessageAsync());
+                            NewMessage = new MessageDTO();
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        task = _connection.SendAsync("UpdateMessage", NewMessage, Chat);
+                        ;
                     }
-                    await task;
-                    await System.Threading.Tasks.Task.Delay(100).
-                      ContinueWith(async s => await GetMessageAsync());
-                    NewMessage = new MessageDTO();
                 }
+                else
+                {
+                    // var chatUsers = await GetChatUsers(chat.Id);
+                    //message.IdChat = chat.Id;
+                    //message.Chat = chat;
+                    //message.IdSender = sender.Id;
+                    //message.Sender = sender;
+                    message.Text += "  (ред.)";
+                    string arg = JsonSerializer.Serialize(message, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        //MessageBox.Show("Задача успешно обновлена!");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show("Ошибка! Обновление задачи приостановлено!");
+                        return;
+                    }
+                }
+
+
 
             })
             {
@@ -203,13 +264,13 @@ namespace ProjectSystemWPF.ViewModel
             };
             SaveFile = new CommandParameter<MessageDTO>(async (MessageDTO message) =>
             {
-                var folderDialog =  new OpenFolderDialog();
+                var folderDialog = new OpenFolderDialog();
                 if (folderDialog.ShowDialog() == true)
                 {
-                    var filepath =  Path.Combine(folderDialog.FolderName, message.DocumentTitle);
+                    var filepath = Path.Combine(folderDialog.FolderName, message.DocumentTitle);
                     File.WriteAllBytes(filepath, message.Document);
                 }
-                
+
             });
         }
 
@@ -302,15 +363,16 @@ namespace ProjectSystemWPF.ViewModel
             this.dispatcher = dispatcher;
         }
 
-        internal void EditMessage(MessageDTO message)
+        internal async System.Threading.Tasks.Task EditMessageAsync(MessageDTO message)
         {
             NewMessage = message;
+
         }
 
         internal async System.Threading.Tasks.Task DeleteMessageAsync(MessageDTO message)
         {
             message.Text = "Сообщение удалено!";
-            
+
             string arg = JsonSerializer.Serialize(message, REST.Instance.options);
             var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
                 new StringContent(arg, Encoding.UTF8, "application/json"));

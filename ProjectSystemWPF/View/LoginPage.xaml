@@ -48,7 +48,7 @@
                 </StackPanel.RenderTransform>
                 <Label Content="Авторизация" HorizontalAlignment="Center" FontSize="20"/>
                 <Label Content="Введите эл.почту" FontSize="14" Margin="5"/>
-                <TextBox Margin="5" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(Validation.Errors)[0].ErrorContent}" x:Name="loginBox"/>
+                <TextBox  KeyDown="KeyDown" Margin="5" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(Validation.Errors)[0].ErrorContent}" x:Name="loginBox"/>
                 <Label Content="Введите пароль" FontSize="14" Margin="5"/>
                 <PasswordBox KeyDown="KeyDown" x:Name="passwrdBox" ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
                 <Button Content="Войти" Height="25" Width="80" Margin="10" FontWeight="Bold" Command="{Binding OpenPage}"

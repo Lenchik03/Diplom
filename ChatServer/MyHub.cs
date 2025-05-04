@@ -71,53 +71,38 @@ namespace ChatServer
             //myHub.Clients.All.SendAsync("newMessage", message);
         }
 
-        public async System.Threading.Tasks.Task UpdateMessage(MessageDTO message, ChatDTO chat)
-        {
-            var chatUsers = await GetChatUsers(chat.Id);
-            //message.IdChat = chat.Id;
-            //message.Chat = chat;
-            //message.IdSender = sender.Id;
-            //message.Sender = sender;
-            message.Text += "  (ред.)";
-            string arg = JsonSerializer.Serialize(message, REST.Instance.options);
-            var responce = await REST.Instance.client.PutAsync($"Messages",
-                new StringContent(arg, Encoding.UTF8, "application/json"));
-            try
-            {
-                responce.EnsureSuccessStatusCode();
-                //MessageBox.Show("Задача успешно обновлена!");
-
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show("Ошибка! Обновление задачи приостановлено!");
-                return;
-            }
-
-            chatUsers.Select(s => s.Id).ToList().ForEach(async s =>
-            {
-                if (clients.ContainsKey(s) && s != message.IdSender)
-                    try
-                    {
-                        await clients[s].SendAsync("updateMessage", message);
-                    }
-                    catch (Exception e)
-                    {
-
-
-                    }
-            });
-
-            //myHub.Clients.All.SendAsync("newMessage", message);
-        }
-
+        
         static Dictionary<int, IClientProxy> clients = new();
-        public void Register(int idUser)
+        public async Task RegisterAsync(int idUser)
         {
             if (clients.ContainsKey(idUser))
                 clients[idUser] = Clients.Caller;
+
             else
                 clients.Add(idUser, Clients.Caller);
+
+            try
+            {
+                UserDTO user;
+                var result = await REST.Instance.client.GetAsync($"Users/{idUser}");
+                //todo not ok
+
+                if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    return;
+                }
+                else
+                {
+                    user = await result.Content.ReadFromJsonAsync<UserDTO>(REST.Instance.options);
+                }
+                await clients[idUser].SendAsync("welcome", user.FirstName);
+            }
+            catch (Exception e)
+            {
+
+
+            }
+
         }
     }
 }

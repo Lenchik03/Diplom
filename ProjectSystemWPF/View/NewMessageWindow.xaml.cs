@@ -38,6 +38,13 @@ namespace ProjectSystemWPF
             
         }
 
+        private void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((MessageVM)DataContext).NewChat?.Execute(null);
+            }
+        }
         private void Vm_Loaded(object? sender, EventArgs e)
         {
             stackpanel.Children.Clear();

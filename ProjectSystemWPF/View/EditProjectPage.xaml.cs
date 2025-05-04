@@ -40,6 +40,12 @@ namespace ProjectSystemWPF.View
 
         }
 
-
+        private void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((EditProjectVM)DataContext).Save?.Execute(null);
+            }
+        }
     }
 }

@@ -31,6 +31,13 @@ namespace ProjectSystemWPF.View
             (DataContext as EditSUPVM).SetWindow(this);
         }
 
+        private void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((EditSUPVM)DataContext).Save?.Execute(null);
+            }
+        }
         private void Vm_Loaded(object? sender, EventArgs e)
         {
             

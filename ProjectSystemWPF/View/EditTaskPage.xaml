@@ -19,11 +19,11 @@
 
                 <StackPanel Margin="5">
                     <Label Content="Название"/>
-                    <TextBox Text="{Binding Task.Title}"/>
+                    <TextBox KeyDown="KeyDown" Text="{Binding Task.Title}"/>
                     <Label Content="Описание"/>
-                    <TextBox Text="{Binding Task.Description}" TextWrapping="Wrap"/>
+                    <TextBox KeyDown="KeyDown" Text="{Binding Task.Description}" TextWrapping="Wrap"/>
                     <Label Content="Проект"/>
-                    <ComboBox ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Title"/>
+                    <ComboBox KeyDown="KeyDown" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Title"/>
                     <Label Content="Назначить исполнителей:" Visibility="{Binding ExecutorsVisible}"/>
                     <StackPanel Visibility="{Binding ExecutorsVisible}">
                         <Label Content="Поиск по ФИО"/>

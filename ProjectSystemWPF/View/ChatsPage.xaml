@@ -85,6 +85,7 @@
                                         <TextBlock Text="{Binding Text}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         <!--<TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>-->
                                         <Button Content="{Binding DocumentTitle}" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SaveFile}" CommandParameter="{Binding .}" Visibility="{Binding FileButtonVisible}" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding DateOfSending}" Foreground="Gray" FontSize="8"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -103,7 +104,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding NewMessage.Text}" Background="LightYellow" Margin="3" TextWrapping="Wrap"/>
+                        <TextBox KeyDown="KeyDown" Text="{Binding NewMessage.Text}" Background="LightYellow" Margin="3" TextWrapping="Wrap"/>
                         <Button Content="📎" Height="40" Width="50" Command="{Binding AttachFile}" Grid.Column="1"/>
                         <Button Content="➤" Height="40" Width="50" Command="{Binding SendMessage}" Grid.Column="2"/>
                     </Grid>

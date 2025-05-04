@@ -48,6 +48,7 @@ namespace ChatServerDTO.DTO
                 StartDate = project.StartDate,
                 CompletionDate = project.CompletionDate,
                 IdCreator = project.IdCreator,
+                IsDeleted = project.IsDeleted
             };
 
             if (project.IdCreatorNavigation != null)
@@ -69,7 +70,8 @@ namespace ChatServerDTO.DTO
                 Description = projectDTO.Description,
                 StartDate = projectDTO.StartDate,
                 CompletionDate = projectDTO.CompletionDate,
-                IdCreator = projectDTO.IdCreator
+                IdCreator = projectDTO.IdCreator,
+                IsDeleted = projectDTO.IsDeleted
             };
 
             return result;

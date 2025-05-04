@@ -80,7 +80,7 @@
             <Image Source="/View/header.png"/>
             <Button Content="Главная" Command="{Binding OpenProjectClick}" Visibility="{Binding SuperUserColapsed}"/>
             <Button Content="Мои проекты"  Command="{Binding OpenMyProjectClick}" Visibility="{Binding SuperUserColapsed}"/>
-            <Button Content="Сотрудники" Command="{Binding OpenEmployeesClick}" Visibility="{Binding SuperUserVisible}"/>
+            <Button Content="Сотрудники" Command="{Binding OpenEmployeesClick}"/>
             <Button Content="Чаты" Command="{Binding OpenChatsClick}" Visibility="{Binding SuperUserColapsed}"/>
             <Button Content="Профиль" Command="{Binding OpenProfileClick}" Visibility="{Binding SuperUserColapsed}"/>
             <Button Content="Проекты" Command="{Binding SUProjectPageClick}" Visibility="{Binding SuperUserVisible}"/>

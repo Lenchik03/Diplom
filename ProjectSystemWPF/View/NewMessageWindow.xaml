@@ -227,7 +227,7 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                     <TextBlock Text="{Binding CountPart}" Grid.Column="1" Margin="5"/>
                 </Grid>
                 
-                <StackPanel x:Name="stackpanel">
+                <StackPanel x:Name="stackpanel" ScrollViewer.VerticalScrollBarVisibility="Visible">
                 <TreeViewItem Style="{DynamicResource treeView}"/>
             </StackPanel>
             </StackPanel>
@@ -236,8 +236,8 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <StackPanel>
                 
                 <Label Content="Название чата:"/>
-                <TextBox Text="{Binding Chat.Title}" Margin="5"/>
-                <Label Content="Аватарка чата:"/>
+                <TextBox KeyDown="KeyDown" Text="{Binding Chat.Title}" Margin="5"/>
+                <Label Content="Картинка чата:"/>
                 <Image Source="{Binding Chat.ImageSourse}" Width="100" Height="100" Margin="10"/>
                 <Button Content="Выбрать" Height="30" Width="100" Command="{Binding SelectImage}"/>
                 

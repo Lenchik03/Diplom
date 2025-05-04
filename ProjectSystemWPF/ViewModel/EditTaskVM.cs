@@ -184,7 +184,7 @@ namespace ProjectSystemWPF.ViewModel
                 {
 
                     string arg = JsonSerializer.Serialize(Task, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"TaskMs",
+                    var responce = await REST.Instance.client.PutAsync($"TaskMs/{Task.Id}",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
                     try 
                     {
@@ -198,7 +198,7 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
                     string arg1 = JsonSerializer.Serialize(SelectedExecutors, REST.Instance.options);
-                    var responce1 = await REST.Instance.client.PostAsync($"Tasks/AddNewExecutors/{Task.Id}",
+                    var responce1 = await REST.Instance.client.PostAsync($"TaskMs/AddNewExecutors/{Task.Id}",
                         new StringContent(arg1, Encoding.UTF8, "application/json"));
                     try
                     {

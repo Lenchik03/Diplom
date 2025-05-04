@@ -68,6 +68,10 @@ namespace ProjectSystemWPF.ViewModel
         private TaskDTO selectedTask;
         private Status selectedStatus;
 
+        public CommandParameter<TaskDTO> TakeTask { get; set; }
+
+        public CommandParameter<TaskDTO> CompleteTask { get; set; }
+
         public ProjectVM()
         {
             GetProjects();
@@ -75,6 +79,46 @@ namespace ProjectSystemWPF.ViewModel
             //GetUsers();
             //GetTasks();
             GetStatuses();
+
+            TakeTask = new CommandParameter<TaskDTO>(async (TaskDTO task) =>
+            {
+                task.IdStatus = 2;
+                task.StatusTitle = "В процессе";
+                string arg = JsonSerializer.Serialize(task, REST.Instance.options);
+                var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+                try
+                {
+                    responce.EnsureSuccessStatusCode();
+                    //MessageBox.Show("Проект успешно обновлен!");
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка!");
+                    return;
+                }
+            });
+
+            CompleteTask = new CommandParameter<TaskDTO>(async (TaskDTO task) =>
+            {
+                task.IdStatus = 3;
+                task.StatusTitle = "Выполнена";
+                string arg = JsonSerializer.Serialize(task, REST.Instance.options);
+                var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
+                    new StringContent(arg, Encoding.UTF8, "application/json"));
+                try
+                {
+                    responce.EnsureSuccessStatusCode();
+                    //MessageBox.Show("Проект успешно обновлен!");
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка!");
+                    return;
+                }
+            });
 
 
 

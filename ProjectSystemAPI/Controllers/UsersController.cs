@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using ChatServerDTO.DB;
+using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -108,8 +109,9 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("GetExecutorsByTask/{taskId}")]
         public ActionResult<List<User>> GetExecutorsByTask(int taskId)
         {
-            return Ok(dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).
-                Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Where(s => s.IsDeleted == false).Distinct().ToList());
+            var list = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).
+                Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Distinct().ToList();
+            return Ok(list);
 
             //var result = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).Where(s => s.IdTask == taskId);
             //return Ok(result);
@@ -168,7 +170,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Сотрудник")]
-        [HttpPost("ChangePassword")]
+        [HttpPut("ChangePassword")]
         public void ChangePassword(UserDTO user)
         {
             dbContext.Users.Update((User)user);
@@ -182,6 +184,17 @@ namespace ProjectSystemAPI.Controllers
             return users.Select(s => (UserDTO)s);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserDTO>> GetUser(int id)
+        {
+            var user = await dbContext.Users.FindAsync(id);
 
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return (UserDTO)user;
+        }
     }
 }

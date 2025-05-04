@@ -53,6 +53,36 @@ namespace ProjectSystemWPF.ViewModel
 
         private void HubMethods()
         {
+            _connection.On<string>("welcome", (username) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Notifier notifier = new Notifier(cfg =>
+                    {
+                        cfg.PositionProvider = new WindowPositionProvider(
+                            parentWindow: System.Windows.Application.Current.MainWindow,
+                            corner: Corner.TopRight,
+                            offsetX: 10,
+                            offsetY: 10);
+
+                        cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                            notificationLifetime: TimeSpan.FromSeconds(3),
+                            maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+
+                        cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
+                    });
+
+                    //OnMessage?.Invoke(this, chatId);
+
+                    //var notify = new ToastContentBuilder();
+                    //notify.AddText("Новое сообщение!");
+                    //notify.AddArgument($"Вам пришло новое сообщение в чате {chat.Title}");
+                    //notify.AddArgument(mess);
+                    //notify.GetToastContent();
+                    //var toast = notify.GetToastContent();
+                    notifier.ShowInformation($"Привет, {username}!");
+                });
+            });
             _connection.On<MessageDTO, int, string>("newMessage", (mess, chatId, chatTitle) =>
             {
                 Application.Current.Dispatcher.Invoke(() =>

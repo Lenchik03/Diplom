@@ -80,6 +80,9 @@ namespace ProjectSystemWPF.ViewModel
             {
                 if (Chat.Id == 0)
                 {
+                    Chat.IdCreator = ActiveUser.GetInstance().User.Id;
+                    Chat.Creator = ActiveUser.GetInstance().User;
+                    Chat.IsDeleted = false;
                     string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
                     var responce = await REST.Instance.client.PostAsync($"Chats",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -87,6 +90,7 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         responce.EnsureSuccessStatusCode();
                         Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
+                        Signal(nameof(Chat));
                         //MessageBox.Show("Отдел был добавлен!");
                     }
                     catch (Exception ex)
@@ -113,17 +117,17 @@ namespace ProjectSystemWPF.ViewModel
                 else
                 {
                     string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Chats",
+                    var responce = await REST.Instance.client.PutAsync($"Chats/{Chat.Id}",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
                     try
                     {
                         responce.EnsureSuccessStatusCode();
                         Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
-                        //MessageBox.Show("Отдел был добавлен!");
+                        MessageBox.Show("Чат успешно обновлен!");
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show("Произошла ошибка. Заполните все данные!");
+                        MessageBox.Show("Произошла ошибка");
                         return;
                     }
 

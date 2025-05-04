@@ -36,7 +36,14 @@ namespace ProjectSystemWPF.View
             (DataContext as EditTaskVM).SetWindow(this);
         }
 
-        
+        private void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((EditTaskVM)DataContext).Save?.Execute(null);
+            }
+        }
+
 
         private void Vm_Loaded(object? sender, EventArgs e)
         {

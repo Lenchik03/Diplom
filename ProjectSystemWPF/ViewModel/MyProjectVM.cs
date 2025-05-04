@@ -90,7 +90,8 @@ namespace ProjectSystemWPF.ViewModel
 
             DeleteProject = new VmCommand(async () =>
             {
-                foreach (var task in Project.Tasks)
+                var projectTasks = Tasks.Where(s => s.IdProject == Project.Id);
+                foreach (var task in projectTasks)
                 {
                     task.IdStatus = 4;
                     task.StatusTitle = "Удалена";

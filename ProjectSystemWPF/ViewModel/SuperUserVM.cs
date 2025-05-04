@@ -245,6 +245,7 @@ namespace ProjectSystemWPF.ViewModel
                         }
 
                     }
+                    
                     Employee.IsDeleted = true;
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
                     var responce = await REST.Instance.client.PutAsync($"Employees/{Employee.Id}",

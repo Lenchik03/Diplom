@@ -51,7 +51,7 @@ namespace ProjectSystemWPF.ViewModel
                     if (result.StatusCode != System.Net.HttpStatusCode.OK)
                     {
                         var answer = await result.Content.ReadAsStringAsync();
-                        MessageBox.Show(answer);
+                        MessageBox.Show("Ошибка!");
                         return;
                     }
                     else
@@ -60,12 +60,13 @@ namespace ProjectSystemWPF.ViewModel
                         ActiveUser.GetInstance().User = user.User;
                         REST.Instance.SetToken(user.Token);
                         var con = SignalR.Instance.CreateConnection();
-                        await con.SendAsync("Register", ActiveUser.GetInstance().User.Id);
+                        //await con.SendAsync("Register", ActiveUser.GetInstance().User.Id);
                     }
 
                     if (Validator.TryValidateObject(this, new ValidationContext(this), null))
                     {
                         //var customer = UserRepository.Instance.Customer(Login, passwrdBox.Password);
+                        
                         var user = ActiveUser.GetInstance().User;
                         if (user.Id == 0)
                         {

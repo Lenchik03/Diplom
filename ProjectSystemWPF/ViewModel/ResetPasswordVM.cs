@@ -40,15 +40,17 @@ namespace ProjectSystemWPF.ViewModel
         {
             Save = new VmCommand(async () =>
             {
-                if (OldPassword != null)
-                {
+            if (OldPassword != null)
+            {
+                var pass = ActiveUser.GetInstance().User.Password;
+                    var olp = Md5.HashPassword(OldPassword);
                     if (ActiveUser.GetInstance().User.Password == Md5.HashPassword(OldPassword))
                     {
                         if (NewPassword != null)
                         {
                             ActiveUser.GetInstance().User.Password = Md5.HashPassword(NewPassword);
                             string arg = JsonSerializer.Serialize(ActiveUser.GetInstance().User, REST.Instance.options);
-                            var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
+                            var responce = await REST.Instance.client.PutAsync($"Users/ChangePassword",
                                 new StringContent(arg, Encoding.UTF8, "application/json"));
                             try
                             {
