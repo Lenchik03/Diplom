@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectSystemAPI.DTO;
-using ProjectSystemAPI.DB;
+using ChatServerDTO.DB;
 
 namespace ChatServerDTO.DB
 {

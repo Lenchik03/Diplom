@@ -1,5 +1,4 @@
-﻿using ChatServerDTO.DB;
-using ProjectSystemAPI.DB;
+﻿using ChatServerDTO.DTO;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,15 +11,15 @@ using System.Windows.Markup;
 
 namespace ProjectSystemWPF.Converters
 {
-    internal class ConvertUserToAlign : MarkupExtension,  IValueConverter
+    internal class ConvertFileToVisible : MarkupExtension, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-                return HorizontalAlignment.Left;
-            if ((int)value == ActiveUser.GetInstance().User.Id)
-                return HorizontalAlignment.Right;
-            return HorizontalAlignment.Left;
+            var mas = value as MessageDTO;
+            if (mas == null)
+                return Visibility.Collapsed;
+            else
+                return mas.Document != null ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -28,8 +27,7 @@ namespace ProjectSystemWPF.Converters
             throw new NotImplementedException();
         }
 
-        static ConvertUserToAlign instance = new();
-        // это требуется для MarkupExtension - типа метод получения экземпляра
+        static ConvertFileToVisible instance = new();
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return instance;

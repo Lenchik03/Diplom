@@ -73,7 +73,7 @@ namespace ChatServer
 
         
         static Dictionary<int, IClientProxy> clients = new();
-        public async Task RegisterAsync(int idUser)
+        public async System.Threading.Tasks.Task RegisterAsync(int idUser)
         {
             if (clients.ContainsKey(idUser))
                 clients[idUser] = Clients.Caller;

@@ -53,7 +53,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="5">
-                                        <Image Source="{Binding ImageSourse}" Width="50" Height="50"/>
+                                        <Image Source="{Binding ImagePath}" Width="50" Height="50"/>
                                         <Label Content="{Binding Title}"/>
                                         <!--<Label Content="{Binding CountMess}"/>-->
                                     </StackPanel>
@@ -81,11 +81,19 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding Sender.FIO}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        <TextBlock Text="{Binding Text}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding Sender.FIO}"
+                                                   Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}"
+                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding Text}" 
+                                                   Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}"
+                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         <!--<TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>-->
-                                        <Button Content="{Binding DocumentTitle}" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SaveFile}" CommandParameter="{Binding .}" Visibility="{Binding FileButtonVisible}" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        <TextBlock Text="{Binding DateOfSending}" Foreground="Gray" FontSize="8"/>
+                                        <Button Content="{Binding DocumentTitle}" 
+                                                Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SaveFile}"
+                                                CommandParameter="{Binding .}" 
+                                                Visibility="{Binding Converter={c:ConvertFileToVisible}}" 
+                                                HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding DateOfSending}" Foreground="Gray" FontSize="8" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -105,8 +113,37 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBox KeyDown="KeyDown" Text="{Binding NewMessage.Text}" Background="LightYellow" Margin="3" TextWrapping="Wrap"/>
-                        <Button Content="📎" Height="40" Width="50" Command="{Binding AttachFile}" Grid.Column="1"/>
-                        <Button Content="➤" Height="40" Width="50" Command="{Binding SendMessage}" Grid.Column="2"/>
+                        <Button Content="📎" Height="40" Width="50"
+                                Command="{Binding AttachFile}" Grid.Column="1">
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="popup1" Storyboard.TargetProperty="IsOpen">
+                                                <DiscreteBooleanKeyFrame Value="True"/>
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Button.Triggers>
+                        </Button>
+                        <Popup x:Name="popup1" StaysOpen="True" Placement="Bottom" MaxWidth="180"
+         AllowsTransparency="True"  >
+                            <TextBlock Text="{Binding NewMessage.DocumentTitle}" TextWrapping="Wrap" Width="180" Background="LightPink" Opacity="0.8" />
+                        </Popup>
+                        <Button Content="➤" Height="40" Width="50" Command="{Binding SendMessage}" Grid.Column="2">
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="popup1" Storyboard.TargetProperty="IsOpen">
+                                                <DiscreteBooleanKeyFrame Value="False"/>
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Button.Triggers>
+                        </Button>
                     </Grid>
                 </Grid>
 

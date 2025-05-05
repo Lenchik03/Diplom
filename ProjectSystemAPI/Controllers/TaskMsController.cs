@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ChatServerDTO.DB;
 using ChatServerDTO.DTO;
 using Microsoft.AspNetCore.Http;

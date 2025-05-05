@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ProjectSystemAPI.DB;
-    
+
 public class ActiveUser
     {
         public UserDTO User

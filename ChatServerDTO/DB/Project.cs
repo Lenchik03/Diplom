@@ -21,5 +21,5 @@ public partial class Project
 
     public virtual User IdCreatorNavigation { get; set; } = null!;
 
-    public virtual ICollection<ChatServerDTO.DB.Task> Tasks { get; set; } = new List<ChatServerDTO.DB.Task>();
+    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 }

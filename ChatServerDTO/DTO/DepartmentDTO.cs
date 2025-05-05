@@ -1,5 +1,5 @@
 ﻿using ChatServerDTO.DB;
-using ProjectSystemAPI.DB;
+using ChatServerDTO.DB;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;

@@ -122,7 +122,6 @@ namespace ProjectSystemWPF.ViewModel
                     try
                     {
                         responce.EnsureSuccessStatusCode();
-                        Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
                         MessageBox.Show("Чат успешно обновлен!");
                     }
                     catch (Exception ex)

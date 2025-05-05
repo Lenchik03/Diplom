@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
@@ -187,7 +188,7 @@ namespace ProjectSystemWPF.ViewModel
                 }
             });
 
-            AttachFile = new VmCommand(async () =>
+            AttachFile = new VmCommand( async () =>
             {
                 var openFileDialog = new Microsoft.Win32.OpenFileDialog();
                 if (openFileDialog.ShowDialog() == true)
@@ -198,8 +199,8 @@ namespace ProjectSystemWPF.ViewModel
                     var fileContent = await File.ReadAllBytesAsync(filePath);
                     NewMessage.DocumentTitle = fileName;
                     NewMessage.Document = fileContent;
+                    Signal(nameof(NewMessage));
                 }
-
             });
 
             SendMessage = new VmCommand(async () =>
@@ -216,14 +217,15 @@ namespace ProjectSystemWPF.ViewModel
                         if (NewMessage.Document != null || NewMessage.Text != "")
                         {
                             System.Threading.Tasks.Task task = null;
+
                             if (NewMessage.Id == 0)
                             {
                                 task = _connection.SendAsync("NewMessage", NewMessage, Chat);
                             }
-
                             await task;
-                            await System.Threading.Tasks.Task.Delay(100).
+                            await System.Threading.Tasks.Task.Delay(200).
                               ContinueWith(async s => await GetMessageAsync());
+
                             NewMessage = new MessageDTO();
                         }
                     }
@@ -269,6 +271,7 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     var filepath = Path.Combine(folderDialog.FolderName, message.DocumentTitle);
                     File.WriteAllBytes(filepath, message.Document);
+                    Process.Start(new ProcessStartInfo { FileName = "explorer", Arguments = filepath, WorkingDirectory = folderDialog.FolderName });
                 }
 
             });

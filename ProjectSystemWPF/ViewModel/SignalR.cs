@@ -26,6 +26,7 @@ namespace ProjectSystemWPF.ViewModel
             if (_connection?.State == HubConnectionState.Connected)
                 return _connection;
             _connection = new HubConnectionBuilder().
+                            WithAutomaticReconnect().
                             AddJsonProtocol(s =>
                             {
                                 s.PayloadSerializerOptions.ReferenceHandler =

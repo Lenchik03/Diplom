@@ -9,7 +9,7 @@ public partial class Message
 
     public int IdChat { get; set; }
 
-    public string Text { get; set; } = null!;
+    public string? Text { get; set; }
 
     public int IdSender { get; set; }
 
@@ -18,6 +18,10 @@ public partial class Message
     public string? DocumentTitle { get; set; }
 
     public DateTime? DateOfSending { get; set; }
+
+    public bool? IsChanged { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual Chat IdChatNavigation { get; set; } = null!;
 

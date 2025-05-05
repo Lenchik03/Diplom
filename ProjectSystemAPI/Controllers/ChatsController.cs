@@ -31,11 +31,11 @@ namespace ProjectSystemAPI.Controllers
             var chats = _context.ChatUsers.AsNoTracking().
                 Where(s => s.IdUser == idUser).
                 Select(s => s.IdChatNavigation.Id).ToList();
-            return Ok(_context.Chats.Include(s=>s.ChatUsers).
+            return Ok(_context.Chats.Include(s => s.ChatUsers).
                 Include(s => s.ChatUsers).
-                ThenInclude(s=>s.IdUserNavigation).
+                ThenInclude(s => s.IdUserNavigation).
                 AsNoTracking().
-                Where(s=>chats.Contains(s.Id)).Select(s=>(ChatDTO)s).ToList());
+                Where(s => chats.Contains(s.Id)).Select(s => (ChatDTO)s).ToList());
             //var list = _context.Chats.Include(d => d.ChatUsers)
             //    .Where(s => s.ChatUsers.FirstOrDefault(u => u.Id == idUser) != null)
             //    .ToList();
@@ -93,10 +93,11 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ChatDTO>> PostChat(ChatDTO chat)
         {
-            _context.Chats.Add((Chat)chat);
+            var result = (Chat)chat;
+            _context.Chats.Add(result);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetChat", new { id = chat.Id }, chat);
+            chat.Id = result.Id;
+            return CreatedAtAction("GetChat", new { id = result.Id }, chat);
         }
 
         [HttpGet("ChatMembers/{id}")]
@@ -108,10 +109,8 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewMembers/{id}")]
         public async Task<ActionResult> AddNewMembers(int id, [FromBody] List<UserDTO> chatUsers)
         {
-            foreach(var user in _context.ChatUsers)
-            {
-                _context.ChatUsers.Remove(user);
-            }
+            var remove = _context.ChatUsers.Where(s => s.IdChat == id);
+            _context.ChatUsers.RemoveRange(remove);
 
             ChatUser chatUser = new ChatUser();
 

@@ -34,8 +34,15 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("MyProject/{idUser}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjects(int idUser)
         {
-            return Ok(_context.TaskForUsers.Include(s => s.IdTaskNavigation).ThenInclude(s => s.IdProjectNavigation).
-                Where(s => s.IdUser == idUser).AsNoTracking().Select(s => s.IdTaskNavigation).Select(s => s.IdProjectNavigation).Where(r => r.IsDeleted == false).Distinct().OrderByDescending(s => s.StartDate).ToList());
+            var h = _context.TaskForUsers.Include(s => s.IdTaskNavigation).ThenInclude(s => s.IdProjectNavigation).Include("IdTaskNavigation.IdProjectNavigation.IdCreatorNavigation").
+                Where(s => s.IdUser == idUser && s.IdTaskNavigation.IdProjectNavigation.IsDeleted == false).
+                AsNoTracking();
+            return Ok(h.Select(s => s.IdTaskNavigation).
+                    Select(s => s.IdProjectNavigation).
+                    Distinct().
+                    OrderByDescending(s => s.StartDate).
+                    Select(s=>(ProjectDTO)s).
+                    ToList());
             /*var list = _context.Tasks.Include(d => d.TaskForUsers)
                 .Where(s => s.TaskForUsers.FirstOrDefault(u => u.Id == idUser) != null)
                 .Select(s => s.IdProject).Distinct().ToList();

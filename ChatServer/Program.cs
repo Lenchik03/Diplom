@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSignalR().
+builder.Services.AddSignalR(s => {s.MaximumReceiveMessageSize = (10 * 1024 * 1024);}).
     AddJsonProtocol(s =>
     {
         s.PayloadSerializerOptions.ReferenceHandler =
