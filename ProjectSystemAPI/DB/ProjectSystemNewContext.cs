@@ -115,6 +115,7 @@ public partial class ProjectSystemNewContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''");
+            entity.Property(e => e.IsDeleted).HasColumnName("Is_deleted");
 
             entity.HasOne(d => d.IdDirectorNavigation).WithMany(p => p.Departments)
                 .HasForeignKey(d => d.IdDirector)
@@ -262,6 +263,8 @@ public partial class ProjectSystemNewContext : DbContext
 
             entity.HasIndex(e => e.IdUser, "FK_TaskForUsers_Users_Id");
 
+            entity.HasIndex(e => e.IdStatus, "FK_Tasks_Statuses_Id");
+
             entity.Property(e => e.Id)
                 .HasColumnType("int(11)")
                 .HasColumnName("id");
@@ -271,6 +274,9 @@ public partial class ProjectSystemNewContext : DbContext
             entity.Property(e => e.IdUser)
                 .HasColumnType("int(11)")
                 .HasColumnName("Id_user");
+            entity.Property(e => e.IdStatus)
+              .HasColumnType("int(11)")
+              .HasColumnName("Id_status");
 
             entity.HasOne(d => d.IdTaskNavigation).WithMany(p => p.TaskForUsers)
                 .HasForeignKey(d => d.IdTask)
@@ -281,6 +287,11 @@ public partial class ProjectSystemNewContext : DbContext
                 .HasForeignKey(d => d.IdUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TaskForUsers_Users_Id");
+
+            entity.HasOne(d => d.IdStatusNavigation).WithMany(p => p.TaskForUsers)
+                .HasForeignKey(d => d.IdStatus)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Tasks_Statuses_Id");
         });
 
         modelBuilder.Entity<User>(entity =>

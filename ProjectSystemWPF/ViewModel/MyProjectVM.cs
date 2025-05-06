@@ -182,7 +182,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void GetTasks()
         {
-            var result1 = await REST.Instance.client.GetAsync($"TaskMs/");
+            var result1 = await REST.Instance.client.GetAsync($"TaskMs?idProject={Project.Id}");
             //todo not ok
 
             if (result1.StatusCode != System.Net.HttpStatusCode.OK)
@@ -191,11 +191,12 @@ namespace ProjectSystemWPF.ViewModel
             }
             else
             {
+                var str = await result1.Content.ReadAsStringAsync();
                 tasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
             }
 
-            Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id));
-        }
+                Tasks = new ObservableCollection<TaskDTO>(tasks);
+            }
 
         internal void Select(ProjectDTO p)
         {

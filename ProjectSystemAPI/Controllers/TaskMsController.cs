@@ -40,7 +40,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewExecutors/{id}")]
         public async Task<ActionResult> AddNewExecutors(int id, [FromBody] List<UserDTO> executors)
         {
-            foreach(var t in _context.TaskForUsers.Where(s => s.IdTask == id))
+            foreach (var t in _context.TaskForUsers.Where(s => s.IdTask == id))
             {
                 _context.TaskForUsers.Remove(t);
             }
@@ -72,11 +72,15 @@ namespace ProjectSystemAPI.Controllers
 
         // GET: api/TaskMs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskDTO>>> GetTasks()
+        public async Task<ActionResult<IEnumerable<TaskDTO>>> GetTasks(int idProject)
         {
-            var lists = await _context.Tasks.Include(s => s.IdProjectNavigation).Include(s => s.IdCreatorNavigation).Include(s => s.IdStatusNavigation).ToListAsync();
+            var lists = await _context.Tasks.Where(s => s.IdProject == idProject).AsNoTracking().
+                Include(s => s.IdProjectNavigation).
+                Include(s => s.IdCreatorNavigation).
+                Include(s => s.IdStatusNavigation).
+                Include(s => s.TaskForUsers).Include("TaskForUsers.IdStatusNavigation").Include("TaskForUsers.IdUserNavigation").ToListAsync();
             return Ok(lists.Select(s => (TaskDTO)s).OrderByDescending(s => s.Id));
-            
+
         }
 
         // GET: api/TaskMs/5

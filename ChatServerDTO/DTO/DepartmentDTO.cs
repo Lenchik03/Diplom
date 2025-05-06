@@ -13,7 +13,7 @@ namespace ProjectSystemAPI.DTO
         public int Id { get; set; }
 
         public string? Title { get; set; }
-
+        public bool IsDeleted { get; set; }
         public int? IdMainDep { get; set; }
 
         public int? IdDirector { get; set; }

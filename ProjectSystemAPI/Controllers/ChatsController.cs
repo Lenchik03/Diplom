@@ -35,7 +35,7 @@ namespace ProjectSystemAPI.Controllers
                 Include(s => s.ChatUsers).
                 ThenInclude(s => s.IdUserNavigation).
                 AsNoTracking().
-                Where(s => chats.Contains(s.Id)).Select(s => (ChatDTO)s).ToList());
+                Where(s => chats.Contains(s.Id) && s.IsDeleted == false).Select(s => (ChatDTO)s).ToList());
             //var list = _context.Chats.Include(d => d.ChatUsers)
             //    .Where(s => s.ChatUsers.FirstOrDefault(u => u.Id == idUser) != null)
             //    .ToList();

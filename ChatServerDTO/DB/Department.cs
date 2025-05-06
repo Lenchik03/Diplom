@@ -12,6 +12,7 @@ public partial class Department
     public int? IdMainDep { get; set; }
 
     public int? IdDirector { get; set; }
+    public bool? IsDeleted { get; set; } = false;
 
     public virtual User? IdDirectorNavigation { get; set; }
 

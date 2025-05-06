@@ -16,12 +16,16 @@
     </Page.Resources>
     <Grid Background="#FFFDC401">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width=".6*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
-            
-            <StackPanel>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -34,13 +38,13 @@
 
                 </Grid>
 
-                <Grid>
-                    <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="EditProjectClick" BorderBrush="Black" BorderThickness ="1"  Background="LightYellow" Margin="5" ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" HorizontalContentAlignment="Stretch" >
+                <Grid Grid.Row="1">
+                    <ListBox  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" MouseDoubleClick="EditProjectClick" BorderBrush="Black" BorderThickness ="1"  Background="LightYellow" Margin="5" ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" HorizontalContentAlignment="Stretch" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Background="#FFFDC401">
                                     <StackPanel Orientation="Horizontal">
-                                        <Ellipse Width="20" Height="20">
+                                        <Ellipse Margin="3" Width="20" Height="20">
                                             <Ellipse.Fill>
                                                 <MultiBinding Converter="{c:ConvertDateToBrush}">
                                                     <Binding  Path="StartDate" />
@@ -50,20 +54,24 @@
                                         </Ellipse>
                                         <Label Content="{Binding Title}" FontSize="15"/>
                                         <TextBlock Text="{Binding CompletionDate, StringFormat=dd.MM.yyyy}" FontSize="15"/>
-                                        
-                                </StackPanel>
+
+                                    </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        
+
                     </ListBox>
 
                 </Grid>
 
-            </StackPanel>
+            </Grid>
         </Border>
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1" Grid.Column="1">
-            <StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -76,7 +84,7 @@
 
                 </Grid>
 
-                <Grid>
+                <Grid Grid.Row="1">
                     <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" BorderBrush="Black" MouseDoubleClick="EditTaskClick" BorderThickness ="1" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -85,6 +93,41 @@
                                         <Label Content="{Binding Title}" FontSize="15"/>
                                         <!--<Label Content="{Binding Executor}" FontSize="15"/>-->
                                         <Label Content="{Binding StatusTitle}" Foreground="{Binding StatusTitle, Converter={c:ConvertStatusToBrush}}"  FontSize="15"/>
+                                        <ItemsControl ItemsSource="{Binding TaskForUsers}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding FIO}" Margin="5">
+                                                        <TextBlock.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding StatusId}" Value="1">
+                                                                        <Setter Property="TextBlock.Foreground" Value="Red"/>
+                                                                        <Setter Property="TextBlock.ToolTip" Value="Не взял"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding StatusId}" Value="2">
+                                                                        <Setter Property="TextBlock.Foreground" Value="BlueViolet"/>
+                                                                        <Setter Property="TextBlock.ToolTip" Value="Пытается"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding StatusId}" Value="3">
+                                                                        <Setter Property="TextBlock.Foreground" Value="Green"/>
+                                                                        <Setter Property="TextBlock.ToolTip" Value="Осилил"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding StatusId}" Value="4">
+                                                                        <Setter Property="TextBlock.Foreground" Value="Gray"/>
+                                                                        <Setter Property="TextBlock.ToolTip" Value="Забил"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -92,7 +135,7 @@
                     </ListBox>
                 </Grid>
 
-            </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </Page>

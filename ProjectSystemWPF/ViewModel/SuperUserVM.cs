@@ -272,46 +272,66 @@ namespace ProjectSystemWPF.ViewModel
             {
                 if (Department == null)
                     MessageBox.Show("Выберите отдел для удаления!");
-                if (Department.ChildDepartments.Count != 0)
+                if (Department.ChildDepartments != null)
                 {
-                    foreach (var dep in Department.ChildDepartments)
+                    if (Department.ChildDepartments.Count != 0)
                     {
-                        if (dep.Users.Count != 0)
+                        foreach (var dep in Department.ChildDepartments)
                         {
-                            MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их");
-                            return;
-                        }
-                        else
-                        {
-                            var result = await REST.Instance.client.DeleteAsync($"Departments/{dep.Id}");
-                            //todo not ok
-
-                            if (result.StatusCode != System.Net.HttpStatusCode.NoContent)
+                            if (dep.Users.Count != 0)
                             {
+                                MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их");
                                 return;
                             }
+                            else
+                            {
+                                Department.IsDeleted = true;
+                                string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
+                                var responce = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
+                                    new StringContent(arg, Encoding.UTF8, "application/json"));
+                                try
+                                {
+                                    responce.EnsureSuccessStatusCode();
+                                    //MessageBox.Show("Пользователь успешно обновлен!");
 
+                                }
+                                catch (Exception ex)
+                                {
+                                    //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                                    return;
+                                }
+
+                                Department = new DepartmentDTO();
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        if (Department.Users.Count != 0)
+                            MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их!");
+
+                        else
+                        {
+                            Department.IsDeleted = true;
+                            string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
+                            var responce = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
+                                new StringContent(arg, Encoding.UTF8, "application/json"));
+                            try
+                            {
+                                responce.EnsureSuccessStatusCode();
+                                //MessageBox.Show("Пользователь успешно обновлен!");
+
+                            }
+                            catch (Exception ex)
+                            {
+                                //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                                return;
+                            }
                             Department = new DepartmentDTO();
                         }
                     }
                 }
-                else
-                {
-                    if (Department.Users.Count != 0)
-                        MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их!");
-
-                    else
-                    {
-                        var result = await REST.Instance.client.DeleteAsync($"Departments/{Department.Id}");
-                        //todo not ok
-
-                        if (result.StatusCode != System.Net.HttpStatusCode.OK)
-                        {
-                            return;
-                        }
-                    }
-                }
-
             });
 
             CanEditClick = new VmCommand(() =>
@@ -415,7 +435,7 @@ namespace ProjectSystemWPF.ViewModel
                         //    Id = Employee.IdDepartmentNavigation.Id, 
                         //    Title = Employee.IdDepartmentNavigation .Title};
                         //Employee.Password = "";
-
+                        Employee.IsDeleted = false;
                         string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
                         var responce = await REST.Instance.client.PostAsync($"Users/AddNewUser",
                             new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -433,6 +453,7 @@ namespace ProjectSystemWPF.ViewModel
                                 Department.IdDirector = answerUser.Id;
                                 // Employee.IdDepartmentNavigation.IdDirector = answerUser.Id;
 
+                                
                                 string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
                                 var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
                                     new StringContent(arg1, Encoding.UTF8, "application/json"));
@@ -468,6 +489,7 @@ namespace ProjectSystemWPF.ViewModel
 
             SaveDep = new VmCommand(async () =>
             {
+                Department.IsDeleted = false;
                 if (Department.Id != 0 && Department != null)
                 {
                     string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
@@ -607,8 +629,9 @@ namespace ProjectSystemWPF.ViewModel
             var director = new UserDTO();
             foreach (var maindep in MainDepartments)
             {
-                mdirector = allEmployees.FirstOrDefault(s => s.IdDepartment == maindep.Id);
+                //mdirector = allEmployees.FirstOrDefault(s => s.IdDepartment == maindep.Id);
                 //if (maindep.IdDirectorNavigation != null)
+                mdirector = maindep.Director;
                 if (mdirector != null)
                     mheader = $"{maindep.Title} - {mdirector.FIO}";
                 else
@@ -620,8 +643,9 @@ namespace ProjectSystemWPF.ViewModel
                 StackPanel expanderPanel1 = new StackPanel();
                 foreach (var dep in Departments)
                 {
-                    director = allEmployees.FirstOrDefault(s => s.IdDepartment == dep.Id);
+                    //director = allEmployees.FirstOrDefault(s => s.IdDepartment == dep.Id);
                     //if (dep.IdDirectorNavigation != null)
+                    director = dep.Director;
                     if (director != null)
                         header = $"{dep.Title} - {director.FIO}";
                     else

@@ -10,4 +10,6 @@ public partial class Status
     public string Title { get; set; } = null!;
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+
+    public virtual ICollection<TaskForUser> TaskForUsers { get; set; } = new List<TaskForUser>();
 }

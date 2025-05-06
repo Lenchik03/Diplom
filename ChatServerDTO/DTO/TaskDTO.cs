@@ -14,7 +14,7 @@ namespace ChatServerDTO.DTO
     {
         public int Id { get; set; }
 
-        public string? Title { get; set; } 
+        public string? Title { get; set; }
 
         public string? Description { get; set; }
 
@@ -30,9 +30,9 @@ namespace ChatServerDTO.DTO
 
         public string? StatusTitle { get; set; }
 
-        public List<TaskForUser> TaskForUsers { get; set; } = new List<TaskForUser>();
+        public List<TaskUserStatus> TaskForUsers { get; set; }
 
-        public static explicit operator TaskDTO (ChatServerDTO.DB.Task task)
+        public static explicit operator TaskDTO(ChatServerDTO.DB.Task task)
         {
             var result = new TaskDTO
             {
@@ -54,8 +54,16 @@ namespace ChatServerDTO.DTO
             if (task.IdStatusNavigation != null)
                 result.StatusTitle = task.IdStatusNavigation.Title;
 
-            if (task.TaskForUsers != null)
-                result.TaskForUsers = task.TaskForUsers.Select(s => (TaskForUser)s).ToList();
+            if (task.TaskForUsers.Count > 0)
+            {
+                result.TaskForUsers = task.TaskForUsers.Select(s => new TaskUserStatus
+                {
+                    FIO = $"{s.IdUserNavigation.LastName} {s.IdUserNavigation.FirstName?.FirstOrDefault()}. {s.IdUserNavigation.Patronymic?.FirstOrDefault()}.",
+                    UserId = s.IdUser,
+                    StatusId = s.IdStatus,
+                    StatusTitle = s.IdStatusNavigation.Title
+                }).ToList();
+            }
 
             return result;
         }
@@ -74,5 +82,13 @@ namespace ChatServerDTO.DTO
 
             return result;
         }
+    }
+
+    public class TaskUserStatus
+    {
+        public int UserId { get; set; }
+        public string FIO { get; set; }
+        public int StatusId { get; set; }
+        public string StatusTitle { get; set; }
     }
 }

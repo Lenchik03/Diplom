@@ -50,16 +50,23 @@ namespace ProjectSystemWPF.ViewModel
 
             Save = new VmCommand(async () =>
             {
+                
                 var lastdepId = Employee.IdDepartment;
                 DepartmentDTO department = Departments.FirstOrDefault(s => s.Id == lastdepId);
-                department.Users.Remove(Employee);
+                if (Employee.IdRole == 1 || Employee.IdRole == 2)
+                {
+                    department.IdDirector = null;
+                    department.Director = null;
+                }
+                    
+                    department.Users.Remove(Employee);
                 if (SelectedRole.Id == 1)
                 {
                     if (SelectedDep.IdDirector == null)
                     {
                         SelectedDep.IdDirector = Employee.Id;
                         string arg = JsonSerializer.Serialize(SelectedDep, REST.Instance.options);
-                        var responce = await REST.Instance.client.PutAsync($"Departmants/{SelectedDep.Id}",
+                        var responce = await REST.Instance.client.PutAsync($"Departments/{SelectedDep.Id}",
                             new StringContent(arg, Encoding.UTF8, "application/json"));
                         try
                         {
@@ -95,7 +102,7 @@ namespace ProjectSystemWPF.ViewModel
                             MessageBox.Show("Пользователь успешно обновлен!");
                             
                             string arg2 = JsonSerializer.Serialize(department, REST.Instance.options);
-                            var responce2 = await REST.Instance.client.PutAsync($"Departmants/{department.Id}",
+                            var responce2 = await REST.Instance.client.PutAsync($"Departments/{department.Id}",
                                 new StringContent(arg2, Encoding.UTF8, "application/json"));
                             try
                             {
@@ -135,7 +142,7 @@ namespace ProjectSystemWPF.ViewModel
                         MessageBox.Show("Пользователь успешно обновлен!");
 
                         string arg = JsonSerializer.Serialize(department, REST.Instance.options);
-                        var responce = await REST.Instance.client.PutAsync($"Departmants/{department.Id}",
+                        var responce = await REST.Instance.client.PutAsync($"Departments/{department.Id}",
                             new StringContent(arg, Encoding.UTF8, "application/json"));
                         try
                         {
