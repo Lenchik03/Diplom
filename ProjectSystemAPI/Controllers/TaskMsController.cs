@@ -40,10 +40,9 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewExecutors/{id}")]
         public async Task<ActionResult> AddNewExecutors(int id, [FromBody] List<UserDTO> executors)
         {
-            foreach (var t in _context.TaskForUsers.Where(s => s.IdTask == id))
-            {
-                _context.TaskForUsers.Remove(t);
-            }
+            var remove = _context.TaskForUsers.Where(s => s.IdTask == id);
+            _context.TaskForUsers.RemoveRange(remove);
+            
 
             TaskForUser taskForUser = new TaskForUser();
 
@@ -136,8 +135,8 @@ namespace ProjectSystemAPI.Controllers
             var task = (Task)taskM;
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTaskM", new { id = taskM.Id }, taskM);
+            taskM.Id = task.Id;
+            return CreatedAtAction("GetTaskM", new { id = task.Id }, taskM);
         }
 
         // DELETE: api/TaskMs/5

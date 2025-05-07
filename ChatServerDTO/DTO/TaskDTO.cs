@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Task = ChatServerDTO.DB.Task;
 
@@ -29,6 +30,7 @@ namespace ChatServerDTO.DTO
         //public ProjectDTO? Project { get; set; }
 
         public string? StatusTitle { get; set; }
+
 
         public List<TaskUserStatus> TaskForUsers { get; set; }
 

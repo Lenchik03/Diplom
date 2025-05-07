@@ -163,7 +163,7 @@ namespace ProjectSystemWPF.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Произошла ошибка. Заполните все данные!");
+                        MessageBox.Show("Произошла ошибка");
                         return;
                     }
                     string arg1 = JsonSerializer.Serialize(SelectedExecutors, REST.Instance.options);

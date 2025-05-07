@@ -26,6 +26,7 @@ namespace ProjectSystemWPF.View
         {
             InitializeComponent();
             (DataContext as TransferUserVM).GetUser(user);
+            (DataContext as TransferUserVM).GetWindow(this);
             (DataContext as TransferUserVM).Loaded += Vm_Loaded;
             /*
             var vm = new TransferUserVM();

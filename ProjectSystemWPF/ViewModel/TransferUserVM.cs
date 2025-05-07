@@ -1,6 +1,7 @@
 ﻿using ChatServerDTO.DB;
 using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
+using ProjectSystemWPF.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -162,7 +163,8 @@ namespace ProjectSystemWPF.ViewModel
                         MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
                         return;
                     }
-                }            
+                }
+                transferUserWindow.Close();
             });
             
         }
@@ -204,6 +206,12 @@ namespace ProjectSystemWPF.ViewModel
         internal void GetUser(UserDTO user)
         {
             Employee = user;
+        }
+
+        TransferUserWindow transferUserWindow;
+        internal void GetWindow(TransferUserWindow transferUserWindow)
+        {
+            this.transferUserWindow = transferUserWindow;
         }
     }
 }
