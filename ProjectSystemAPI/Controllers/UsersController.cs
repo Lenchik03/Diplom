@@ -126,11 +126,13 @@ namespace ProjectSystemAPI.Controllers
             var exs = new ObservableCollection<User>();
             var user = dbContext.Users.FirstOrDefault(s => s.Id == userId);
             var dep = dbContext.Departments.FirstOrDefault(s => s.Id == user.IdDepartment);
+            var deps = dbContext.Departments.Where(s => s.IdMainDep == dep.Id);
+            var users = dbContext.Users.ToList();
             if (dep.IdMainDep == null)
             {
-                foreach (var d in dep.InverseIdMainDepNavigation)
+                foreach (var d in deps)
                 {
-                    foreach (var usr in dbContext.Users.Where(s => s.IdDepartment == d.Id))
+                    foreach (var usr in users.Where(s => s.IdDepartment == d.Id))
                     {
                         exs.Add(usr);
                     }
