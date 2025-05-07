@@ -55,7 +55,8 @@ namespace ChatServerDTO.DTO
             {
                 Id = chat.Id,
                 Title = chat.Title,
-                ImagePath = chat.ImagePath
+                ImagePath = chat.ImagePath,
+                IsDeleted = chat.IsDeleted,
 
             };
             if (chat.ChatUsers != null)

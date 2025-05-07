@@ -25,7 +25,11 @@ namespace ChatServerDTO.DTO
 
         public string? DocumentTitle { get; set; }
         public DateTime? DateOfSending { get; set; }
+        public bool? IsChanged { get; set; } = false;
 
+        public bool? IsDeleted { get; set; } = false;
+        public string ChangedTitle { get; set; }
+        public string DeletedTitle { get; set; }
         //public ChatDTO Chat { get; set; } = null!;
 
         public UserDTO? Sender { get; set; }
@@ -41,7 +45,13 @@ namespace ChatServerDTO.DTO
                 DocumentTitle = message.DocumentTitle,
                 IdSender = message.IdSender,
                 DateOfSending = message.DateOfSending,
+                IsChanged = message.IsChanged,
+                IsDeleted = message.IsDeleted
             };
+            if (message.IsChanged != null)
+                result.ChangedTitle = "(ред).";
+            if (message.IsDeleted != null)
+                result.DeletedTitle = "Сообщение удалено!";
             /*
             if (message.IdChatNavigation != null)
                 result.Chat = (ChatDTO)message.IdChatNavigation;
@@ -63,7 +73,8 @@ namespace ChatServerDTO.DTO
                 DocumentTitle = from.DocumentTitle,
                 IdSender = from.IdSender,
                 DateOfSending = from.DateOfSending,
-
+                IsChanged= from.IsChanged,
+                IsDeleted = from.IsDeleted
             };
             return result;
         }

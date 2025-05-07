@@ -20,7 +20,7 @@ namespace ProjectSystemWPF.ViewModel
     public class EditTaskVM : BaseVM
     {
         public event EventHandler Loaded;
-        private string search;
+        private string search = "";
         private TaskDTO task;
         private ObservableCollection<UserDTO> selectedExecutors = new();
         private UserDTO addExecutor;
@@ -105,7 +105,8 @@ namespace ProjectSystemWPF.ViewModel
             {
                 search = value;
                 Signal();
-                GetExecutors();
+                if(search.Length > 3)
+                    GetExecutors();
             }
         }
 
@@ -260,55 +261,27 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void GetExecutors()
         {
-            var users = new ObservableCollection<UserDTO>();
-            var deps = new ObservableCollection<DepartmentDTO>();
-            var result = await REST.Instance.client.GetAsync($"Users/GetAllUsers");
-
-            if (result.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return;
-            }
-            else
-            {
-                users = await result.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
-            }
-            var result1 = await REST.Instance.client.GetAsync($"Departments");
-
-            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return;
-            }
-            else
-            {
-                deps = await result1.Content.ReadFromJsonAsync<ObservableCollection<DepartmentDTO>>(REST.Instance.options);
-            }
-
-            var exs = new ObservableCollection<UserDTO>();
-            var dep = deps.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
-            if (dep.IdMainDep == null)
-            {
-                foreach (var d in dep.ChildDepartments)
-                {
-                    foreach (var user in d.Users)
-                    {
-                        Executors.Add(user);
-                    }
-
-                }
-            }
-            else
-            {
-                foreach (var user in dep.Users)
-                {
-                    Executors.Add(user);
-                }
-            }
-
             
+            
+                string arg1 = JsonSerializer.Serialize(Search, REST.Instance.options);
+                var responce1 = await REST.Instance.client.PostAsync($"Users/GetExecutorsForTask?userId={ActiveUser.GetInstance().User.Id}",
+                    new StringContent(arg1, Encoding.UTF8, "application/json"));
+                try
+                {
+                    responce1.EnsureSuccessStatusCode();
+                    Executors = await responce1.Content.ReadFromJsonAsync<ObservableCollection<UserDTO>>(REST.Instance.options);
+
+                }
+                catch (Exception ex)
+                {
+
+                    return;
+                }
+            
+            
+
         }
         EditTaskPage editTaskPage;
-        
-
         internal void SetWindow(EditTaskPage editTaskPage)
         {
             this.editTaskPage = editTaskPage;

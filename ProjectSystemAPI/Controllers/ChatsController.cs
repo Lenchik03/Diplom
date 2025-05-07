@@ -139,7 +139,7 @@ namespace ProjectSystemAPI.Controllers
                 Select(s => _context.Chats.Find(s.IdChat))).ToList();
 
             chatList.RemoveAll(s => _context.ChatUsers.FirstOrDefault(u => u.IdChat == s.Id && u.IdUser == idUser) == null);
-            return Ok(chatList.Select(s => (ChatDTO)s));
+            return Ok(chatList.Select(s => (ChatDTO)s).Where(s => s.IsDeleted == false));
         }
         // DELETE: api/Chats/5
         [HttpDelete("{id}")]

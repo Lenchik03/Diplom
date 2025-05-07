@@ -241,7 +241,7 @@ namespace ProjectSystemWPF.ViewModel
                     //message.Chat = chat;
                     //message.IdSender = sender.Id;
                     //message.Sender = sender;
-                    message.Text += "  (ред.)";
+                    message.IsChanged = true;
                     string arg = JsonSerializer.Serialize(message, REST.Instance.options);
                     var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -374,7 +374,7 @@ namespace ProjectSystemWPF.ViewModel
 
         internal async System.Threading.Tasks.Task DeleteMessageAsync(MessageDTO message)
         {
-            message.Text = "Сообщение удалено!";
+            message.IsDeleted = true;
 
             string arg = JsonSerializer.Serialize(message, REST.Instance.options);
             var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -107,14 +109,53 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [HttpGet("GetExecutorsByTask/{taskId}")]
-        public ActionResult<List<User>> GetExecutorsByTask(int taskId)
+        public ActionResult<List<UserDTO>> GetExecutorsByTask(int taskId)
         {
             var list = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).
                 Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Distinct().ToList();
-            return Ok(list);
+            return Ok(list.Select(s => (UserDTO)s));
 
             //var result = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).Where(s => s.IdTask == taskId);
             //return Ok(result);
+        }
+
+        [HttpPost("GetExecutorsForTask")]
+        public ActionResult<List<UserDTO>> GetExecutorsForTask(int userId, [FromBody] string search)
+        {
+
+            var exs = new ObservableCollection<User>();
+            var user = dbContext.Users.FirstOrDefault(s => s.Id == userId);
+            var dep = dbContext.Departments.FirstOrDefault(s => s.Id == user.IdDepartment);
+            if (dep.IdMainDep == null)
+            {
+                foreach (var d in dep.InverseIdMainDepNavigation)
+                {
+                    foreach (var usr in dbContext.Users.Where(s => s.IdDepartment == d.Id))
+                    {
+                        exs.Add(usr);
+                    }
+
+                }
+            }
+            else
+            {
+                foreach (var usr in dbContext.Users.Where(s => s.IdDepartment == dep.Id))
+                {
+                    exs.Add(usr);
+                }
+
+
+
+
+            }
+            var rezult = new ObservableCollection<User>(exs.Where(s => string.IsNullOrEmpty(search) ||
+                        (s.FirstName.Contains(search) ||
+                        s.LastName.Contains(search) ||
+                        s.Patronymic.Contains(search) ||
+                        s.Email.Contains(search) ||
+                        s.Phone.Contains(search))));
+
+            return Ok(rezult.Select(s => (UserDTO)s));
         }
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]
@@ -180,7 +221,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("GetAllUsers")]
         public async Task<IEnumerable<UserDTO>> GetAllUsers()
         {
-            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).OrderByDescending(s => s.Id).ToList();
+            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).Where(s => s.IsDeleted == false).OrderByDescending(s => s.Id).ToList();
             return users.Select(s => (UserDTO)s);
         }
 

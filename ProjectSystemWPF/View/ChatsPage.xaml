@@ -87,6 +87,9 @@
                                         <TextBlock Text="{Binding Text}" 
                                                    Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}"
                                                    HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding DeletedTitle}"
+                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"
+                                                   Visibility="{Binding Converter={c:ConvertChangeToVisible}}"/>
                                         <!--<TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>-->
                                         <Button Content="{Binding DocumentTitle}" 
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SaveFile}"
@@ -94,6 +97,9 @@
                                                 Visibility="{Binding Converter={c:ConvertFileToVisible}}" 
                                                 HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         <TextBlock Text="{Binding DateOfSending}" Foreground="Gray" FontSize="8" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                        <TextBlock Text="{Binding ChangedTitle}"
+                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"
+                                                   FontSize="10" Visibility="{Binding Converter={c:ConvertChangeToVisible}}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -127,6 +133,7 @@
                                 </EventTrigger>
                             </Button.Triggers>
                         </Button>
+                        
                         <Popup x:Name="popup1" StaysOpen="True" Placement="Bottom" MaxWidth="180"
          AllowsTransparency="True"  >
                             <TextBlock Text="{Binding NewMessage.DocumentTitle}" TextWrapping="Wrap" Width="180" Background="LightPink" Opacity="0.8" />

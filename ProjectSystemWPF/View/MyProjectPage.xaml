@@ -85,7 +85,7 @@
                 </Grid>
 
                 <Grid Grid.Row="1">
-                    <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" BorderBrush="Black" MouseDoubleClick="EditTaskClick" BorderThickness ="1" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
+                    <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" BorderBrush="Black" MouseDoubleClick="EditTaskClick" BorderThickness ="1" Background="LightYellow" Margin="5" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" HorizontalContentAlignment="Stretch" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Background="#FFFDC401" Margin="5">
