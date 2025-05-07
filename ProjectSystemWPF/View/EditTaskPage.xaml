@@ -15,9 +15,13 @@
     <Grid Background="#FFFDC401">
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
             <Grid>
-                <Label Content="ЗАДАЧА" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Content="ЗАДАЧА" FontWeight="Bold" HorizontalAlignment="Center" FontSize="20"/>
 
-                <StackPanel Margin="5">
+                <StackPanel Grid.Row="1">
                     <Label Content="Название"/>
                     <TextBox KeyDown="KeyDown" Text="{Binding Task.Title}"/>
                     <Label Content="Описание"/>
@@ -36,9 +40,13 @@ UpdateSourceTrigger=PropertyChanged}"/>
                             <ColumnDefinition Width="85*"/>
                             <ColumnDefinition Width="190*"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
                             <Label Content="Сотрудники"/>
-                            <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness ="1" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding AddExecutor}" HorizontalContentAlignment="Stretch" >
+                            <ListBox Grid.Row="1"  ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness ="1" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding AddExecutor}" HorizontalContentAlignment="Stretch" >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Background="#FFFDC401" Margin="5">
@@ -49,16 +57,20 @@ UpdateSourceTrigger=PropertyChanged}"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                        </StackPanel>
+                        </Grid>
 
-                        <StackPanel Grid.Column="1" Background="LightYellow">
+                        <StackPanel Grid.Column="1" Background="LightYellow" Margin="0,30,0,0">
                             <Button Margin="5" Content="☞" Command="{Binding AddEx}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                             <Button Margin="5" Content="☜" Command="{Binding RemoveEx}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="2">
+                        <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
                             <Label Content="Исполнители"/>
-                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" BorderBrush="Black" BorderThickness ="1" Background="#FFFDC401" Margin="5,5,5,5" ItemsSource="{Binding SelectedExecutors}" SelectedItem="{Binding RemoveExecutor}" HorizontalContentAlignment="Stretch" >
+                        <ListBox Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Visible" BorderBrush="Black" BorderThickness ="1" Background="#FFFDC401" Margin="5,5,5,5" ItemsSource="{Binding SelectedExecutors}" SelectedItem="{Binding RemoveExecutor}" HorizontalContentAlignment="Stretch" >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Background="#FFFDC401" Margin="5">
@@ -69,7 +81,7 @@ UpdateSourceTrigger=PropertyChanged}"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        </StackPanel>
+                        </Grid>
                     </Grid>
                     <Button Content="Сохранить" Height="30" Width="110" Margin="20" Command="{Binding Save}"/>
                 </StackPanel>

@@ -32,7 +32,7 @@ namespace ChatServerDTO.DTO
         public string? StatusTitle { get; set; }
 
 
-        public List<TaskUserStatus> TaskForUsers { get; set; }
+        public List<TaskUserStatus> TaskForUsers { get; set; } = new();
 
         public static explicit operator TaskDTO(ChatServerDTO.DB.Task task)
         {

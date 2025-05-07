@@ -32,7 +32,7 @@ namespace ProjectSystemAPI.DTO
         public DateTime? Birthday { get; set; }
 
         public string? Post { get; set; }
-        public bool? IsDeleted { get; set; }
+        public bool? IsDeleted { get; set; } = false;
 
         [JsonIgnore]
         public bool Selected
@@ -91,6 +91,7 @@ namespace ProjectSystemAPI.DTO
                 Id = from.Id,
                 Patronymic = from.Patronymic,
                 Post = from.Post,
+                IsDeleted = from.IsDeleted,
             };
 
             return result;

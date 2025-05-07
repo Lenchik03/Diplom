@@ -248,7 +248,7 @@ namespace ProjectSystemWPF.ViewModel
                     
                     Employee.IsDeleted = true;
                     string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Employees/{Employee.Id}",
+                    var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
                     try
                     {
@@ -418,22 +418,38 @@ namespace ProjectSystemWPF.ViewModel
                             {
                                 var shit = ActiveUser.GetInstance().User;
                                 var department = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
-                                //if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
-                                if (department.ChildDepartments.Count == 0)
-                                {
-                                    Employee.IdRole = 3;
-                                    // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
-                                    Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
-                                    //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                                
+
+
+                                    //if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
+                                    if (department.ChildDepartments.Count == 0)
+                                    {
+                                        Employee.IdRole = 3;
+                                        // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                                        Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
+                                        //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                                    }
+                                    else
+                                    {
+                                    if (Department.IdDirector == null)
+                                    {
+
+
+                                        Employee.IdRole = 2;
+                                        //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 2);
+                                        Employee.IdDepartment = Department.Id;
+                                        //Employee.IdDepartmentNavigation = Department;
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show($"У отдела '{Department.Title}' уже есть руководитель!");
+                                        return;
+                                    }
                                 }
-                                else
-                                {
-                                    Employee.IdRole = 2;
-                                    //Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 2);
-                                    Employee.IdDepartment = Department.Id;
-                                    //Employee.IdDepartmentNavigation = Department;
+
                                 }
-                            }
+                                
+                            
                             if (ActiveUser.GetInstance().User.IdRole == 2)
                             {
                                 Employee.IdRole = 3;
@@ -493,6 +509,7 @@ namespace ProjectSystemWPF.ViewModel
                         }
 
                         GetLists();
+                        CreateExpanders();
                     }
                     else
                     {
@@ -556,6 +573,7 @@ namespace ProjectSystemWPF.ViewModel
                     }
                 }
                 GetLists();
+                CreateExpanders();
             });
             NewEmployee = new VmCommand(() =>
             {

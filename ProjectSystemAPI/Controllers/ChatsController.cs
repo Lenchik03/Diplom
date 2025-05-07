@@ -130,7 +130,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [HttpPost("FindChat/{idUser}")]
-        public async Task<ActionResult<List<ChatDTO>>> FindChat(string find, int idUser)
+        public async Task<ActionResult<List<ChatDTO>>> FindChat(int idUser, [FromBody] string find )
         {
             List<Chat> chatList = new List<Chat>();
             chatList.AddRange(_context.Chats.Where(s => s.Title.Contains(find)).AsNoTracking().ToList());

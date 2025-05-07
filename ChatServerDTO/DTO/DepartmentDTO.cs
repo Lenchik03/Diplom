@@ -13,7 +13,7 @@ namespace ProjectSystemAPI.DTO
         public int Id { get; set; }
 
         public string? Title { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool? IsDeleted { get; set; }
         public int? IdMainDep { get; set; }
 
         public int? IdDirector { get; set; }
@@ -43,7 +43,8 @@ namespace ProjectSystemAPI.DTO
                 Id = from.Id,
                 IdDirector = from.IdDirector,
                 IdMainDep = from.IdMainDep,
-                Title = from.Title
+                Title = from.Title,
+                IsDeleted = from.IsDeleted
             };
 
             if (from.Users != null)
@@ -65,7 +66,8 @@ namespace ProjectSystemAPI.DTO
                 Id = from.Id,
                 IdDirector = from.IdDirector,
                 IdMainDep = from.IdMainDep,
-                Title = from.Title
+                Title = from.Title,
+                 IsDeleted = from.IsDeleted
             };
         }
     }
