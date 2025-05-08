@@ -157,7 +157,7 @@ namespace ProjectSystemAPI.Controllers
                         s.Patronymic.Contains(search)
                         )));
 
-            return Ok(rezult.Select(s => (UserDTO)s));
+            return Ok(rezult.Select(s => (UserDTO)s).Where(r => r.IsDeleted == false));
         }
 
         [Authorize(Roles = "Директор отдела, Заместитель директора, Админ")]

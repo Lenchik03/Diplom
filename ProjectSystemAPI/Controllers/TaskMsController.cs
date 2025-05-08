@@ -62,10 +62,10 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [HttpGet("Filter/{id}")]
-        public async Task<ActionResult<IEnumerable<Status>>> Search(int id)
+        public async Task<ActionResult<IEnumerable<TaskDTO>>> Search(int id)
         {
-            var list = _context.Tasks.AsNoTracking().Select(s => s.IdStatus == id).ToList();
-            return Ok(list);
+            var list = _context.Tasks.AsNoTracking().Where(s => s.IdStatus == id).ToList();
+            return Ok(list.Select(s => (TaskDTO)s));
         }
 
 
@@ -105,7 +105,7 @@ namespace ProjectSystemAPI.Controllers
             {
                 return BadRequest();
             }
-
+            
             _context.Entry((Task)taskM).State = EntityState.Modified;
 
             try

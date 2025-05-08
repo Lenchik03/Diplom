@@ -47,15 +47,29 @@ namespace ProjectSystemWPF.ViewModel
         { get => selectedTask;
             set { selectedTask = value;
                 Signal();
-                Filter();
+                
             }
         }
 
-        public ObservableCollection<Status> AllStatuses { get; set; }
+        public ObservableCollection<Status> AllStatuses
+        {
+            get => allStatuses;
+            set { allStatuses = value;
+                Signal();
+            }
+        }
         public Status SelectedStatus 
         { get => selectedStatus;
             set { selectedStatus = value;
                 Signal();
+                if(selectedStatus != null)
+                {
+                    if (selectedStatus.Id == 0)
+                        GetTasks();
+                    else
+                        Filter();
+                }
+                
             }
 
         }
@@ -67,6 +81,7 @@ namespace ProjectSystemWPF.ViewModel
         private ProjectDTO project;
         private TaskDTO selectedTask;
         private Status selectedStatus;
+        private ObservableCollection<Status> allStatuses;
 
         public CommandParameter<TaskDTO> TakeTask { get; set; }
 
@@ -84,6 +99,8 @@ namespace ProjectSystemWPF.ViewModel
             {
                 task.IdStatus = 2;
                 task.StatusTitle = "В процессе";
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 2;
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "В процессе";
                 string arg = JsonSerializer.Serialize(task, REST.Instance.options);
                 var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -104,6 +121,8 @@ namespace ProjectSystemWPF.ViewModel
             {
                 task.IdStatus = 3;
                 task.StatusTitle = "Выполнена";
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 3;
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "Выполнена";
                 string arg = JsonSerializer.Serialize(task, REST.Instance.options);
                 var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -201,20 +220,20 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void Filter()
         {
-            //var result1 = await REST.Instance.client.GetAsync($"TaskMs/Filter/{SelectedStatus.Id}");
-            ////todo not ok
+            var result1 = await REST.Instance.client.GetAsync($"TaskMs/Filter/{SelectedStatus.Id}");
+            //todo not ok
 
-            //if (result1.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
-            //    return;
-            //}
-            //else
-            //{
-            //    var alltasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
-            //    Tasks = new ObservableCollection<TaskDTO>(alltasks.Where(s => s.IdProject == Project.Id));
+            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                var alltasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
+                Tasks = new ObservableCollection<TaskDTO>(alltasks.Where(s => s.IdProject == Project.Id));
 
-            //}
-            
+            }
+
         }
 
         internal void Select(TaskDTO p)
