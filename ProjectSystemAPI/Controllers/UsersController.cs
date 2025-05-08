@@ -128,6 +128,7 @@ namespace ProjectSystemAPI.Controllers
             var dep = dbContext.Departments.FirstOrDefault(s => s.Id == user.IdDepartment);
             var deps = dbContext.Departments.Where(s => s.IdMainDep == dep.Id);
             var users = dbContext.Users.ToList();
+            exs.Add(user);
             if (dep.IdMainDep == null)
             {
                 foreach (var d in deps)
@@ -153,9 +154,8 @@ namespace ProjectSystemAPI.Controllers
             var rezult = new ObservableCollection<User>(exs.Where(s => string.IsNullOrEmpty(search) ||
                         (s.FirstName.Contains(search) ||
                         s.LastName.Contains(search) ||
-                        s.Patronymic.Contains(search) ||
-                        s.Email.Contains(search) ||
-                        s.Phone.Contains(search))));
+                        s.Patronymic.Contains(search)
+                        )));
 
             return Ok(rezult.Select(s => (UserDTO)s));
         }

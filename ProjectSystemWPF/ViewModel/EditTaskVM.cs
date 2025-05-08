@@ -48,7 +48,13 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
 
-        public ObservableCollection<UserDTO> Executors { get; set; } = new();
+        public ObservableCollection<UserDTO> Executors
+        {
+            get => executors;
+            set { executors = value;
+                Signal();
+            }
+        }
         public UserDTO AddExecutor
         {
             get => addExecutor;
@@ -105,8 +111,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 search = value;
                 Signal();
-                if(search.Length > 3)
-                    GetExecutors();
+                GetExecutors();
             }
         }
 
@@ -148,7 +153,13 @@ namespace ProjectSystemWPF.ViewModel
                 Task.Creator = ActiveUser.GetInstance().User;
                 Task.IdCreator = ActiveUser.GetInstance().User.Id;
                 //Task.Project = SelectedProject;
-                Task.IdProject = SelectedProject.Id;
+                if(SelectedProject != null)
+                    Task.IdProject = SelectedProject.Id;
+                else
+                {
+                    MessageBox.Show("Выберите проект!");
+                    return;
+                }    
                 Task.IdStatus = 1;
                 Task.StatusTitle = "Выдана";
                 if (Task.Id == 0)
@@ -261,8 +272,6 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void GetExecutors()
         {
-            
-            
                 string arg1 = JsonSerializer.Serialize(Search, REST.Instance.options);
                 var responce1 = await REST.Instance.client.PostAsync($"Users/GetExecutorsForTask?userId={ActiveUser.GetInstance().User.Id}",
                     new StringContent(arg1, Encoding.UTF8, "application/json"));
@@ -277,11 +286,12 @@ namespace ProjectSystemWPF.ViewModel
 
                     return;
                 }
-            
-            
-
         }
+
+        
         EditTaskPage editTaskPage;
+        private ObservableCollection<UserDTO> executors = new();
+
         internal void SetWindow(EditTaskPage editTaskPage)
         {
             this.editTaskPage = editTaskPage;

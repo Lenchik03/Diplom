@@ -285,8 +285,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public async void FindChatAsync()
         {
-            if (SearchText.Length > 3)
-            {
+            
                 string arg = JsonSerializer.Serialize(SearchText, REST.Instance.options);
                 var responce = await REST.Instance.client.PostAsync($"Chats/FindChat/{ActiveUser.GetInstance().User.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -302,7 +301,7 @@ namespace ProjectSystemWPF.ViewModel
                     //MessageBox.Show("Ошибка! Обновление отдела приостановлено!");
                     return;
                 }
-            }
+            
 
 
         }
