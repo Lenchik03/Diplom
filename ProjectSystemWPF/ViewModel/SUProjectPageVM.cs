@@ -40,7 +40,8 @@ namespace ProjectSystemWPF.ViewModel
             }
             else
             {
-                Projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
+                var projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
+                
             }           
             
         }

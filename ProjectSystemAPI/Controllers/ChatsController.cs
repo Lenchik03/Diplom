@@ -134,10 +134,12 @@ namespace ProjectSystemAPI.Controllers
         {
             List<Chat> chatList = new List<Chat>();
             chatList.AddRange(_context.Chats.Where(s => s.Title.Contains(find)).AsNoTracking().ToList());
-            chatList = chatList.Union(_context.ChatUsers.Include(s => s.IdUserNavigation).
-                Where(s => s.IdUserNavigation.LastName.Contains(find) || s.IdUserNavigation.FirstName.Contains(find) || s.IdUserNavigation.Patronymic.Contains(find)).AsNoTracking().ToList().
-                Select(s => _context.Chats.Find(s.IdChat))).ToList();
-
+            if (find != "")
+            {
+                chatList = chatList.Union(_context.ChatUsers.Include(s => s.IdUserNavigation).
+                    Where(s => s.IdUserNavigation.LastName.Contains(find) || s.IdUserNavigation.FirstName.Contains(find) || s.IdUserNavigation.Patronymic.Contains(find)).Distinct().AsNoTracking().ToList().
+                    Select(s => _context.Chats.Find(s.IdChat))).Distinct().ToList();
+            }
             chatList.RemoveAll(s => _context.ChatUsers.FirstOrDefault(u => u.IdChat == s.Id && u.IdUser == idUser) == null);
             return Ok(chatList.Select(s => (ChatDTO)s).Where(s => s.IsDeleted == false).Distinct());
         }

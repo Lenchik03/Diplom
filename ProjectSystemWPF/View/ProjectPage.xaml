@@ -84,11 +84,22 @@ ItemsSource="{Binding AllStatuses}"/>
                             <DataTemplate>
                                 <StackPanel Background="#FFFDC401" Margin="5">
                                     <StackPanel Orientation="Horizontal">
-                                        <Label Content="{Binding Title}" FontSize="15"/>
-                                        <!--<Label Content="{Binding Executor}" FontSize="15"/>-->
-                                        <Label Content="{Binding StatusTitle}" FontSize="15"/>
-                                        <Button Content="вз" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.TakeTask}" CommandParameter="{Binding .}" HorizontalAlignment="Right"/>
-                                        <Button Content="зв" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.CompleteTask}" CommandParameter="{Binding .}" HorizontalAlignment="Right"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Label Content="{Binding Title}" Margin="5" FontSize="15"/>
+                                                <!--<Label Content="{Binding Executor}" FontSize="15"/>-->
+                                                <Label Content="{Binding StatusTitle}" Margin="5" FontSize="15"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Margin="5" ToolTip="Взять"  Content="&#9654;" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.TakeTask}" CommandParameter="{Binding .}" />
+                                                <Button Margin="5" ToolTip="Завершить"   Content="&#9989;" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.CompleteTask}" CommandParameter="{Binding .}"/>
+                                            </StackPanel>
+                                            
+                                        </Grid>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
