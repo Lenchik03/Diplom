@@ -35,6 +35,7 @@ namespace ChatServerDTO.DTO
                 Title = from.Title,
                 ImagePath = from.ImagePath,
                 IsDeleted = from.IsDeleted,
+                IdCreator = from.IdCreator,
             };
 
             if (from.IdCreatorNavigation != null)
@@ -57,10 +58,14 @@ namespace ChatServerDTO.DTO
                 Title = chat.Title,
                 ImagePath = chat.ImagePath,
                 IsDeleted = chat.IsDeleted,
+                IdCreator = chat.IdCreator,
 
             };
             if (chat.ChatUsers != null)
                 result.ChatUsers = chat.ChatUsers.Select(s => (ChatUser)s).ToList();
+
+            //if (chat.Creator != null)
+            //    result.IdCreatorNavigation = (User)chat.Creator;
             return result;
         }
     }

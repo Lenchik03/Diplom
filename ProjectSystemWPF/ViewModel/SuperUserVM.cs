@@ -263,7 +263,10 @@ namespace ProjectSystemWPF.ViewModel
                     }
 
                     Employee = new UserDTO();
+
                 }
+                GetLists();
+                CreateExpanders();
             });
 
             
@@ -332,6 +335,8 @@ namespace ProjectSystemWPF.ViewModel
                         }
                     }
                 }
+                GetLists();
+                CreateExpanders();
             });
 
             CanEditClick = new VmCommand(() =>

@@ -33,7 +33,7 @@ namespace ProjectSystemAPI.Controllers
                 Select(s => s.IdChatNavigation.Id).ToList();
             return Ok(_context.Chats.Include(s => s.ChatUsers).
                 Include(s => s.ChatUsers).
-                ThenInclude(s => s.IdUserNavigation).
+                ThenInclude(s => s.IdUserNavigation).Include(s => s.IdCreatorNavigation).
                 AsNoTracking().
                 Where(s => chats.Contains(s.Id) && s.IsDeleted == false).Select(s => (ChatDTO)s).ToList());
             //var list = _context.Chats.Include(d => d.ChatUsers)
@@ -133,7 +133,7 @@ namespace ProjectSystemAPI.Controllers
         public async Task<ActionResult<List<ChatDTO>>> FindChat(int idUser, [FromBody] string find )
         {
             List<Chat> chatList = new List<Chat>();
-            chatList.AddRange(_context.Chats.Where(s => s.Title.Contains(find)).AsNoTracking().ToList());
+            chatList.AddRange(_context.Chats.Include(s => s.IdCreatorNavigation).Where(s => s.Title.Contains(find)).AsNoTracking().ToList());
             if (find != "")
             {
                 chatList = chatList.Union(_context.ChatUsers.Include(s => s.IdUserNavigation).

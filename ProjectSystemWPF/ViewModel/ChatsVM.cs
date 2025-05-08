@@ -61,14 +61,14 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
                 if (chat != null)
                 {
-                    GetMessageAsync();
-                    if (chat.IdCreator == ActiveUser.GetInstance().User.Id)
-                        DeleteChatVisible = Visibility.Visible;
+                    DeleteChatVisible = chat.IdCreator == ActiveUser.GetInstance().User.Id ? Visibility.Visible : Visibility.Collapsed;
                     if (chat.Creator != null)
                     {
                         if (chat.Creator.IsDeleted == true)
                             chat.Creator = Chat.ChatUsers.FirstOrDefault().User;
                     }
+                    GetMessageAsync();
+                    
 
                 }
 
@@ -124,7 +124,7 @@ namespace ProjectSystemWPF.ViewModel
         public ObservableCollection<ChatDTO> allChats = new ObservableCollection<ChatDTO>();
         public ObservableCollection<MessageDTO> allMessages = new ObservableCollection<MessageDTO>();
         private string searchText;
-        private ChatDTO chat = new ChatDTO();
+        private ChatDTO chat = new();
         private ObservableCollection<ChatDTO> chats = new ObservableCollection<ChatDTO>();
         private ObservableCollection<MessageDTO> messages = new ObservableCollection<MessageDTO>();
         private MessageDTO message = new MessageDTO();
@@ -166,19 +166,20 @@ namespace ProjectSystemWPF.ViewModel
             NewChat = new VmCommand(async () =>
             {
                 NewMessageWindow newMessageWindow = new NewMessageWindow(new ChatDTO());
-                newMessageWindow.Show();
+                newMessageWindow.ShowDialog();
+                GetChats();
             });
 
             DeleteChat = new VmCommand(async () =>
             {
                 Chat.IsDeleted = true;
                 string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
-                var responce = await REST.Instance.client.PutAsync($"Chats",
+                var responce = await REST.Instance.client.PutAsync($"Chats/{Chat.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
                 try
                 {
                     responce.EnsureSuccessStatusCode();
-                    Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
+                    //Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
                     MessageBox.Show("Чат успешно удален!");
                 }
                 catch (Exception ex)
@@ -186,6 +187,7 @@ namespace ProjectSystemWPF.ViewModel
                     MessageBox.Show("Произошла ошибка");
                     return;
                 }
+                GetChats();
             });
 
             AttachFile = new VmCommand( async () =>

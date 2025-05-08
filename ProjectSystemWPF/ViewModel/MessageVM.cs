@@ -214,9 +214,10 @@ namespace ProjectSystemWPF.ViewModel
                 TreeViewItem mtreeviewitem = new TreeViewItem { DataContext = maindep, Style = controlStyle, Background = Brushes.LightYellow };
                 mtreeviewitem.Tag = maindep;
                 mtreeviewitem.Header = maindep.Title;
-                if (maindep.Users.Count != 0)
+                var t = maindep.Users.Where(s => s.IsDeleted == false).ToList();
+                if (t.Count != 0)
                 {
-                    foreach (var emp in maindep.Users.Where(s => s.IdRole != 4))
+                    foreach (var emp in maindep.Users.Where(s => s.IdRole != 4 && s.IsDeleted == false))
                     {
                         if (Chat != null && Chat.ChatUsers.FirstOrDefault(s=>s.IdUser == emp.Id) != null)
                             emp.Selected = true;
@@ -228,12 +229,12 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     foreach (var dep in maindep.ChildDepartments)
                     {
-                        if (dep.Users.Count != 0)
+                        if (dep.Users.Where(s => s.IsDeleted == false).ToList().Count != 0)
                         {
                             TreeViewItem treeViewItem = new TreeViewItem { DataContext = dep, Style = controlStyle };
                             treeViewItem.Tag = dep;
                             treeViewItem.Header = dep.Title;
-                            foreach (var emps in dep.Users.Where(s => s.IdRole != 4))
+                            foreach (var emps in dep.Users.Where(s => s.IdRole != 4 && s.IsDeleted == false))
                             {
                                 if (Chat != null && Chat.ChatUsers.FirstOrDefault(s => s.IdUser == emps.Id) != null)
                                     emps.Selected = true;
@@ -251,9 +252,9 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
-                    if (maindep.Users.Count != 0)
+                    if (maindep.Users.Where(s => s.IsDeleted == false).ToList().Count != 0)
                     {
-                        foreach (var emp in maindep.Users.Where(s => s.IdRole != 4))
+                        foreach (var emp in maindep.Users.Where(s => s.IdRole != 4 && s.IsDeleted == false))
                         {
                             if (Chat != null && Chat.ChatUsers.FirstOrDefault(s => s.IdUser == emp.Id) != null)
                                 emp.Selected = true;

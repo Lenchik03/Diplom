@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ProjectSystemWPF"
         xmlns:vm="clr-namespace:ProjectSystemWPF.ViewModel"
         mc:Ignorable="d"
-        Title="NewMessageWindow" Height="450" Width="800"
+        Title="" Height="450" Width="800"
         DataContext="{DynamicResource messageVM}"
     xmlns:converters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
     xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf">
@@ -228,8 +228,8 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                 </Grid>
                 
                 <StackPanel x:Name="stackpanel" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                <TreeViewItem Style="{DynamicResource treeView}"/>
-            </StackPanel>
+                <TreeViewItem Style="{DynamicResource treeView}" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                </StackPanel>
             </StackPanel>
         </Border>
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1" Grid.Column="1">

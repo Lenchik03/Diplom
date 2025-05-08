@@ -119,10 +119,11 @@ namespace ProjectSystemWPF.ViewModel
 
             CompleteTask = new CommandParameter<TaskDTO>(async (TaskDTO task) =>
             {
-                task.IdStatus = 3;
-                task.StatusTitle = "Выполнена";
-                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 3;
-                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "Выполнена";
+                //task.IdStatus = 3;
+                //task.StatusTitle = "Выполнена";
+                
+                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 3;
+                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "Выполнена";
                 string arg = JsonSerializer.Serialize(task, REST.Instance.options);
                 var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));

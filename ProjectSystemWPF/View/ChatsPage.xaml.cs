@@ -46,7 +46,11 @@ namespace ProjectSystemWPF.View
             var list = sender as ListBox;
             var p = list.SelectedItem as ChatDTO;
             if (p != null)
-                ((ChatsVM)DataContext).Select(p);
+            {
+                if(p.IdCreator == ActiveUser.GetInstance().User.Id)
+                    ((ChatsVM)DataContext).Select(p);
+            }
+                
         }
 
        
