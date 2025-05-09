@@ -86,25 +86,34 @@ namespace ProjectSystemWPF.ViewModel
         private TaskDTO selectedTask;
         private Status selectedStatus;
         private ObservableCollection<Status> allStatuses;
+        private bool takeButtonVisible;
 
         public CommandParameter<TaskDTO> TakeTask { get; set; }
 
         public CommandParameter<TaskDTO> CompleteTask { get; set; }
 
+        public bool TakeButtonVisible
+        { get => takeButtonVisible;
+            set { takeButtonVisible = value;
+                Signal();
+            } }
+
         public ProjectVM()
         {
             GetProjects();
             System.Threading.Tasks.Task.Delay(500);
+
             //GetUsers();
             //GetTasks();
             GetStatuses();
+            
 
             TakeTask = new CommandParameter<TaskDTO>(async (TaskDTO task) =>
             {
                 //task.IdStatus = 2;
                 //task.StatusTitle = "В процессе";
-                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 2;
-                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "В процессе";
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 2;
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "В процессе";
                 string arg = JsonSerializer.Serialize(task, REST.Instance.options);
                 var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -126,8 +135,8 @@ namespace ProjectSystemWPF.ViewModel
                 //task.IdStatus = 3;
                 //task.StatusTitle = "Выполнена";
                 
-                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 3;
-                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "Выполнена";
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 3;
+                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "Выполнена";
                 string arg = JsonSerializer.Serialize(task, REST.Instance.options);
                 var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -235,7 +244,21 @@ namespace ProjectSystemWPF.ViewModel
             }
 
             Tasks = new ObservableCollection<TaskDTO>(tasks.Where(s => s.IdProject == Project.Id));
+            foreach(TaskDTO task in Tasks)
+            {
+                if (task.TaskForUsers.Count > 0)
+                {
+                    var auser = ActiveUser.GetInstance().User;
+                    if (auser != null)
+                    {
+                        task.UStatus = task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle;
+                        //TakeButtonVisible = task.UStatus == "Выдана" ? true : false;
+                    }
+                        
+                }
+            }
             
+
         }
 
         public async void Filter()
@@ -251,7 +274,15 @@ namespace ProjectSystemWPF.ViewModel
             {
                 var alltasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
                 Tasks = new ObservableCollection<TaskDTO>(alltasks.Where(s => s.IdProject == Project.Id));
-
+                foreach (TaskDTO task in Tasks)
+                {
+                    if (task.TaskForUsers.Count > 0)
+                    {
+                        var auser = ActiveUser.GetInstance().User;
+                        if (auser != null)
+                            task.UStatus = task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle;
+                    }
+                }
             }
 
         }

@@ -132,8 +132,10 @@ namespace ProjectSystemWPF.ViewModel
             {
                 if (SelectedTask != null)
                 {
-                    SelectedTask.IdStatus = 4;
-                    SelectedTask.StatusTitle = "Удалена";
+                    //SelectedTask.IdStatus = 4;
+                    //SelectedTask.StatusTitle = "Удалена";
+                    SelectedTask.TaskForUsers.ForEach(s => s.StatusId = 4);
+                    SelectedTask.TaskForUsers.ForEach(s => s.StatusTitle = "Удалена");
                     string arg = JsonSerializer.Serialize(SelectedTask, REST.Instance.options);
                     var responce = await REST.Instance.client.PutAsync($"TaskMs/{SelectedTask.Id}",
                         new StringContent(arg, Encoding.UTF8, "application/json"));

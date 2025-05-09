@@ -159,7 +159,7 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     MessageBox.Show("Выберите проект!");
                     return;
-                }    
+                }
                 Task.IdStatus = 1;
                 Task.StatusTitle = "Выдана";
                 if (Task.Id == 0)

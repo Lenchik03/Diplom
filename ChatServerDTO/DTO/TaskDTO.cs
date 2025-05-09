@@ -56,9 +56,33 @@ namespace ChatServerDTO.DTO
 
             //if (task.IdProjectNavigation != null)
             //    result.Project = (ProjectDTO)task.IdProjectNavigation;
-
-            if (task.IdStatusNavigation != null)
-                result.StatusTitle = task.IdStatusNavigation.Title;
+            if(task.TaskForUsers.Count > 0)
+            {
+                if (task.TaskForUsers.Where(s => s.IdStatus == 2).Count() == task.TaskForUsers.Count)
+                {
+                    result.IdStatus = 2;
+                    result.StatusTitle = "В процессе";
+                }
+                else if (task.TaskForUsers.Where(s => s.IdStatus == 3).Count() == task.TaskForUsers.Count)
+                {
+                    result.IdStatus = 3;
+                    result.StatusTitle = "Выполнена";
+                }
+                else if (task.TaskForUsers.Where(s => s.IdStatus == 4).Count() == task.TaskForUsers.Count)
+                {
+                    result.IdStatus = 4;
+                    result.StatusTitle = "Удалена";
+                }
+                else
+                {
+                    result.IdStatus = 1;
+                    result.StatusTitle = "Выдана";
+                }
+            }
+            
+                
+            //if (task.IdStatusNavigation != null)
+            //    result.StatusTitle = task.IdStatusNavigation.Title;
 
             if (task.TaskForUsers.Count > 0)
             {
@@ -71,12 +95,7 @@ namespace ChatServerDTO.DTO
                 }).ToList();
                
             }
-            if (task.TaskForUsers.Count > 0)
-            {
-                var auser = ActiveUser.GetInstance().User;
-                if (auser != null)
-                result.UStatus = result.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle;
-            }
+            
 
                 return result;
         }

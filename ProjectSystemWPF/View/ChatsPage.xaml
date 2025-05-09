@@ -41,7 +41,7 @@
 
                     <StackPanel Margin="4">
                         <TextBlock Text="Поиск по названию" />
-                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Background="LightYellow"/>
 
                     </StackPanel>
 
@@ -54,7 +54,7 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="5">
                                         <Image Source="{Binding ImagePath}" Width="50" Height="50"/>
-                                        <Label Content="{Binding Title}"/>
+                                        <Label Content="{Binding Title}" Margin="10"/>
                                         <!--<Label Content="{Binding CountMess}"/>-->
                                     </StackPanel>
                                 </DataTemplate>

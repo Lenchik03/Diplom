@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChatServerDTO.DTO;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,26 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Markup;
-using System.Windows.Media;
+using System.Windows;
 
 namespace ProjectSystemWPF.Converters
 {
-    public class ConvertStatusToBrush : MarkupExtension, IValueConverter
+    public class ConvertTakeBtToVisible : MarkupExtension, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = (string)value;
-            if (status == "Выдана")
-                return Brushes.Yellow;
-
-            else if (status == "В процессе")
-                return Brushes.Green;
-
-            else if (status == "Выполнена")
-                return Brushes.Blue;
-
+            var mas = value as TaskDTO;
+            if (mas == null)
+                return Visibility.Collapsed;
             else
-                return Brushes.Gray;
+                return mas.UStatus == "Выдана" ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -33,7 +27,7 @@ namespace ProjectSystemWPF.Converters
             throw new NotImplementedException();
         }
 
-        static ConvertStatusToBrush instance = new();
+        static ConvertTakeBtToVisible instance = new();
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return instance;

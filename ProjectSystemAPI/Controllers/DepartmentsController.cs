@@ -26,7 +26,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet] 
         public async Task<ActionResult<IEnumerable<DepartmentDTO>>> GetDepartments()
         {
-            var deps = await _context.Departments.Include(s => s.Users).Include(s=>s.IdDirectorNavigation).Where(s => s.IsDeleted == false).ToListAsync();
+            var deps = await _context.Departments.Include(s => s.Users).Include(s=>s.IdDirectorNavigation).Include(s => s.IdMainDepNavigation).Include(s => s.InverseIdMainDepNavigation).Where(s => s.IsDeleted == false).ToListAsync();
             return Ok( deps.Select(s => (DepartmentDTO)s));
         }
 
