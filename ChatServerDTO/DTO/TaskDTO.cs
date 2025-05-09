@@ -1,9 +1,11 @@
 ﻿using ChatServerDTO.DB;
 using ChatServerDTO.DB;
+using ProjectSystemAPI.DB;
 using ProjectSystemAPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -30,6 +32,8 @@ namespace ChatServerDTO.DTO
         //public ProjectDTO? Project { get; set; }
 
         public string? StatusTitle { get; set; }
+
+        public string? UStatus { get; set; }
 
 
         public List<TaskUserStatus> TaskForUsers { get; set; } = new();
@@ -65,9 +69,16 @@ namespace ChatServerDTO.DTO
                     StatusId = s.IdStatus,
                     StatusTitle = s.IdStatusNavigation.Title
                 }).ToList();
+               
+            }
+            if (task.TaskForUsers.Count > 0)
+            {
+                var auser = ActiveUser.GetInstance().User;
+                if (auser != null)
+                result.UStatus = result.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle;
             }
 
-            return result;
+                return result;
         }
 
         public static explicit operator Task(TaskDTO taskDTO)

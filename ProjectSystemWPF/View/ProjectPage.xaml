@@ -89,15 +89,16 @@ ItemsSource="{Binding AllStatuses}"/>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             
                                                 <Label Content="{Binding Title}" Margin="5" FontSize="15"/>
                                                 <!--<Label Content="{Binding Executor}" FontSize="15"/>-->
-                                                <Label Content="{Binding StatusTitle}" Margin="5" FontSize="15"/>
+                                            <Label Grid.Column="1" Content="{Binding UStatus}" Margin="5" FontSize="15" Foreground="{Binding StatusTitle, Converter={c:ConvertStatusToBrush}}"/>
                                             
                                             
-                                                <Button Grid.Column="1" Margin="5" ToolTip="Взять"  Content="&#9654;" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.TakeTask}" CommandParameter="{Binding .}" />
-                                                <Button Grid.Column="2" Margin="5" ToolTip="Завершить"   Content="&#9989;" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.CompleteTask}" CommandParameter="{Binding .}"/>
+                                                <Button Grid.Column="2" Margin="5" ToolTip="Взять"  Content="&#9654;" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.TakeTask}" CommandParameter="{Binding .}" />
+                                                <Button Grid.Column="3" Margin="5" ToolTip="Завершить"   Content="&#9989;" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.CompleteTask}" CommandParameter="{Binding .}"/>
                                             
                                             
                                         </Grid>

@@ -28,7 +28,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("My/{idUser}")]
         public async Task<ActionResult<IEnumerable<TaskDTO>>> GetMyTasks(int idUser)
         {
-            var list = _context.TaskForUsers.Include(s => s.IdTaskNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdTaskNavigation).OrderByDescending(s => s.Id).ToList();
+            var list = _context.TaskForUsers.Include(s => s.IdTaskNavigation).ThenInclude(s => s.IdCreatorNavigation).Include(s => s.IdTaskNavigation).ThenInclude(s => s.IdStatusNavigation).Include(s => s.IdTaskNavigation).ThenInclude(s => s.IdProjectNavigation).Include(s => s.IdTaskNavigation).ThenInclude(s => s.TaskForUsers).ThenInclude(s => s.IdUserNavigation).Include(s => s.IdTaskNavigation).ThenInclude(s => s.TaskForUsers).ThenInclude(s => s.IdStatusNavigation).AsNoTracking().Where(s => s.IdUser == idUser).Select(s => s.IdTaskNavigation).OrderByDescending(s => s.Id).ToList();
             return Ok(list.Select(s => (TaskDTO)s).OrderByDescending(s => s.Id));
             /*var list = _context.Tasks.Include(d=>d.TaskForUsers)
                 .Where(s=>s.TaskForUsers.FirstOrDefault(u=>u.Id == idUser) != null)

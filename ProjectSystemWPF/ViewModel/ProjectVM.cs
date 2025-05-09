@@ -13,6 +13,10 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using ToastNotifications;
+using ToastNotifications.Lifetime;
+using ToastNotifications.Messages;
+using ToastNotifications.Position;
 
 namespace ProjectSystemWPF.ViewModel
 {
@@ -97,10 +101,10 @@ namespace ProjectSystemWPF.ViewModel
 
             TakeTask = new CommandParameter<TaskDTO>(async (TaskDTO task) =>
             {
-                task.IdStatus = 2;
-                task.StatusTitle = "В процессе";
-                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 2;
-                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "В процессе";
+                //task.IdStatus = 2;
+                //task.StatusTitle = "В процессе";
+                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 2;
+                //task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "В процессе";
                 string arg = JsonSerializer.Serialize(task, REST.Instance.options);
                 var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
                     new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -130,7 +134,22 @@ namespace ProjectSystemWPF.ViewModel
                 try
                 {
                     responce.EnsureSuccessStatusCode();
-                    //MessageBox.Show("Проект успешно обновлен!");
+                    Notifier notifier = new Notifier(cfg =>
+                    {
+                        cfg.PositionProvider = new WindowPositionProvider(
+                            parentWindow: System.Windows.Application.Current.MainWindow,
+                            corner: Corner.TopRight,
+                            offsetX: 10,
+                            offsetY: 10);
+
+                        cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                            notificationLifetime: TimeSpan.FromSeconds(3),
+                            maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+
+                        cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
+                    });
+
+                    notifier.ShowInformation($"Задача {task.Title} успешно завершена!");
 
                 }
                 catch (Exception ex)
