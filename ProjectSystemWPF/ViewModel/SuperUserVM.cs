@@ -1,4 +1,5 @@
 ﻿using ChatServerDTO.DB;
+using ChatServerDTO.DTO;
 using MaterialDesignColors;
 using MaterialDesignColors.Recommended;
 using ProjectSystemAPI.DB;
@@ -39,6 +40,7 @@ namespace ProjectSystemWPF.ViewModel
 
         }
         ObservableCollection<DepartmentDTO> allDepartments = new();
+        ObservableCollection<ProjectDTO> projects = new();
         ObservableCollection<UserDTO> allEmployees = new();
         public bool CanEdit
         {
@@ -212,7 +214,9 @@ namespace ProjectSystemWPF.ViewModel
             TransferClick = new VmCommand(async () =>
                 {
                     TransferUserWindow transferUserWindow = new TransferUserWindow(Employee);
-                    transferUserWindow.Show();
+                    transferUserWindow.ShowDialog();
+                    GetLists();
+                    CreateExpanders();
                 });
             test = new VmCommand(() =>
             {
@@ -221,20 +225,64 @@ namespace ProjectSystemWPF.ViewModel
             });
             DeleteEmployee = new VmCommand(async () =>
             {
-                if (Employee == null)
-                    MessageBox.Show("Выберите сотрудника для увольнения!");
-                else
+                if (MessageBox.Show("Увольнение сотрудника", "Вы уверены?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    if (Employee.Id == Department.IdDirector)
+                    if (Employee == null)
+                        MessageBox.Show("Выберите сотрудника для увольнения!");
+                    else
                     {
-                        Department.Director = null;
-                        Department.IdDirector = null;
-                        string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
-                        var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
-                            new StringContent(arg1, Encoding.UTF8, "application/json"));
+                        if (Employee.Id == Department.IdDirector)
+                        {
+                            Department.Director = null;
+                            Department.IdDirector = null;
+                            string arg1 = JsonSerializer.Serialize(Department, REST.Instance.options);
+                            var responce1 = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
+                                new StringContent(arg1, Encoding.UTF8, "application/json"));
+                            try
+                            {
+                                responce1.EnsureSuccessStatusCode();
+                                //MessageBox.Show("Пользователь успешно обновлен!");
+
+                            }
+                            catch (Exception ex)
+                            {
+                                //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                                return;
+                            }
+
+                        }
+                        var userprojects = projects.Where(s => s.IdCreator == Employee.Id).ToList();
+                        GetDefaultUser();
+                        if (userprojects.Count > 0)
+                        {
+                            foreach (var project in userprojects)
+                            {
+                                project.IdCreator = 59;
+                                project.Creator = defaultUser;
+                                string arg1 = JsonSerializer.Serialize(project, REST.Instance.options);
+                                var responce1 = await REST.Instance.client.PutAsync($"Projects/{project.Id}",
+                                    new StringContent(arg1, Encoding.UTF8, "application/json"));
+                                try
+                                {
+                                    responce1.EnsureSuccessStatusCode();
+                                    //MessageBox.Show("Пользователь успешно обновлен!");
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                                    return;
+                                }
+                            }
+                        }
+                        Employee.IsDeleted = true;
+
+                        string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
+                        var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
+                            new StringContent(arg, Encoding.UTF8, "application/json"));
                         try
                         {
-                            responce1.EnsureSuccessStatusCode();
+                            responce.EnsureSuccessStatusCode();
                             //MessageBox.Show("Пользователь успешно обновлен!");
 
                         }
@@ -244,48 +292,62 @@ namespace ProjectSystemWPF.ViewModel
                             return;
                         }
 
-                    }
-                    
-                    Employee.IsDeleted = true;
-                    string arg = JsonSerializer.Serialize(Employee, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Users/UpdateUser",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
-                    try
-                    {
-                        responce.EnsureSuccessStatusCode();
-                        //MessageBox.Show("Пользователь успешно обновлен!");
+                        Employee = new UserDTO();
 
                     }
-                    catch (Exception ex)
-                    {
-                        //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
-                        return;
-                    }
-
-                    Employee = new UserDTO();
-
+                    GetLists();
+                    CreateExpanders();
                 }
-                GetLists();
-                CreateExpanders();
             });
 
             
 
             DeleteDepartment = new VmCommand(async () =>
             {
-                if (Department == null)
-                    MessageBox.Show("Выберите отдел для удаления!");
-                if (Department.ChildDepartments != null)
+                if (MessageBox.Show("Удаление отдела", "Вы уверены?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    if (Department.ChildDepartments.Count != 0)
+
+                    if (Department == null)
+                        MessageBox.Show("Выберите отдел для удаления!");
+                    if (Department.ChildDepartments != null)
                     {
-                        foreach (var dep in Department.ChildDepartments)
+                        if (Department.ChildDepartments.Count != 0)
                         {
-                            if (dep.Users.Count != 0)
+                            foreach (var dep in Department.ChildDepartments)
                             {
-                                MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их");
-                                return;
+                                if (dep.Users.Count != 0)
+                                {
+                                    MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их");
+                                    return;
+                                }
+                                else
+                                {
+                                    Department.IsDeleted = true;
+                                    string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
+                                    var responce = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
+                                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                                    try
+                                    {
+                                        responce.EnsureSuccessStatusCode();
+                                        //MessageBox.Show("Пользователь успешно обновлен!");
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
+                                        return;
+                                    }
+
+                                    Department = new DepartmentDTO();
+                                }
                             }
+                        }
+
+                        else
+                        {
+                            if (Department.Users.Count != 0)
+                                MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их!");
+
                             else
                             {
                                 Department.IsDeleted = true;
@@ -303,40 +365,13 @@ namespace ProjectSystemWPF.ViewModel
                                     //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
                                     return;
                                 }
-
                                 Department = new DepartmentDTO();
                             }
                         }
                     }
-
-                    else
-                    {
-                        if (Department.Users.Count != 0)
-                            MessageBox.Show("Сначала переведите сотрудников в другие отделы или увольте их!");
-
-                        else
-                        {
-                            Department.IsDeleted = true;
-                            string arg = JsonSerializer.Serialize(Department, REST.Instance.options);
-                            var responce = await REST.Instance.client.PutAsync($"Departments/{Department.Id}",
-                                new StringContent(arg, Encoding.UTF8, "application/json"));
-                            try
-                            {
-                                responce.EnsureSuccessStatusCode();
-                                //MessageBox.Show("Пользователь успешно обновлен!");
-
-                            }
-                            catch (Exception ex)
-                            {
-                                //MessageBox.Show("Ошибка! Обновление пользователя приостановлено!");
-                                return;
-                            }
-                            Department = new DepartmentDTO();
-                        }
-                    }
+                    GetLists();
+                    CreateExpanders();
                 }
-                GetLists();
-                CreateExpanders();
             });
 
             CanEditClick = new VmCommand(() =>
@@ -477,7 +512,9 @@ namespace ProjectSystemWPF.ViewModel
                             try
                             {
                                 responce.EnsureSuccessStatusCode();
-                                MessageBox.Show("Сотрудник был добавлен");
+                                    MessageBox.Show("Сотрудник был добавлен");
+                                
+                                    
 
 
                                 if (Employee.IdRole == 1 || Employee.IdRole == 2)
@@ -506,7 +543,7 @@ namespace ProjectSystemWPF.ViewModel
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show("Произошла ошибка!");
+                                MessageBox.Show(await responce.Content.ReadAsStringAsync());
                                 return;
                             }
 
@@ -603,7 +640,21 @@ namespace ProjectSystemWPF.ViewModel
             }
             return false;
         }
+        UserDTO defaultUser = null;
+        public async void GetDefaultUser()
+        {
+            var result = await REST.Instance.client.GetAsync($"Users/{59}");
+            //todo not ok
 
+            if (result.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                defaultUser = await result.Content.ReadFromJsonAsync<UserDTO>(REST.Instance.options);
+            }
+        }
         public async void GetLists()
         {
             var searchRezult = allEmployees.Where(s => string.IsNullOrEmpty(search) ||
@@ -648,6 +699,18 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     var test = await result2.Content.ReadAsStringAsync();
                     Roles = await result2.Content.ReadFromJsonAsync<ObservableCollection<Role>>(REST.Instance.options);
+                }
+
+                var result3 = await REST.Instance.client.GetAsync("Projects");
+                //todo not ok
+
+                if (result3.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    return;
+                }
+                else
+                {
+                    projects = await result3.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
                 }
 
             }
@@ -698,7 +761,7 @@ namespace ProjectSystemWPF.ViewModel
                         Expanders.Add(depExp);
                         depExp.PreviewMouseDown += ExpanderClick;
                         depExp.Tag = dep;
-                        var users = dep.Users.Where(s => s.IdRole == 3);
+                        var users = dep.Users.Where(s => s.IdRole == 3 && s.IsDeleted == false);
                         //if (users.Where(s => string.IsNullOrEmpty(search) ||
                         //(s.FirstName.Contains(search) ||
                         //s.LastName.Contains(search) ||
@@ -712,7 +775,7 @@ namespace ProjectSystemWPF.ViewModel
                         expanderPanel1.Children.Add(depExp);
                     }
                 }
-                var usersListBox = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3) };
+                var usersListBox = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3 && s.IsDeleted == false) };
                 usersListBox.SelectionChanged += UserSelected;
                 var usersExpander = new Expander { Margin = new Thickness(0, 0, 0, 20), Header = "Сотрудники", Background = Brushes.White, Content = usersListBox };
                 Expanders.Add(usersExpander);

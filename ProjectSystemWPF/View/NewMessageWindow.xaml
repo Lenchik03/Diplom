@@ -217,7 +217,7 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1">
-            <StackPanel>
+            <StackPanel IsEnabled="{Binding CanEditChat}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -228,22 +228,22 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                 </Grid>
                 
                 <StackPanel x:Name="stackpanel" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                <TreeViewItem Style="{DynamicResource treeView}" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                    <TreeViewItem Style="{DynamicResource treeView}" ScrollViewer.CanContentScroll="True"/>
                 </StackPanel>
             </StackPanel>
         </Border>
         <Border Background="LightYellow" Margin="10" BorderBrush="Black" BorderThickness="1" Grid.Column="1">
-            <StackPanel>
+            <StackPanel IsEnabled="{Binding CanEditChat}">
                 
                 <Label Content="Название чата:"/>
                 <TextBox KeyDown="KeyDown" Text="{Binding Chat.Title}" Margin="5"/>
                 <Label Content="Картинка чата:"/>
                 <Image Source="{Binding Chat.ImagePath}" Width="100" Height="100" Margin="10"/>
                 <Button Content="Выбрать" ToolTip="{Binding Chat.ImagePath}" 
-                        Height="30" Width="100" Command="{Binding SelectImage}"/>
+                        Height="30" Width="100" Command="{Binding SelectImage}" Visibility="{Binding EditVisible}"/>
 
 
-                <Button Command="{Binding NewChat}" Content="Сохранить" Width="150" Margin="5"/>
+                <Button Command="{Binding NewChat}" Content="Сохранить" Width="150" Margin="5" Visibility="{Binding EditVisible}"/>
             </StackPanel>
         </Border>
 

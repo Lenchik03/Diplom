@@ -80,26 +80,34 @@
                         <ListBox x:Name="listBox" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Messages}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding Message}" Background="LightYellow">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Vertical">
+                                    <StackPanel Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" Orientation="Vertical" MaxWidth="300" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}" Margin="5">
                                         <TextBlock Text="{Binding Sender.FIO}"
-                                                   Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}"
-                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                                   
+                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}" Margin="5"/>
                                         <TextBlock Text="{Binding Text}" 
+                                                   Margin="5,0,5,0"
+                                                   TextWrapping="Wrap"
                                                    Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}"
-                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        <TextBlock Text="{Binding DeletedTitle}"
                                                    HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"
-                                                   Visibility="{Binding Converter={c:ConvertChangeToVisible}}"/>
+                                                   Visibility="{Binding Converter={c:ConvertTextToVisible}}"/>
+                                        <TextBlock Text="{Binding DeletedTitle}"
+                                                   Margin="5,0,5,0"
+                                                   HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"
+                                                   Visibility="{Binding Converter={c:ConvertDeletedToVisible}}"/>
                                         <!--<TextBlock Text="{Binding DocumentTitle}" Background="{Binding IdSender, Converter={c:ConvertUserToBrush}}" TextAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>-->
                                         <Button Content="{Binding DocumentTitle}" 
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SaveFile}"
                                                 CommandParameter="{Binding .}" 
+                                                MaxWidth="200"
                                                 Visibility="{Binding Converter={c:ConvertFileToVisible}}" 
+                                                Margin="5"
                                                 HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
-                                        <TextBlock Text="{Binding DateOfSending}" Foreground="Gray" FontSize="8" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
+                                                
+                                        <TextBlock Text="{Binding DateOfSending, StringFormat=MM.dd.yy H:mm}" Margin="5" Foreground="Gray" FontSize="8" HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"/>
                                         <TextBlock Text="{Binding ChangedTitle}"
                                                    HorizontalAlignment="{Binding IdSender, Converter={c:ConvertUserToAlign}}"
-                                                   FontSize="10" Visibility="{Binding Converter={c:ConvertChangeToVisible}}"/>
+                                                   FontSize="10" Visibility="{Binding Converter={c:ConvertChangeToVisible}}"
+                                                   Margin="5,0,5,5"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -118,7 +126,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox KeyDown="KeyDown" Text="{Binding NewMessage.Text}" Background="LightYellow" Margin="3" TextWrapping="Wrap"/>
+                        <TextBox x:Name="textbox" KeyDown="KeyDown" Text="{Binding NewMessage.Text}" Background="LightYellow" Margin="3" TextWrapping="Wrap"/>
                         <Button Content="📎" Height="40" Width="50"
                                 Command="{Binding AttachFile}" Grid.Column="1">
                             <Button.Triggers>
@@ -136,7 +144,7 @@
                         
                         <Popup x:Name="popup1" StaysOpen="True" Placement="Bottom" MaxWidth="180"
          AllowsTransparency="True"  >
-                            <TextBlock Text="{Binding NewMessage.DocumentTitle}" TextWrapping="Wrap" Width="180" Background="LightPink" Opacity="0.8" />
+                            <TextBlock Text="{Binding NewMessage.DocumentTitle}" TextWrapping="Wrap" Width="180" Background="DodgerBlue" Opacity="0.8" />
                         </Popup>
                         <Button Content="➤" Height="40" Width="50" Command="{Binding SendMessage}" Grid.Column="2">
                             <Button.Triggers>

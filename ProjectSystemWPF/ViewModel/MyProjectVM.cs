@@ -1,6 +1,7 @@
 ﻿using ChatServerDTO.DB;
 using ChatServerDTO.DTO;
 using ProjectSystemAPI.DB;
+using ProjectSystemAPI.DTO;
 using ProjectSystemWPF.View;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ using System.Windows;
 
 namespace ProjectSystemWPF.ViewModel
 {
-    public class MyProjectVM: BaseVM
+    public class MyProjectVM : BaseVM
     {
         public VmCommand DeleteProject { get; set; }
         public VmCommand NewProject { get; set; }
@@ -37,6 +38,7 @@ namespace ProjectSystemWPF.ViewModel
                 Signal();
                 if (project != null)
                 {
+                    
                     GetTasks();
                 }
             }
@@ -85,25 +87,44 @@ namespace ProjectSystemWPF.ViewModel
             {
                 EditTaskPage editTaskPage = new EditTaskPage(new TaskDTO());
                 editTaskPage.ShowDialog();
-
+                await System.Threading.Tasks.Task.Delay(200).
+                              ContinueWith(async s => await GetTasks());
             });
 
             DeleteProject = new VmCommand(async () =>
             {
-                var projectTasks = Tasks.Where(s => s.IdProject == Project.Id);
-                foreach (var task in projectTasks)
-                {
-                    task.IdStatus = 4;
-                    task.StatusTitle = "Удалена";
+                //var projectTasks = Tasks.Where(s => s.IdProject == Project.Id);
+                //foreach (var task in projectTasks)
+                //{
+                //    task.IdStatus = 4;
+                //    task.StatusTitle = "Удалена";
 
-                    string arg1 = JsonSerializer.Serialize(task, REST.Instance.options);
-                    var responce1 = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
-                        new StringContent(arg1, Encoding.UTF8, "application/json"));
+                //    string arg1 = JsonSerializer.Serialize(task, REST.Instance.options);
+                //    var responce1 = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
+                //        new StringContent(arg1, Encoding.UTF8, "application/json"));
+                //    try
+                //    {
+                //        responce1.EnsureSuccessStatusCode();
+                //        // MessageBox.Show("Проект успешно обновлен!");
+
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        // MessageBox.Show("Ошибка! Обновление проекта приостановлено!");
+                //        return;
+                //    }
+                //}
+                if (MessageBox.Show("Удаление проекта", "Вы уверены?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    Project.IsDeleted = true;
+                    string arg = JsonSerializer.Serialize(Project, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Projects/{Project.Id}",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
                     try
                     {
-                        responce1.EnsureSuccessStatusCode();
+                        responce.EnsureSuccessStatusCode();
                         // MessageBox.Show("Проект успешно обновлен!");
-
+                        GetProjects();
                     }
                     catch (Exception ex)
                     {
@@ -111,44 +132,33 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
                 }
-                Project.IsDeleted = true;
-                string arg = JsonSerializer.Serialize(Project, REST.Instance.options);
-                var responce = await REST.Instance.client.PutAsync($"Projects/{Project.Id}",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
-                try
-                {
-                    responce.EnsureSuccessStatusCode();
-                    // MessageBox.Show("Проект успешно обновлен!");
-
-                }
-                catch (Exception ex)
-                {
-                    // MessageBox.Show("Ошибка! Обновление проекта приостановлено!");
-                    return;
-                }
             });
 
             DeleteTask = new VmCommand(async () =>
             {
                 if (SelectedTask != null)
                 {
-                    //SelectedTask.IdStatus = 4;
-                    //SelectedTask.StatusTitle = "Удалена";
-                    SelectedTask.TaskForUsers.ForEach(s => s.StatusId = 4);
-                    SelectedTask.TaskForUsers.ForEach(s => s.StatusTitle = "Удалена");
-                    string arg = JsonSerializer.Serialize(SelectedTask, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"TaskMs/{SelectedTask.Id}",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
-                    try
+                    if (MessageBox.Show("Удаление отдела", "Вы уверены?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        responce.EnsureSuccessStatusCode();
-                        //MessageBox.Show("Задача успешно обновлена!");
-
-                    }
-                    catch (Exception ex)
-                    {
-                        //MessageBox.Show("Ошибка! Обновление З приостановлено!");
-                        return;
+                        //SelectedTask.IdStatus = 4;
+                        //SelectedTask.StatusTitle = "Удалена";
+                        SelectedTask.TaskForUsers.ForEach(s => s.StatusId = 4);
+                        SelectedTask.TaskForUsers.ForEach(s => s.StatusTitle = "Удалена");
+                        string arg = JsonSerializer.Serialize(SelectedTask, REST.Instance.options);
+                        var responce = await REST.Instance.client.PutAsync($"TaskMs/{SelectedTask.Id}",
+                            new StringContent(arg, Encoding.UTF8, "application/json"));
+                        try
+                        {
+                            responce.EnsureSuccessStatusCode();
+                            //MessageBox.Show("Задача успешно обновлена!");
+                            await System.Threading.Tasks.Task.Delay(200).
+                                  ContinueWith(async s => await GetTasks());
+                        }
+                        catch (Exception ex)
+                        {
+                            //MessageBox.Show("Ошибка! Обновление З приостановлено!");
+                            return;
+                        }
                     }
                 }
                 else
@@ -182,7 +192,7 @@ namespace ProjectSystemWPF.ViewModel
 
         }
 
-        public async void GetTasks()
+        public async System.Threading.Tasks.Task GetTasks()
         {
             var result1 = await REST.Instance.client.GetAsync($"TaskMs?idProject={Project.Id}");
             //todo not ok
@@ -197,9 +207,29 @@ namespace ProjectSystemWPF.ViewModel
                 tasks = await result1.Content.ReadFromJsonAsync<ObservableCollection<TaskDTO>>(REST.Instance.options);
             }
 
-                Tasks = new ObservableCollection<TaskDTO>(tasks);
+            Tasks = new ObservableCollection<TaskDTO>(tasks);
+        }
+    
+
+         public UserDTO DefaultCreator = null;
+        public async System.Threading.Tasks.Task GetUserByIdAsync(int userId)
+        {
+            var result1 = await REST.Instance.client.GetAsync($"Users/{userId}");
+            //todo not ok
+
+            if (result1.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return;
+            }
+            else
+            {
+                var str = await result1.Content.ReadAsStringAsync();
+                DefaultCreator = await result1.Content.ReadFromJsonAsync<UserDTO>(REST.Instance.options);
             }
 
+            
+        }
+    
         internal void Select(ProjectDTO p)
         {
             EditProjectPage editProjectPage = new EditProjectPage(p);

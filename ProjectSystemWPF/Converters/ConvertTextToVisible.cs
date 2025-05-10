@@ -5,23 +5,21 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using System.Windows;
 
 namespace ProjectSystemWPF.Converters
 {
-    internal class ConvertFileToVisible : MarkupExtension, IValueConverter
+    public class ConvertTextToVisible : MarkupExtension, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var mas = value as MessageDTO;
             if (mas == null)
                 return Visibility.Collapsed;
-            else if (mas.IsDeleted == true)
-                return Visibility.Collapsed;
             else
-                return mas.Document != null ? Visibility.Visible : Visibility.Collapsed;
+                return mas.IsDeleted == false ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -29,10 +27,12 @@ namespace ProjectSystemWPF.Converters
             throw new NotImplementedException();
         }
 
-        static ConvertFileToVisible instance = new();
+        static ConvertTextToVisible instance = new();
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return instance;
         }
     }
+
+
 }

@@ -29,6 +29,7 @@ namespace ProjectSystemWPF.View
             InitializeComponent();
             (DataContext as ChatsVM).SetDispatcher(Dispatcher);
                  ((INotifyCollectionChanged)listBox.Items).CollectionChanged += Items_CollectionChanged;
+            
         }
 
         private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -47,7 +48,7 @@ namespace ProjectSystemWPF.View
             var p = list.SelectedItem as ChatDTO;
             if (p != null)
             {
-                if(p.IdCreator == ActiveUser.GetInstance().User.Id)
+                //if(p.IdCreator == ActiveUser.GetInstance().User.Id)
                     ((ChatsVM)DataContext).Select(p);
             }
                 
@@ -83,7 +84,9 @@ namespace ProjectSystemWPF.View
         {
             if (e.Key == Key.Enter)
             {
+                (DataContext as ChatsVM).SetMessageText(textbox);
                 ((ChatsVM)DataContext).SendMessage?.Execute(null);
+                
             }
         }
     }

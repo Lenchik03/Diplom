@@ -133,7 +133,7 @@ namespace ProjectSystemAPI.Controllers
             {
                 foreach (var d in deps)
                 {
-                    foreach (var usr in users.Where(s => s.IdDepartment == d.Id))
+                    foreach (var usr in users.Where(s => s.IdDepartment == d.Id && s.Id != 6 && s.Id != 59))
                     {
                         exs.Add(usr);
                     }
@@ -142,7 +142,7 @@ namespace ProjectSystemAPI.Controllers
             }
             else
             {
-                foreach (var usr in dbContext.Users.Where(s => s.IdDepartment == dep.Id))
+                foreach (var usr in dbContext.Users.Where(s => s.IdDepartment == dep.Id && s.Id != 6 && s.Id != 59))
                 {
                     exs.Add(usr);
                 }
@@ -164,7 +164,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpPost("AddNewUser")]
         public ActionResult<UserDTO> AddNewUser(UserDTO user)
         {
-            var user1 = dbContext.Users.FirstOrDefault(s => s.Email == user.Email);
+            var user1 = dbContext.Users.FirstOrDefault(s => s.Email == user.Email && s.IsDeleted == false);
             if (user1 == null)
             {
                 string str = GetPassword.GetPass();
@@ -223,7 +223,7 @@ namespace ProjectSystemAPI.Controllers
         [HttpGet("GetAllUsers")]
         public async Task<IEnumerable<UserDTO>> GetAllUsers()
         {
-            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).Where(s => s.IsDeleted == false).OrderByDescending(s => s.Id).ToList();
+            var users = dbContext.Users.Include(s => s.IdRoleNavigation).Include(s => s.IdDepartmentNavigation).ThenInclude(s => s.InverseIdMainDepNavigation).Where(s => s.IsDeleted == false && s.Id != 6 && s.Id != 59).OrderByDescending(s => s.Id).ToList();
             return users.Select(s => (UserDTO)s);
         }
 

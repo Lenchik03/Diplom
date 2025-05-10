@@ -17,7 +17,7 @@ namespace ChatServerDTO.DTO
 
         public int IdChat { get; set; }
 
-        public string Text { get; set; } = null!;
+        public string? Text { get; set; } = string.Empty;
 
         public int IdSender { get; set; }
 
@@ -28,8 +28,8 @@ namespace ChatServerDTO.DTO
         public bool? IsChanged { get; set; } = false;
 
         public bool? IsDeleted { get; set; } = false;
-        public string ChangedTitle { get; set; }
-        public string DeletedTitle { get; set; }
+        public string? ChangedTitle { get; set; } = "";
+        public string? DeletedTitle { get; set; } = "";
         //public ChatDTO Chat { get; set; } = null!;
 
         public UserDTO? Sender { get; set; }

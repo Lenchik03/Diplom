@@ -27,6 +27,11 @@ namespace ProjectSystemWPF.ViewModel
         public ObservableCollection<DepartmentDTO> MainDepartments { get; set; } = new();
         public ObservableCollection<DepartmentDTO> Departments { get; set; } = new();
         public ObservableCollection<Role> Roles { get; set; } = new();
+        public bool CanEditChat
+        { get => canEditChat;
+            set { canEditChat = value;
+                Signal();
+            } }
         public ObservableCollection<UserDTO> Employees
         {
             get => employees;
@@ -51,7 +56,16 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
         public VmCommand NewChat { get; set; }
-        
+        public Visibility EditVisible
+        {
+            get => editVisible;
+            set { editVisible = value;
+                Signal();
+            }
+        }
+
+
+
         public VmCommand SelectImage { get; set; }
         ObservableCollection<DepartmentDTO> allDepartments = new();
         ObservableCollection<UserDTO> allEmployees = new();
@@ -64,6 +78,8 @@ namespace ProjectSystemWPF.ViewModel
         public MessageVM()
         {
             GetLists();
+            
+
             SelectImage = new VmCommand(async () =>
             {
                 var openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -74,6 +90,7 @@ namespace ProjectSystemWPF.ViewModel
                     var fileContent = await File.ReadAllBytesAsync(filePath);
                     Chat.ImagePath = fileContent;
                     Chat.ImageSourse = filePath;
+                    Signal(nameof(Chat.ImageSourse));
                 }
             });
             NewChat = new VmCommand(async () =>
@@ -91,7 +108,23 @@ namespace ProjectSystemWPF.ViewModel
                         responce.EnsureSuccessStatusCode();
                         Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
                         Signal(nameof(Chat));
+
+                        selectedUser.Add(ActiveUser.GetInstance().User);
+                        string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
+                        var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
+                            new StringContent(arg1, Encoding.UTF8, "application/json"));
+                        try
+                        {
+                            responce.EnsureSuccessStatusCode();
+                            //MessageBox.Show("Отдел был добавлен!");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Произошла ошибка при добавлении участников!");
+                            return;
+                        }
                         //MessageBox.Show("Отдел был добавлен!");
+                        
                     }
                     catch (Exception ex)
                     {
@@ -99,20 +132,7 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
 
-                    selectedUser.Add(ActiveUser.GetInstance().User);
-                    string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
-                    var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
-                        new StringContent(arg1, Encoding.UTF8, "application/json"));
-                    try
-                    {
-                        responce.EnsureSuccessStatusCode();
-                        //MessageBox.Show("Отдел был добавлен!");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Произошла ошибка при добавлении участников!");
-                        return;
-                    }
+                    
                 }
                 else
                 {
@@ -122,7 +142,23 @@ namespace ProjectSystemWPF.ViewModel
                     try
                     {
                         responce.EnsureSuccessStatusCode();
-                        MessageBox.Show("Чат успешно обновлен!");
+                        
+                        selectedUser.Add(ActiveUser.GetInstance().User);
+                        string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
+                        var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
+                            new StringContent(arg1, Encoding.UTF8, "application/json"));
+                        try
+                        {
+                            responce.EnsureSuccessStatusCode();
+                            MessageBox.Show("Чат успешно обновлен!");
+                            //MessageBox.Show("Отдел был добавлен!");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Произошла ошибка при добавлении участников!");
+                            return;
+                        }
+                        
                     }
                     catch (Exception ex)
                     {
@@ -130,20 +166,7 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
 
-                    selectedUser.Add(ActiveUser.GetInstance().User);
-                    string arg1 = JsonSerializer.Serialize(selectedUser, REST.Instance.options);
-                    var responce1 = await REST.Instance.client.PostAsync($"Chats/AddNewMembers/{Chat.Id}",
-                        new StringContent(arg1, Encoding.UTF8, "application/json"));
-                    try
-                    {
-                        responce.EnsureSuccessStatusCode();
-                        //MessageBox.Show("Отдел был добавлен!");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Произошла ошибка при добавлении участников!");
-                        return;
-                    }
+                    
                 }
                 newMessageWindow.Close();
                 GetLists();
@@ -280,6 +303,8 @@ namespace ProjectSystemWPF.ViewModel
         }
         NewMessageWindow newMessageWindow;
         private ChatDTO chat1 = new();
+        private bool canEditChat = true;
+        private Visibility editVisible = Visibility.Visible;
 
         internal void SetWindow(NewMessageWindow newMessageWindow)
         {
@@ -288,7 +313,14 @@ namespace ProjectSystemWPF.ViewModel
 
         internal void GetChat(ChatDTO chat)
         {
-            Chat = chat; 
+            Chat = chat;
+            if (Chat.IdCreator != null)
+            {
+                EditVisible = Chat.IdCreator == ActiveUser.GetInstance().User.Id ? Visibility.Visible : Visibility.Collapsed;
+                CanEditChat = Chat.IdCreator == ActiveUser.GetInstance().User.Id ? true : false;
+                
+            }
+                
             Loaded?.Invoke(this, null);
         }
     }

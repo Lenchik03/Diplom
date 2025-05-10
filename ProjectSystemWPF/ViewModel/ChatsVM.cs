@@ -22,6 +22,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
@@ -172,22 +173,25 @@ namespace ProjectSystemWPF.ViewModel
 
             DeleteChat = new VmCommand(async () =>
             {
-                Chat.IsDeleted = true;
-                string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
-                var responce = await REST.Instance.client.PutAsync($"Chats/{Chat.Id}",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
-                try
+                if (MessageBox.Show("Удаление чата", "Вы уверены?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    responce.EnsureSuccessStatusCode();
-                    //Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
-                    MessageBox.Show("Чат успешно удален!");
+                    Chat.IsDeleted = true;
+                    string arg = JsonSerializer.Serialize(Chat, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Chats/{Chat.Id}",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce.EnsureSuccessStatusCode();
+                        //Chat = await responce.Content.ReadFromJsonAsync<ChatDTO>(REST.Instance.options);
+                        MessageBox.Show("Чат успешно удален!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Произошла ошибка");
+                        return;
+                    }
+                    GetChats();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Произошла ошибка");
-                    return;
-                }
-                GetChats();
             });
 
             AttachFile = new VmCommand( async () =>
@@ -215,6 +219,7 @@ namespace ProjectSystemWPF.ViewModel
                         NewMessage.IdSender = ActiveUser.GetInstance().User.Id;
                         NewMessage.IdChat = Chat.Id;
                         NewMessage.DateOfSending = DateTime.Now;
+                      
                         //Message.Chat = Chat;
                         if (NewMessage.Document != null || NewMessage.Text != "")
                         {
@@ -243,19 +248,23 @@ namespace ProjectSystemWPF.ViewModel
                     //message.Chat = chat;
                     //message.IdSender = sender.Id;
                     //message.Sender = sender;
-                    message.IsChanged = true;
-                    string arg = JsonSerializer.Serialize(message, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
+                    NewMessage.IsChanged = true;
+                    
+                    Signal(nameof(NewMessage));
+                    string arg = JsonSerializer.Serialize(NewMessage, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"Messages/{NewMessage.Id}",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
                     try
                     {
                         responce.EnsureSuccessStatusCode();
+                        await System.Threading.Tasks.Task.Delay(200).
+                              ContinueWith(async s => await GetMessageAsync());
                         //MessageBox.Show("Задача успешно обновлена!");
-
+                        NewMessage = new MessageDTO();
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show("Ошибка! Обновление задачи приостановлено!");
+                        MessageBox.Show("Ошибка!");
                         return;
                     }
                 }
@@ -370,19 +379,21 @@ namespace ProjectSystemWPF.ViewModel
         internal async System.Threading.Tasks.Task EditMessageAsync(MessageDTO message)
         {
             NewMessage = message;
-
         }
 
         internal async System.Threading.Tasks.Task DeleteMessageAsync(MessageDTO message)
         {
             message.IsDeleted = true;
-
+            if (message.IsChanged == true)
+                message.IsChanged = false;
             string arg = JsonSerializer.Serialize(message, REST.Instance.options);
             var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
                 new StringContent(arg, Encoding.UTF8, "application/json"));
             try
             {
                 responce.EnsureSuccessStatusCode();
+                await System.Threading.Tasks.Task.Delay(200).
+                              ContinueWith(async s => await GetMessageAsync());
                 // MessageBox.Show("Проект успешно обновлен!");
 
             }
@@ -391,6 +402,13 @@ namespace ProjectSystemWPF.ViewModel
                 // MessageBox.Show("Ошибка! Обновление проекта приостановлено!");
                 return;
             }
+        }
+
+        public string Text;
+        internal void SetMessageText(TextBox textbox)
+        {
+            Text = textbox.Text;
+            NewMessage.Text = Text;
         }
     }
 }

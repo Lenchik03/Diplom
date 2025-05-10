@@ -121,6 +121,8 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     responce.EnsureSuccessStatusCode();
                     //MessageBox.Show("Проект успешно обновлен!");
+                    await System.Threading.Tasks.Task.Delay(200).
+                              ContinueWith(async s => await GetTasks());
 
                 }
                 catch (Exception ex)
@@ -134,37 +136,40 @@ namespace ProjectSystemWPF.ViewModel
             {
                 //task.IdStatus = 3;
                 //task.StatusTitle = "Выполнена";
-                
-                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 3;
-                task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "Выполнена";
-                string arg = JsonSerializer.Serialize(task, REST.Instance.options);
-                var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
-                    new StringContent(arg, Encoding.UTF8, "application/json"));
-                try
+                if (MessageBox.Show("Завершение задачи", "Вы уверены?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    responce.EnsureSuccessStatusCode();
-                    Notifier notifier = new Notifier(cfg =>
+                    task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusId = 3;
+                    task.TaskForUsers.FirstOrDefault(s => s.UserId == ActiveUser.GetInstance().User.Id).StatusTitle = "Выполнена";
+                    string arg = JsonSerializer.Serialize(task, REST.Instance.options);
+                    var responce = await REST.Instance.client.PutAsync($"TaskMs/{task.Id}",
+                        new StringContent(arg, Encoding.UTF8, "application/json"));
+                    try
                     {
-                        cfg.PositionProvider = new WindowPositionProvider(
-                            parentWindow: System.Windows.Application.Current.MainWindow,
-                            corner: Corner.TopRight,
-                            offsetX: 10,
-                            offsetY: 10);
+                        responce.EnsureSuccessStatusCode();
+                        Notifier notifier = new Notifier(cfg =>
+                        {
+                            cfg.PositionProvider = new WindowPositionProvider(
+                                parentWindow: System.Windows.Application.Current.MainWindow,
+                                corner: Corner.TopRight,
+                                offsetX: 10,
+                                offsetY: 10);
 
-                        cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                            notificationLifetime: TimeSpan.FromSeconds(3),
-                            maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+                            cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                                notificationLifetime: TimeSpan.FromSeconds(3),
+                                maximumNotificationCount: MaximumNotificationCount.FromCount(5));
 
-                        cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
-                    });
+                            cfg.Dispatcher = System.Windows.Application.Current.Dispatcher;
+                        });
 
-                    notifier.ShowInformation($"Задача {task.Title} успешно завершена!");
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ошибка!");
-                    return;
+                        notifier.ShowInformation($"Задача {task.Title} успешно завершена!");
+                        await System.Threading.Tasks.Task.Delay(200).
+                                  ContinueWith(async s => await GetTasks());
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка!");
+                        return;
+                    }
                 }
             });
 
@@ -229,7 +234,7 @@ namespace ProjectSystemWPF.ViewModel
         //    }
         //}
 
-        public async void GetTasks()
+        public async System.Threading.Tasks.Task GetTasks()
         {
             var result1 = await REST.Instance.client.GetAsync($"TaskMs/My/{ActiveUser.GetInstance().User.Id}");
             //todo not ok

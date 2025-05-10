@@ -40,7 +40,7 @@ namespace ProjectSystemWPF.ViewModel
             }
             else
             {
-                var projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
+                Projects = await result.Content.ReadFromJsonAsync<ObservableCollection<ProjectDTO>>(REST.Instance.options);
                 
             }           
             
@@ -52,6 +52,7 @@ namespace ProjectSystemWPF.ViewModel
         {
             EditSUPP editSUPP = new EditSUPP(p);
             editSUPP.ShowDialog();
+            GetProjects();
         }
     }
 }

@@ -18,8 +18,10 @@ namespace ProjectSystemWPF.Converters
             var mas = value as MessageDTO;
             if (mas == null)
                 return Visibility.Collapsed;
+            else if (mas.IsDeleted == true)
+                return Visibility.Collapsed;
             else
-                return mas.IsChanged != null ? Visibility.Visible : Visibility.Collapsed;
+                return mas.IsChanged == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

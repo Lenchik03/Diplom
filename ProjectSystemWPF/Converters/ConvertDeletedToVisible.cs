@@ -19,7 +19,7 @@ namespace ProjectSystemWPF.Converters
             if (mas == null)
                 return Visibility.Collapsed;
             else
-                return mas.IsDeleted != null ? Visibility.Visible : Visibility.Collapsed;
+                return mas.IsDeleted == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
