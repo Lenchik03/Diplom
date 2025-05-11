@@ -240,7 +240,7 @@ namespace ProjectSystemWPF.ViewModel
                 var t = maindep.Users.Where(s => s.IsDeleted == false).ToList();
                 if (t.Count != 0)
                 {
-                    foreach (var emp in maindep.Users.Where(s => s.IdRole != 4 && s.IsDeleted == false))
+                    foreach (var emp in maindep.Users.Where(s => s.IdRole != 4 && s.Id != 59 && s.IsDeleted == false))
                     {
                         if (Chat != null && Chat.ChatUsers.FirstOrDefault(s=>s.IdUser == emp.Id) != null)
                             emp.Selected = true;
@@ -257,7 +257,7 @@ namespace ProjectSystemWPF.ViewModel
                             TreeViewItem treeViewItem = new TreeViewItem { DataContext = dep, Style = controlStyle };
                             treeViewItem.Tag = dep;
                             treeViewItem.Header = dep.Title;
-                            foreach (var emps in dep.Users.Where(s => s.IdRole != 4 && s.IsDeleted == false))
+                            foreach (var emps in dep.Users.Where(s => s.IdRole != 4 && s.Id != 59 && s.IsDeleted == false))
                             {
                                 if (Chat != null && Chat.ChatUsers.FirstOrDefault(s => s.IdUser == emps.Id) != null)
                                     emps.Selected = true;
@@ -277,7 +277,7 @@ namespace ProjectSystemWPF.ViewModel
                 {
                     if (maindep.Users.Where(s => s.IsDeleted == false).ToList().Count != 0)
                     {
-                        foreach (var emp in maindep.Users.Where(s => s.IdRole != 4 && s.IsDeleted == false))
+                        foreach (var emp in maindep.Users.Where(s => s.IdRole != 4 && s.Id != 59 && s.IsDeleted == false))
                         {
                             if (Chat != null && Chat.ChatUsers.FirstOrDefault(s => s.IdUser == emp.Id) != null)
                                 emp.Selected = true;
