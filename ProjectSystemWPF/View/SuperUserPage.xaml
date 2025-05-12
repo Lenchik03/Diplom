@@ -20,12 +20,18 @@ FontFamily="{DynamicResource MaterialDesignFont}">
     <Page.Resources>
         <vm:SuperUserVM x:Key="superUserVM"/>
         <DataTemplate DataType="{x:Type m:UserDTO}">
-            <StackPanel Orientation="Horizontal" >
-                <TextBlock Text="{Binding FirstName}" Margin="0,0,5,0"/>
-                <TextBlock Text="{Binding LastName}" Margin="0,0,5,0"/>
-                <TextBlock Text="{Binding Patronymic}" Margin="0,0,5,0"/>
-                <TextBlock Text="{Binding Phone}"/>
-            </StackPanel>
+            <Grid Tag="{Binding}" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding FirstName}" Margin="0,0,5,0"/>
+                <TextBlock Grid.Column="1" Text="{Binding LastName}" Margin="0,0,5,0"/>
+                <TextBlock Grid.Column="2" Text="{Binding Patronymic}" Margin="0,0,5,0"/>
+                <TextBlock Grid.Column="3" Text="{Binding Phone}"/>
+            </Grid>
         </DataTemplate>
     </Page.Resources>
 

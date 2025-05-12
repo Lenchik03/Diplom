@@ -46,7 +46,7 @@ UpdateSourceTrigger=PropertyChanged}"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
                             <Label Content="Сотрудники"/>
-                            <ListBox Grid.Row="1"  ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness ="1" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding AddExecutor}" HorizontalContentAlignment="Stretch" >
+                            <ListBox Height="200" Grid.Row="1"  ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness ="1" BorderBrush="Black" Background="#FFFDC401" Margin="5" ItemsSource="{Binding Executors}" SelectedItem="{Binding AddExecutor}" HorizontalContentAlignment="Stretch" >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Background="#FFFDC401" Margin="5">

@@ -24,6 +24,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ProjectSystemWPF.ViewModel
@@ -85,7 +86,9 @@ namespace ProjectSystemWPF.ViewModel
         public Visibility TransferVisible
         {
             get => transferVisible;
-            set { transferVisible = value;
+            set
+            {
+                transferVisible = value;
                 Signal();
             }
         }
@@ -149,7 +152,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 search = value;
                 GetLists();
-                
+
             }
         }
 
@@ -187,7 +190,7 @@ namespace ProjectSystemWPF.ViewModel
                 HiddenEditUser = Visibility.Visible;
                 Hidden = Visibility.Visible;
             }
-            
+
             if (ActiveUser.GetInstance().User.IdRole == 1 && (dep == Department || CheckSubDepartment(dep, Department)))
             {
                 HiddenEditDep = Visibility.Visible;
@@ -300,7 +303,7 @@ namespace ProjectSystemWPF.ViewModel
                 }
             });
 
-            
+
 
             DeleteDepartment = new VmCommand(async () =>
             {
@@ -458,19 +461,19 @@ namespace ProjectSystemWPF.ViewModel
                             {
                                 var shit = ActiveUser.GetInstance().User;
                                 var department = allDepartments.FirstOrDefault(s => s.Id == ActiveUser.GetInstance().User.IdDepartment);
-                                
 
 
-                                    //if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
-                                    if (department.ChildDepartments.Count == 0)
-                                    {
-                                        Employee.IdRole = 3;
-                                        // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
-                                        Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
-                                        //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
-                                    }
-                                    else
-                                    {
+
+                                //if (ActiveUser.GetInstance().User.IdDepartmentNavigation.InverseIdMainDepNavigation.Count == 0)
+                                if (department.ChildDepartments.Count == 0)
+                                {
+                                    Employee.IdRole = 3;
+                                    // Employee.IdRoleNavigation = Roles.FirstOrDefault(s => s.Id == 3);
+                                    Employee.IdDepartment = ActiveUser.GetInstance().User.IdDepartment;
+                                    //Employee.IdDepartmentNavigation = ActiveUser.GetInstance().User.IdDepartmentNavigation;
+                                }
+                                else
+                                {
                                     if (Department.IdDirector == null)
                                     {
 
@@ -487,9 +490,9 @@ namespace ProjectSystemWPF.ViewModel
                                     }
                                 }
 
-                                }
-                                
-                            
+                            }
+
+
                             if (ActiveUser.GetInstance().User.IdRole == 2)
                             {
                                 Employee.IdRole = 3;
@@ -512,9 +515,9 @@ namespace ProjectSystemWPF.ViewModel
                             try
                             {
                                 responce.EnsureSuccessStatusCode();
-                                    MessageBox.Show("Сотрудник был добавлен");
-                                
-                                    
+                                MessageBox.Show("Сотрудник был добавлен");
+
+
 
 
                                 if (Employee.IdRole == 1 || Employee.IdRole == 2)
@@ -559,7 +562,7 @@ namespace ProjectSystemWPF.ViewModel
                         return;
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show("Ошибка!");
                 }
@@ -621,10 +624,11 @@ namespace ProjectSystemWPF.ViewModel
             {
                 Employee = new();
 
+
             });
             NewDep = new VmCommand(() =>
             {
-                DepartmentDTO dep = new DepartmentDTO { IdMainDep = Department.Id};
+                DepartmentDTO dep = new DepartmentDTO { IdMainDep = Department.Id };
                 Department.ChildDepartments.Add(dep);
                 Department = dep;
                 DepDirector = null;
@@ -743,7 +747,7 @@ namespace ProjectSystemWPF.ViewModel
                     mheader = maindep.Title;
                 var mdepExp = new Expander { Header = mheader, BorderThickness = new Thickness(2), Background = Brushes.White, BorderBrush = brush };
                 Expanders.Add(mdepExp);
-                mdepExp.PreviewMouseDown += ExpanderClick;
+                mdepExp.PreviewMouseDown += UserSelected;
                 mdepExp.Tag = maindep;
                 StackPanel expanderPanel1 = new StackPanel();
                 foreach (var dep in Departments)
@@ -759,7 +763,7 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         var depExp = new Expander { Margin = new Thickness(20, 0, 0, 0), Header = header, Background = Brushes.White };
                         Expanders.Add(depExp);
-                        depExp.PreviewMouseDown += ExpanderClick;
+                        depExp.PreviewMouseDown += UserSelected;
                         depExp.Tag = dep;
                         var users = dep.Users.Where(s => s.IdRole == 3 && s.IsDeleted == false);
                         //if (users.Where(s => string.IsNullOrEmpty(search) ||
@@ -769,14 +773,14 @@ namespace ProjectSystemWPF.ViewModel
                         //s.Email.Contains(search) ||
                         //s.Phone.Contains(search))).Count() > 0)
                         //    depExp.IsExpanded = false;
-                        var list = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = users };
-                        list.SelectionChanged += UserSelected;
+                        var list = new ListBox { HorizontalContentAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(40, 0, 0, 0), ItemsSource = users };
+                        list.PreviewMouseDown += UserSelected;
                         depExp.Content = list;
                         expanderPanel1.Children.Add(depExp);
                     }
                 }
-                var usersListBox = new ListBox { Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3 && s.IsDeleted == false) };
-                usersListBox.SelectionChanged += UserSelected;
+                var usersListBox = new ListBox { HorizontalContentAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(40, 0, 0, 0), ItemsSource = maindep.Users.Where(s => s.IdRole == 3 && s.IsDeleted == false) };
+                usersListBox.PreviewMouseDown += UserSelected;
                 var usersExpander = new Expander { Margin = new Thickness(0, 0, 0, 20), Header = "Сотрудники", Background = Brushes.White, Content = usersListBox };
                 Expanders.Add(usersExpander);
                 expanderPanel1.Children.Add(usersExpander);
@@ -787,22 +791,39 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
 
-        private void UserSelected(object sender, SelectionChangedEventArgs e)
+        private void UserSelected(object sender, MouseButtonEventArgs e)
         {
-            if (e.AddedItems.Count > 0)
+            if (sender is Expander expander)
             {
-                Employee = e.AddedItems[0] as UserDTO;
-
+                Department = expander.Tag as DepartmentDTO;
+                Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector && s.IdRole != 4);
+                if (Employee == null)
+                    Employee = new UserDTO { LastName = "Директор не назначен" };
+                DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
             }
+            else
+            {
+                FrameworkElement grid = null;
+                if (e.OriginalSource is TextBlock block)
+                    grid = block.Parent as FrameworkElement;
+                else if (e.OriginalSource is Grid)
+                    grid = e.OriginalSource as Grid;
+                if (grid != null && grid.Tag != null)
+                    Employee = grid.Tag as UserDTO;
+            }
+            //if (e.AddedItems.Count > 0)
+            //{
+            //    Employee = e.AddedItems[0] as UserDTO;
+
+            //}
         }
 
-        private void ExpanderClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ExpanderClick(object sender, MouseButtonEventArgs e)
         {
-            Department = ((Expander)sender).Tag as DepartmentDTO;
-            Employee = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector && s.IdRole != 4);
-            if (Employee == null)
-                Employee = new UserDTO { LastName = "Директор не назначен" };
-            DepDirector = allEmployees.FirstOrDefault(s => s.Id == Department.IdDirector);
+        //    var dep = ((Expander)sender).Tag as DepartmentDTO;
+        //    if (Department == dep)
+        //        return;
+               
         }
         StackPanel stack1;
         private Visibility transferVisible;

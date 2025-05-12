@@ -91,6 +91,7 @@ namespace ProjectSystemWPF.ViewModel
                     Chat.ImagePath = fileContent;
                     Chat.ImageSourse = filePath;
                     Signal(nameof(Chat.ImageSourse));
+                    Signal(nameof(Chat));
                 }
             });
             NewChat = new VmCommand(async () =>
@@ -224,9 +225,8 @@ namespace ProjectSystemWPF.ViewModel
         private ChatDTO chat;
         private int countPart;
 
-        public StackPanel CreateTreeView(NewMessageWindow newMessageWindow)
+        public Control CreateTreeView(NewMessageWindow newMessageWindow)
         {
-            StackPanel panel = new StackPanel();
             var treeview = new TreeView();
 
             var controlStyle = newMessageWindow.FindResource("treeView") as Style;
@@ -288,9 +288,10 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 treeview.Items.Add(mtreeviewitem);
             }
-
-            panel.Children.Add(treeview);
-            return panel;
+            ScrollViewer scrollViewer = new ScrollViewer();
+            scrollViewer.Content = treeview;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+            return scrollViewer;
         }
 
         internal async System.Threading.Tasks.Task DoThingsAsync(List<UserDTO> selectedUser, bool result)
