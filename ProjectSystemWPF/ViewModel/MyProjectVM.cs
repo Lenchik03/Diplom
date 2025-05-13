@@ -87,8 +87,12 @@ namespace ProjectSystemWPF.ViewModel
             {
                 EditTaskPage editTaskPage = new EditTaskPage(new TaskDTO());
                 editTaskPage.ShowDialog();
+
                 await System.Threading.Tasks.Task.Delay(200).
                               ContinueWith(async s => await GetTasks());
+                Signal(nameof(SelectedTask.TaskForUsers));
+                Signal(nameof(SelectedTask));
+                Signal(nameof(Project));
             });
 
             DeleteProject = new VmCommand(async () =>
@@ -236,10 +240,11 @@ namespace ProjectSystemWPF.ViewModel
             editProjectPage.ShowDialog();
         }
 
-        internal void SelectTask(TaskDTO t)
+        internal async void SelectTask(TaskDTO t)
         {
             EditTaskPage editTaskPage = new EditTaskPage(t);
             editTaskPage.ShowDialog();
+            await GetTasks();
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using ChatServerDTO.DB;
+using System;
 
 namespace ChatServer
 {
@@ -68,10 +70,41 @@ namespace ChatServer
                     }
             });
 
+            
+
             //myHub.Clients.All.SendAsync("newMessage", message);
         }
+        public async System.Threading.Tasks.Task EditMessage(MessageDTO message, int chatId)
+        {
+            var chatUsers = await GetChatUsers(chatId);
+            string arg = JsonSerializer.Serialize(message, REST.Instance.options);
+            var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
+                new StringContent(arg, Encoding.UTF8, "application/json"));
+            try
+            {
+                responce.EnsureSuccessStatusCode();
+                
+            }
+            catch (Exception ex)
+            {
+            }
 
-        
+            chatUsers.Select(s => s.Id).ToList().ForEach(async s =>
+            {
+                if (clients.ContainsKey(s) && s != message.IdSender)
+                    try
+                    {
+                        await clients[s].SendAsync("editMessage", chatId);
+                    }
+                    catch (Exception e)
+                    {
+
+
+                    }
+            });
+        }
+
+
         static Dictionary<int, IClientProxy> clients = new();
         public async System.Threading.Tasks.Task RegisterAsync(int idUser)
         {

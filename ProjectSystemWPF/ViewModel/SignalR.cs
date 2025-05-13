@@ -114,6 +114,12 @@ namespace ProjectSystemWPF.ViewModel
                     notifier.ShowInformation($"Вам пришло новое сообщение в чате {chatTitle}");
                 });
             });
+            _connection.On<int>("editMessage", async chatId => {
+                if (ChatsVM.LastChatOpen.Chat?.Id == chatId)
+                {
+                    await ChatsVM.LastChatOpen.GetMessageAsync();
+                }
+            });
         }
 
 

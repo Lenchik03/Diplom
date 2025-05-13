@@ -34,6 +34,10 @@ namespace ProjectSystemWPF.ViewModel
 {
     public class ChatsVM : BaseVM
     {
+        public static ChatsVM LastChatOpen;
+
+       
+
         public VmCommand NewChat { get; set; }
         public string SearchText
         {
@@ -157,6 +161,7 @@ namespace ProjectSystemWPF.ViewModel
 
         public ChatsVM()
         {
+            LastChatOpen = this;
             GetChats();
             GetMessageAsync();
 
@@ -251,22 +256,21 @@ namespace ProjectSystemWPF.ViewModel
                     NewMessage.IsChanged = true;
                     
                     Signal(nameof(NewMessage));
-                    string arg = JsonSerializer.Serialize(NewMessage, REST.Instance.options);
-                    var responce = await REST.Instance.client.PutAsync($"Messages/{NewMessage.Id}",
-                        new StringContent(arg, Encoding.UTF8, "application/json"));
-                    try
+                    if (NewMessage.Document != null || NewMessage.Text != "")
                     {
-                        responce.EnsureSuccessStatusCode();
+                        System.Threading.Tasks.Task task = null;
+
+                        if (NewMessage.Id != 0)
+                        {
+                            task = _connection.SendAsync("EditMessage", NewMessage, Chat.Id);
+                        }
+                        await task;
                         await System.Threading.Tasks.Task.Delay(200).
-                              ContinueWith(async s => await GetMessageAsync());
-                        //MessageBox.Show("Задача успешно обновлена!");
+                          ContinueWith(async s => await GetMessageAsync());
+
                         NewMessage = new MessageDTO();
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка!");
-                        return;
-                    }
+                   
                 }
 
 
@@ -386,22 +390,20 @@ namespace ProjectSystemWPF.ViewModel
             message.IsDeleted = true;
             if (message.IsChanged == true)
                 message.IsChanged = false;
-            string arg = JsonSerializer.Serialize(message, REST.Instance.options);
-            var responce = await REST.Instance.client.PutAsync($"Messages/{message.Id}",
-                new StringContent(arg, Encoding.UTF8, "application/json"));
-            try
-            {
-                responce.EnsureSuccessStatusCode();
-                await System.Threading.Tasks.Task.Delay(200).
-                              ContinueWith(async s => await GetMessageAsync());
-                // MessageBox.Show("Проект успешно обновлен!");
 
-            }
-            catch (Exception ex)
-            {
-                // MessageBox.Show("Ошибка! Обновление проекта приостановлено!");
-                return;
-            }
+
+                System.Threading.Tasks.Task task = null;
+
+                if (message.Id != 0)
+                {
+                    task = _connection.SendAsync("EditMessage", message, Chat.Id);
+                }
+                await task;
+                await System.Threading.Tasks.Task.Delay(200).
+                  ContinueWith(async s => await GetMessageAsync());
+
+                NewMessage = new MessageDTO();
+            
         }
 
         public string Text;
