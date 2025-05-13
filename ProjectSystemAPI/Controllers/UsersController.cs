@@ -112,7 +112,7 @@ namespace ProjectSystemAPI.Controllers
         public ActionResult<List<UserDTO>> GetExecutorsByTask(int taskId)
         {
             var list = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).
-                Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Distinct().ToList();
+                Where(s => s.IdTask == taskId).AsNoTracking().Select(s => s.IdUserNavigation).Where(s => s.IsDeleted == false).Distinct().ToList();
             return Ok(list.Select(s => (UserDTO)s));
 
             //var result = dbContext.TaskForUsers.Include(s => s.IdTaskNavigation).Where(s => s.IdTask == taskId);
@@ -133,7 +133,7 @@ namespace ProjectSystemAPI.Controllers
             {
                 foreach (var d in deps)
                 {
-                    foreach (var usr in users.Where(s => s.IdDepartment == d.Id && s.Id != 6 && s.Id != 59))
+                    foreach (var usr in users.Where(s => s.IdDepartment == d.Id && s.Id != 6 && s.Id != 59 && s.IsDeleted == false))
                     {
                         exs.Add(usr);
                     }
@@ -142,7 +142,7 @@ namespace ProjectSystemAPI.Controllers
             }
             else
             {
-                foreach (var usr in dbContext.Users.Where(s => s.IdDepartment == dep.Id && s.Id != 6 && s.Id != 59))
+                foreach (var usr in dbContext.Users.Where(s => s.IdDepartment == dep.Id && s.Id != 6 && s.Id != 59 && s.IsDeleted == false))
                 {
                     exs.Add(usr);
                 }

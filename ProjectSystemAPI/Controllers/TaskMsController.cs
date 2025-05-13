@@ -39,7 +39,7 @@ namespace ProjectSystemAPI.Controllers
         }
 
         [HttpPost("AddNewExecutors/{id}")]
-        public async Task<ActionResult> AddNewExecutors(int id, [FromBody] List<UserDTO> executors)
+        public async Task<ActionResult<List<TaskUserStatus>>> AddNewExecutors(int id, [FromBody] List<UserDTO> executors)
         {
             var remove = _context.TaskForUsers.Where(s => s.IdTask == id);
             _context.TaskForUsers.RemoveRange(remove);
@@ -59,7 +59,13 @@ namespace ProjectSystemAPI.Controllers
                 _context.TaskForUsers.Add(taskForUser);
             }
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(_context.TaskForUsers.Where(s => s.IdTask ==  id).Select(s => new TaskUserStatus
+            {
+                FIO = $"{s.IdUserNavigation.LastName} {s.IdUserNavigation.FirstName.FirstOrDefault()}. {s.IdUserNavigation.Patronymic.FirstOrDefault()}.",
+                UserId = s.IdUser,
+                StatusId = s.IdStatus,
+                StatusTitle = s.IdStatusNavigation.Title
+            }));
         }
 
         [HttpGet("Filter/{id}")]

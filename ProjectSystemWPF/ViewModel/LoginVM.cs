@@ -58,53 +58,72 @@ namespace ProjectSystemWPF.ViewModel
                         }
                         else
                         {
-                            var user = await result.Content.ReadFromJsonAsync<ResponseTokenAndRole>(REST.Instance.options);
-                            ActiveUser.GetInstance().User = user.User;
-                            REST.Instance.SetToken(user.Token);
-                            var con = SignalR.Instance.CreateConnection();
-                            await con.SendAsync("RegisterAsync", ActiveUser.GetInstance().User.Id);
+                                var user = await result.Content.ReadFromJsonAsync<ResponseTokenAndRole>(REST.Instance.options);
+                                if(user.User.IsDeleted == false)
+                                {
+                                    ActiveUser.GetInstance().User = user.User;
+                                    REST.Instance.SetToken(user.Token);
+                                    var con = SignalR.Instance.CreateConnection();
+                                    await con.SendAsync("RegisterAsync", ActiveUser.GetInstance().User.Id);
+                                 }
+                                
+                            
+                            
+                            
                         }
 
                         if (Validator.TryValidateObject(this, new ValidationContext(this), null))
                         {
                             //var customer = UserRepository.Instance.Customer(Login, passwrdBox.Password);
-
-                            var user = ActiveUser.GetInstance().User;
-                            if (user.Id == 0)
+                            if(ActiveUser.GetInstance().User != null)
                             {
-                                MessageBox.Show("Неверный логин или пароль");
-                            }
+                                if (ActiveUser.GetInstance().User.IsDeleted == false)
+                                {
+                                    var user = ActiveUser.GetInstance().User;
+                                    if (user.Id == 0)
+                                    {
+                                        MessageBox.Show("Неверный логин или пароль");
+                                    }
 
+                                    else
+                                    {
+
+                                        if (user.IdRole == 3) // открытие страницы сотрудника
+                                        {
+                                            ProjectPage projectPage = new ProjectPage();
+                                            MainVM.Instance.CurrentPage = projectPage;
+                                            //страница полученных проектов 
+                                        }
+                                        else if (user.IdRole == 2)
+                                        {
+                                            //страница полученных проектов (от директора)
+                                            ProjectPage projectPage = new ProjectPage();
+                                            MainVM.Instance.CurrentPage = projectPage;
+                                        }
+                                        else if (user.IdRole == 4)
+                                        {
+                                            SuperUserPage superUserPage = new SuperUserPage();
+                                            MainVM.Instance.CurrentPage = superUserPage;
+                                        }
+
+                                        else // открытие страницы руководителя
+                                        {
+                                            //страница отправленных проектов (ты директор)
+                                            //SuperUserPage superUserPage = new SuperUserPage();
+                                            MyProjectPage myprojectPage = new MyProjectPage();
+                                            MainVM.Instance.CurrentPage = myprojectPage;
+                                        }
+
+                                    }
+                                }
+                                
+                            }
                             else
                             {
-
-                                if (user.IdRole == 3) // открытие страницы сотрудника
-                                {
-                                    ProjectPage projectPage = new ProjectPage();
-                                    MainVM.Instance.CurrentPage = projectPage;
-                                    //страница полученных проектов 
-                                }
-                                else if (user.IdRole == 2)
-                                {
-                                    //страница полученных проектов (от директора)
-                                    ProjectPage projectPage = new ProjectPage();
-                                    MainVM.Instance.CurrentPage = projectPage;
-                                }
-                                else if (user.IdRole == 4)
-                                {
-                                    SuperUserPage superUserPage = new SuperUserPage();
-                                    MainVM.Instance.CurrentPage = superUserPage;
-                                }
-
-                                else // открытие страницы руководителя
-                                {
-                                    //страница отправленных проектов (ты директор)
-                                    //SuperUserPage superUserPage = new SuperUserPage();
-                                    MyProjectPage myprojectPage = new MyProjectPage();
-                                    MainVM.Instance.CurrentPage = myprojectPage;
-                                }
-
+                                MessageBox.Show("Доступ запрещён!");
                             }
+
+
                         }
                     }
                     else

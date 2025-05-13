@@ -1,4 +1,5 @@
-﻿using ChatServerDTO.DTO;
+﻿using ChatServerDTO.DB;
+using ChatServerDTO.DTO;
 using MaterialDesignColors.Recommended;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using ProjectSystemAPI.DB;
@@ -115,6 +116,8 @@ namespace ProjectSystemWPF.ViewModel
             }
         }
 
+        List<TaskUserStatus> taskForUsers = new List<TaskUserStatus>();
+
         public EditTaskVM()
         {
             
@@ -145,6 +148,7 @@ namespace ProjectSystemWPF.ViewModel
                 else
                     MessageBox.Show("Выберите исполнителя!");
             });
+            
 
             Save = new VmCommand(async () =>
             {
@@ -194,7 +198,20 @@ namespace ProjectSystemWPF.ViewModel
                 }
                 else
                 {
-
+                    string arg1 = JsonSerializer.Serialize(SelectedExecutors, REST.Instance.options);
+                    var responce1 = await REST.Instance.client.PostAsync($"TaskMs/AddNewExecutors/{Task.Id}",
+                        new StringContent(arg1, Encoding.UTF8, "application/json"));
+                    try
+                    {
+                        responce1.EnsureSuccessStatusCode();
+                        taskForUsers = await responce1.Content.ReadFromJsonAsync<List<TaskUserStatus>>(REST.Instance.options);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Произошла ошибка при передаче задачи исполнителям!");
+                        return;
+                    }
+                    Task.TaskForUsers = taskForUsers;
                     string arg = JsonSerializer.Serialize(Task, REST.Instance.options);
                     var responce = await REST.Instance.client.PutAsync($"TaskMs/{Task.Id}",
                         new StringContent(arg, Encoding.UTF8, "application/json"));
@@ -209,19 +226,7 @@ namespace ProjectSystemWPF.ViewModel
                         MessageBox.Show("Ошибка! Обновление задачи приостановлено!");
                         return;
                     }
-                    string arg1 = JsonSerializer.Serialize(SelectedExecutors, REST.Instance.options);
-                    var responce1 = await REST.Instance.client.PostAsync($"TaskMs/AddNewExecutors/{Task.Id}",
-                        new StringContent(arg1, Encoding.UTF8, "application/json"));
-                    try
-                    {
-                        responce.EnsureSuccessStatusCode();
-
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Произошла ошибка при передаче задачи исполнителям!");
-                        return;
-                    }
+                   
                 }
                 editTaskPage.Close();
              });
