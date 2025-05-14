@@ -32,7 +32,7 @@ namespace ProjectSystemWPF.View
             var list = sender as ListBox;
             var p = list.SelectedItem as ProjectDTO;
             if (p != null)
-                ((MyProjectVM)DataContext).Select(p);
+                ((MyProjectVM)DataContext).SelectAsync(p);
         }
 
         private void EditTaskClick(object sender, MouseButtonEventArgs e)

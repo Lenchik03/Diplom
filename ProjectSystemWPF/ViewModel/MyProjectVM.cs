@@ -80,7 +80,7 @@ namespace ProjectSystemWPF.ViewModel
             {
                 EditProjectPage editProjectPage = new EditProjectPage(new ProjectDTO());
                 editProjectPage.ShowDialog();
-                GetProjects();
+                await GetProjects();
             });
 
             NewTask = new VmCommand(async () =>
@@ -234,10 +234,11 @@ namespace ProjectSystemWPF.ViewModel
             
         }
     
-        internal void Select(ProjectDTO p)
+        internal async System.Threading.Tasks.Task SelectAsync(ProjectDTO p)
         {
             EditProjectPage editProjectPage = new EditProjectPage(p);
             editProjectPage.ShowDialog();
+            await GetProjects();
         }
 
         internal async void SelectTask(TaskDTO t)

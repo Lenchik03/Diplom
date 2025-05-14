@@ -223,7 +223,7 @@ RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Label Content="Участнки чата:"/>
+                    <Label Content="Участники чата:"/>
                     <TextBlock Text="{Binding CountPart}" Grid.Column="1" Margin="5"/>
                 </StackPanel>
 

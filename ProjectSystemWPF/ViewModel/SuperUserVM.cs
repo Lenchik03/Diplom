@@ -741,7 +741,7 @@ namespace ProjectSystemWPF.ViewModel
                 //mdirector = allEmployees.FirstOrDefault(s => s.IdDepartment == maindep.Id);
                 //if (maindep.IdDirectorNavigation != null)
                 mdirector = maindep.Director;
-                if (mdirector != null)
+                if (mdirector != null && mdirector.IsDeleted == false)
                     mheader = $"{maindep.Title} - {mdirector.FIO}";
                 else
                     mheader = maindep.Title;
@@ -755,7 +755,7 @@ namespace ProjectSystemWPF.ViewModel
                     //director = allEmployees.FirstOrDefault(s => s.IdDepartment == dep.Id);
                     //if (dep.IdDirectorNavigation != null)
                     director = dep.Director;
-                    if (director != null)
+                    if (director != null && director.IsDeleted == false)
                         header = $"{dep.Title} - {director.FIO}";
                     else
                         header = dep.Title;
