@@ -244,7 +244,7 @@ namespace ProjectSystemWPF.ViewModel
                     {
                         if (Chat != null && Chat.ChatUsers.FirstOrDefault(s=>s.IdUser == emp.Id) != null)
                             emp.Selected = true;
-                        if (emp.Id != maindep.IdDirector)
+                        if (emp.Id == maindep.IdDirector)
                             mtreeviewitem.Items.Add(new TreeViewItem { DataContext = emp, Style = controlStyle, Tag = emp, Header = emp.FIO });
                     }
                 }
