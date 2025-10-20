@@ -21,6 +21,10 @@ namespace ProjectSystemWPF.ViewModel
     {
         HubConnection _connection;
         public string Address { get; set; } = "http://localhost:5147";
+
+        string token = "";
+
+        public void SetToken(string token) => this.token = token;
         public HubConnection CreateConnection()
         {
             if (_connection?.State == HubConnectionState.Connected)
@@ -35,7 +39,7 @@ namespace ProjectSystemWPF.ViewModel
                                 System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
                             }
             ).
-                        WithUrl(Address + "/chat").
+                        WithUrl(Address + $"/chat/access_token={token}").
             Build();
             
             _connection.StartAsync();

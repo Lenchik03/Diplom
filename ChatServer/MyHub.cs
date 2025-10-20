@@ -8,17 +8,19 @@ using System.Text;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using ChatServerDTO.DB;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatServer
 {
+    [Authorize]
     public class MyHub : Hub
     {
         public override System.Threading.Tasks.Task OnConnectedAsync()
         {
-            
+
             return base.OnConnectedAsync();
         }
-        private MyHub myHub;
+
         public async Task<ObservableCollection<UserDTO>> GetChatUsers(int chatId)
         {
             var result = await REST.Instance.client.GetAsync($"Chats/ChatMembers/{chatId}");

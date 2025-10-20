@@ -62,7 +62,8 @@ namespace ProjectSystemWPF.ViewModel
                                 if(user.User.IsDeleted == false)
                                 {
                                     ActiveUser.GetInstance().User = user.User;
-                                    REST.Instance.SetToken(user.Token);
+                                //REST.Instance.SetToken(user.Token);
+                                    SignalR.Instance.SetToken(user.Token);
                                     var con = SignalR.Instance.CreateConnection();
                                     await con.SendAsync("RegisterAsync", ActiveUser.GetInstance().User.Id);
                                  }
